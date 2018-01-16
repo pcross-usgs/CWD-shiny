@@ -4,17 +4,11 @@ library(shiny)
 library(popbio)
 library(deSolve)
 
-setwd("C:/Current Projects/CWD_shiny")
-#SIS model
-runApp("C:/Current Projects/CWD_shiny/model1")
-
-# Pulsed SIS model
-runApp("C:/Current Projects/CWD_shiny/model2")
-
+runApp("app1")
 
 #Deploy the app on the web.
-#library(rsconnect)
-#setwd("~/WorkPlay/MangeSIS/shinyapp_model4_pulsed")
-#deployApp()
+library(rsconnect)
+setwd("~/Current Projects/CWD_shiny/app1")
+deployApp()
 
 
