@@ -1,13 +1,16 @@
 #Script to set up and run the Shiny SIS Models
 rm(list = ls())
 library(shiny)
-library(knitr)
-library(markdown)
 library(popbio)
 library(deSolve)
 
-setwd('~/WorkPlay/CWD_shiny/')
-runApp("~/WorkPlay/CWD_shiny/shinyapp_model1") # straight-up SIS model.
+setwd("C:/Current Projects/CWD_shiny")
+#SIS model
+runApp("C:/Current Projects/CWD_shiny/model1")
+
+# Pulsed SIS model
+runApp("C:/Current Projects/CWD_shiny/model2")
+
 
 #Deploy the app on the web.
 #library(rsconnect)
