@@ -8,7 +8,7 @@ runApp("app1")
 
 #Deploy the app on the web.
 library(rsconnect)
-setwd("~/Current Projects/CWD_shiny/app1")
+setwd("D:/Current Projects/CWD_shiny/")
 deployApp()
 
 

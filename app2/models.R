@@ -1,0 +1,117 @@
+# Deterministic Discrete Annual age and sex structured model
+rm(list = ls())
+
+######PARAMETER VALUES######
+#Natural Annual survival rates
+fawn.an.sur <- 0.4
+juv.an.sur <- 0.7
+ad.an.f.sur <- 0.8
+ad.an.m.sur <- 0.8
+
+#Natural monthly survival rates
+fawn.sur <- fawn.an.sur^(1/12)
+juv.sur <- juv.an.sur^(1/12)
+ad.f.sur <- ad.an.f.sur^(1/12)
+ad.m.sur <- ad.an.m.sur^(1/12)
+
+#reproductive rates
+fawn.rep <- 0
+juv.rep <- 0.8
+ad.rep  <- 1.7
+
+n.age.cats <- 12 # age categories
+n0 <- 2000 # initial population size
+ini.prev <- 0.03 # initial prevalence
+foi <- 0.05^(1/12) # monthly probability of becoming infected
+
+dis.mort <- 0 # additional disease induced mortality rates per month.
+hunt.mort <- 0 # added annual hunting mortality over the entire season
+n.years <- 10 # number of years for the simulation
+
+months <- seq(1, n.years*12)
+hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
+hunt.mo[months %% 12 == 4] <- 1 # hunt.mo==1 on months in where the hunt occurs
+# birth.mo <- rep(0, n.years*12)
+# birth.mo[months %% 12 == 0] <- 1
+
+#########CREATE INITIAL CONDITIONS##########
+# Create the survival and birth vectors
+Sur.an.f <- c(fawn.an.sur, juv.an.sur, rep(ad.an.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+Sur.an.m <- c(fawn.an.sur, juv.an.sur, rep(ad.an.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+Bir <- c(fawn.rep, juv.rep, rep(ad.rep, n.age.cats - 2)) # vector of birth rates
+
+Sur.f <- c(fawn.sur, juv.sur, rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+
+#pre-allocate the population matrix (forces to be n.age.cats)
+#P <- matrix(0, nrow = n.age.cats, ncol = n.age.cats)
+
+# Construct the projection matrix
+M <- matrix(rep(0, n.age.cats * n.age.cats), nrow = n.age.cats)
+M[row(M) == (col(M) + 1)] <- Sur.an.f[1:(n.age.cats-1)] # replace the -1 off-diagonal with the survival rates
+M[1,] <- Bir*Sur.an.f # insert the fecundity vector
+lambda(M)
+
+# pre-allocate the output matrices
+St.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
+It.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
+St.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
+It.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
+
+# Intializing with the stabe age distribution
+# just splitting this by sex evenly.
+# differences in male/female survival will result in different stable age structures.
+St.f[,1] <- round(stable.stage(M) * n0 * 0.5 * (1-ini.prev))
+St.m[,1] <- round(stable.stage(M) * n0 * 0.5 * (1-ini.prev))
+
+# equally allocating prevalence across ages.
+It.m[,1] <- round(stable.stage(M) * n0 * 0.5 * ini.prev)
+It.f[,1] <- round(stable.stage(M) * n0 * 0.5 * ini.prev)
+
+#######POPULATION MODEL############
+for(t in 2:(n.years*12)){
+
+  # on birthdays add in recruits and age everyone by one year
+  if(t %% 12 == 0){
+    # aging
+    St.f[2:n.age.cats, t] <- St.f[1:n.age.cats-1, t-1]
+    It.f[2:n.age.cats, t] <- It.f[1:n.age.cats-1, t-1]
+    St.m[2:n.age.cats, t] <- St.m[1:n.age.cats-1, t-1]
+    It.m[2:n.age.cats, t] <- It.m[1:n.age.cats-1, t-1]
+
+    # reproduction
+    St.f[1, t] <- (St.f[1, t-1] * fawn.rep + St.f[2, t-1] * juv.rep +
+                     sum(St.f[3:n.age.cats, t-1]) * ad.rep) * 0.5
+
+    St.m[1, t] <- (St.f[1, t-1] * fawn.rep + St.f[2, t-1] * juv.rep +
+                     sum(St.f[3:n.age.cats, t-1]) * ad.rep) * 0.5
+  }
+  if(t %% 12 != 0){
+    #updating the next month
+    St.f[, t] <- St.f[, t-1]
+    It.f[, t] <- It.f[, t-1]
+    St.m[, t] <- St.m[, t-1]
+    It.m[, t] <- It.m[, t-1]
+  }
+
+  ##HUNT MORT then NATURAL MORT, THEN TRANSMISSION
+  # need to double check the ordering
+  St.f[, t] <- (1 - foi) * ((St.f[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.f)
+
+  It.f[, t] <- foi * ((St.f[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.f) +
+                        ((It.f[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.f) * (1 - dis.mort)
+
+  St.m[, t] <- (1 - foi) * ((St.m[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.m)
+
+  It.m[, t] <- foi * ((St.m[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.m) +
+                        ((It.m[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.m) * (1 - dis.mort)
+
+  # break if the population becomes negative.
+  if (sum(St.f[,t] + St.m[,t] + It.f[,t] + It.m[,t]) <= 0) break
+}
+
+matplot(months, t(St.f))
+matplot(months, t(It.m))
+round(St.f[,1:14])
+#  list(St.f = St.f, St.m = St.m, It.f = It.f, It.m = It.m)
+#})
