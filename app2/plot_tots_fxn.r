@@ -17,7 +17,7 @@ plot.tots <- function(dat, ...){
 
   #plot
   par(mar = c(4,5, 1,1))
-  plot((yr.indices-1)/12, N[yr.indices], ...)
+  plot((yr.indices-1)/12, N[yr.indices], ylim = c(0, max(N)), ...)
   lines((yr.indices-1)/12, N.f[yr.indices], col = "red", lwd = 2)
   lines((yr.indices-1)/12, N.m[yr.indices], col = "blue", lwd = 2)
 
@@ -63,6 +63,7 @@ plot.all.yr <- function(dat){
     arrange(category, age, month)
   dat2$category <- as.factor(dat2$category)
   dat2$year <- (dat2$month-1)/12
+
   #plot it
   plot1 <- ggplot(dat2, aes(year, population, color = age)) +
     geom_point() + facet_wrap(~category, ncol = 4)

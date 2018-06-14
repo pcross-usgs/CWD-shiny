@@ -26,8 +26,12 @@ n0 <- 2000 # initial population size
 ini.prev <- 0.03 # initial prevalence
 foi <- 1-(1-0.1)^(1/12) # monthly probability of becoming infected
 
-dis.mort <- 0 # additional disease induced mortality rates per month.
-hunt.mort <- 0 # added annual hunting mortality over the entire season
+dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
+hunt.mort.f <- rep(0.1,12) # added annual hunting mortality over the entire season for females
+hunt.mort.m <- rep(0.2,12) # added annual hunting mortality over the entire season for males
+hunt.mort.i.f <- rep(0.1,12) #hunting mortality associated with infected females - hot-spot removal
+hunt.mort.i.m <- rep(0.2,12) #hunting mortality associated with infected males - hot-spot removal
+
 n.years <- 10 # number of years for the simulation
 
 months <- seq(1, n.years*12)
@@ -95,23 +99,23 @@ for(t in 2:(n.years*12)){
 
   ##HUNT MORT then NATURAL MORT, THEN TRANSMISSION
   # need to double check the ordering
-  St.f[, t] <- (1 - foi) * ((St.f[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.f)
+  St.f[, t] <- (1 - foi) * ((St.f[,t] * (1 - hunt.mort.f * hunt.mo[t])) * Sur.f)
 
-  It.f[, t] <- foi * ((St.f[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.f) +
-                        ((It.f[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.f) * (1 - dis.mort)
+  It.f[, t] <- foi * ((St.f[,t] * (1 - hunt.mort.f * hunt.mo[t])) * Sur.f) +
+    ((It.f[,t] * (1 - hunt.mort.i.f * hunt.mo[t])) * Sur.f) * (1 - dis.mort)
 
-  St.m[, t] <- (1 - foi) * ((St.m[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.m)
+  St.m[, t] <- (1 - foi) * ((St.m[,t] * (1 - hunt.mort.m * hunt.mo[t])) * Sur.m)
 
-  It.m[, t] <- foi * ((St.m[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.m) +
-                        ((It.m[,t] * (1 - hunt.mort * hunt.mo[t])) * Sur.m) * (1 - dis.mort)
+  It.m[, t] <- foi * ((St.m[,t] * (1 - hunt.mort.m * hunt.mo[t])) * Sur.m) +
+    ((It.m[,t] * (1 - hunt.mort.i.m * hunt.mo[t])) * Sur.m) * (1 - dis.mort)
 
   # break if the population becomes negative.
   if (sum(St.f[,t] + St.m[,t] + It.f[,t] + It.m[,t]) <= 0) break
 }
 
-matplot(months, t(St.f))
-matplot(months, t(It.m))
-round(St.f[,1:14])
+#matplot(months, t(St.f))
+#matplot(months, t(It.m))
+#round(St.f[,1:14])
 
 output <- list(St.f = St.f, St.m = St.m, It.f = It.f, It.m = It.m)
 
@@ -120,7 +124,7 @@ source("plot_tots_fxn.r")
 
 #plots
 plot.tots(output, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
-          ylim = c(0,max(N)), cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+          cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
 # all months, ages, sex, disease cat
 plot.all(output)
 
