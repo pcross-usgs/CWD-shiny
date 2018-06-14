@@ -1,14 +1,12 @@
 # Deterministic Discrete Annual age and sex structured model
 rm(list = ls())
-library(popbio)
-library(tidyverse)
 
 ######PARAMETER VALUES######
 #Natural Annual survival rates
 fawn.an.sur <- 0.4
 juv.an.sur <- 0.7
 ad.an.f.sur <- 0.8
-ad.an.m.sur <- 0.7
+ad.an.m.sur <- 0.8
 
 #Natural monthly survival rates
 fawn.sur <- fawn.an.sur^(1/12)
@@ -24,7 +22,7 @@ ad.rep  <- 1.7
 n.age.cats <- 12 # age categories
 n0 <- 2000 # initial population size
 ini.prev <- 0.03 # initial prevalence
-foi <- 1-(1-0.1)^(1/12) # monthly probability of becoming infected
+foi <- 0.05^(1/12) # monthly probability of becoming infected
 
 dis.mort <- 0 # additional disease induced mortality rates per month.
 hunt.mort <- 0 # added annual hunting mortality over the entire season
@@ -33,22 +31,25 @@ n.years <- 10 # number of years for the simulation
 months <- seq(1, n.years*12)
 hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
 hunt.mo[months %% 12 == 4] <- 1 # hunt.mo==1 on months in where the hunt occurs
+# birth.mo <- rep(0, n.years*12)
+# birth.mo[months %% 12 == 0] <- 1
 
 #########CREATE INITIAL CONDITIONS##########
 # Create the survival and birth vectors
 Sur.an.f <- c(fawn.an.sur, juv.an.sur, rep(ad.an.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 Sur.an.m <- c(fawn.an.sur, juv.an.sur, rep(ad.an.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 Bir <- c(fawn.rep, juv.rep, rep(ad.rep, n.age.cats - 2)) # vector of birth rates
+
 Sur.f <- c(fawn.sur, juv.sur, rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 
-# Construct the sex-age projection matrix
-M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
-# replace the -1 off-diagonal with the survival rates
-M[row(M) == (col(M) + 1)] <- c(Sur.an.f[1:(n.age.cats-1)], 0, Sur.an.m[1:(n.age.cats-1)])
-# insert the fecundity vector
-M[1, 1:n.age.cats] <- Bir * 0.5
-M[n.age.cats +1, 1:n.age.cats] <- Bir * 0.5
+#pre-allocate the population matrix (forces to be n.age.cats)
+#P <- matrix(0, nrow = n.age.cats, ncol = n.age.cats)
+
+# Construct the projection matrix
+M <- matrix(rep(0, n.age.cats * n.age.cats), nrow = n.age.cats)
+M[row(M) == (col(M) + 1)] <- Sur.an.f[1:(n.age.cats-1)] # replace the -1 off-diagonal with the survival rates
+M[1,] <- Bir*Sur.an.f # insert the fecundity vector
 lambda(M)
 
 # pre-allocate the output matrices
@@ -58,14 +59,14 @@ St.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
 It.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
 
 # Intializing with the stabe age distribution
-St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * 0.5 * (1-ini.prev))
-St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 * 0.5 *
-                    (1-ini.prev))
+# just splitting this by sex evenly.
+# differences in male/female survival will result in different stable age structures.
+St.f[,1] <- round(stable.stage(M) * n0 * 0.5 * (1-ini.prev))
+St.m[,1] <- round(stable.stage(M) * n0 * 0.5 * (1-ini.prev))
 
 # equally allocating prevalence across ages.
-It.m[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * 0.5 * ini.prev)
-It.f[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 * 0.5 *
-                    ini.prev)
+It.m[,1] <- round(stable.stage(M) * n0 * 0.5 * ini.prev)
+It.f[,1] <- round(stable.stage(M) * n0 * 0.5 * ini.prev)
 
 #######POPULATION MODEL############
 for(t in 2:(n.years*12)){
@@ -112,18 +113,5 @@ for(t in 2:(n.years*12)){
 matplot(months, t(St.f))
 matplot(months, t(It.m))
 round(St.f[,1:14])
-
-output <- list(St.f = St.f, St.m = St.m, It.f = It.f, It.m = It.m)
-
-#load functions
-source("plot_tots_fxn.r")
-
-#plots
-plot.tots(output, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
-          ylim = c(0,max(N)), cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
-# all months, ages, sex, disease cat
-plot.all(output)
-
-# only years, ages, sex, disease cat
-plot.all.yr(output)
-
+#  list(St.f = St.f, St.m = St.m, It.f = It.f, It.m = It.m)
+#})
