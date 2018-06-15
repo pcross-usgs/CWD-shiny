@@ -10,35 +10,53 @@ juv.an.sur <- 0.7
 ad.an.f.sur <- 0.9
 ad.an.m.sur <- 0.8
 
+# annual reproductive rates
+fawn.rep <- 0
+juv.rep <- 0.8
+ad.rep  <- 1.7
+
+# disease parameters
+dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
+ini.prev <- 0.03 # initial prevalence
+foi <- 1 - (0.95^(1/12)) # monthly probability of becoming infected
+
+n0 <- 2000 # initial population size
+n.years <- 10 # number of years for the simulation
+
+#hunting
+hunt.mort.f <- rep(0.1,12) # added annual hunting mortality over the entire season for females
+hunt.mort.m <- rep(0.2,12) # added annual hunting mortality over the entire season for males
+hunt.mort.i.f <- rep(0.1,12) #hunting mortality associated with infected females - hot-spot removal
+hunt.mort.i.m <- rep(0.2,12) #hunting mortality associated with infected males - hot-spot removal
+
+# other model parameters
+n.age.cats <- 12 # age categories
+p <- 0.43 #probability of transitioning between infectious box cars
+
+# Calculated parameters
+months <- seq(1, n.years*12)
+hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
+hunt.mo[months %% 12 == 7] <- 1 # hunt.mo==1 on Nov
+
 #Natural monthly survival rates
 fawn.sur <- fawn.an.sur^(1/12)
 juv.sur <- juv.an.sur^(1/12)
 ad.f.sur <- ad.an.f.sur^(1/12)
 ad.m.sur <- ad.an.m.sur^(1/12)
 
-# annual reproductive rates
-fawn.rep <- 0
-juv.rep <- 0.8
-ad.rep  <- 1.7
+#bundle them into a list
+params <- list(fawn.sur = fawn.sur, juv.sur = juv.sur,
+               ad.f.sur = ad.f.sur, ad.m.sur = ad.m.sur,
+               fawn.rep = fawn.rep, juv.rep = juv.rep,
+               ad.rep = ad.rep,
+               dis.mort = dis.mort, ini.prev = ini.prev,
+               foi = foi, n0= n0, n.years = n.years,
+               hunt.mort.f = hunt.mort.f,
+               hunt.mort.m = hunt.mort.m,
+               hunt.mort.i.f = hunt.mort.i.f,
+               hunt.mort.i.m = hunt.mort.i.m,
+               n.age.cats = n.age.cats, p = p)
 
-n.age.cats <- 12 # age categories
-n0 <- 2000 # initial population size
-ini.prev <- 0.03 # initial prevalence
-foi <- 1 - (0.95^(1/12)) # monthly probability of becoming infected
-
-dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
-p <- 0.43 #probability of transitioning between infectious box cars
-
-hunt.mort.f <- rep(0.1,12) # added annual hunting mortality over the entire season for females
-hunt.mort.m <- rep(0.2,12) # added annual hunting mortality over the entire season for males
-hunt.mort.i.f <- rep(0.1,12) #hunting mortality associated with infected females - hot-spot removal
-hunt.mort.i.m <- rep(0.2,12) #hunting mortality associated with infected males - hot-spot removal
-
-n.years <- 10 # number of years for the simulation
-
-months <- seq(1, n.years*12)
-hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
-hunt.mo[months %% 12 == 7] <- 1 # hunt.mo==1 on Nov
 
 #########CREATE INITIAL CONDITIONS##########
 # Create the survival and birth vectors
@@ -83,13 +101,13 @@ I9t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
 I10t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
 
 # Intializing with the stable age distribution
-St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * 0.5 * (1-ini.prev))
-St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 * 0.5 *
+St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.prev))
+St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                     (1-ini.prev))
 
 # equally allocating prevalence across ages.
-It.m[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * 0.5 * ini.prev)
-It.f[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 * 0.5 *
+I1t.m[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * ini.prev)
+I1t.f[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                     ini.prev)
 
 #######POPULATION MODEL############
@@ -97,7 +115,6 @@ for(t in 2:(n.years*12)){
 
   # on birthdays add in recruits and age everyone by one year
   if(t %% 12 == 2){  # births happen in June, model starts in May
-
 
     # aging
     St.f[2:n.age.cats, t] <- St.f[1:n.age.cats-1, t-1]
@@ -125,18 +142,28 @@ for(t in 2:(n.years*12)){
     I10t.m[2:n.age.cats, t] <- I10t.m[1:n.age.cats-1, t-1]
 
     # reproduction
-    I_fawn <- (I1t.f[1, t-1] + I2t.f[1, t-1] + I3t.f[1, t-1] + I4t.f[1, t-1] + I5t.f[1, t-1] + I6t.f[1, t-1] + I7t.f[1, t-1] + I8t.f[1, t-1] + I9t.f[1, t-1] + I10t.f[1, t-1])
+    I_fawn <- (I1t.f[1, t-1] + I2t.f[1, t-1] + I3t.f[1, t-1] + I4t.f[1, t-1] +
+                 I5t.f[1, t-1] + I6t.f[1, t-1] + I7t.f[1, t-1] + I8t.f[1, t-1] +
+                 I9t.f[1, t-1] + I10t.f[1, t-1])
 
-    I_juv <- (I1t.f[2, t-1] + I2t.f[2, t-1] + I3t.f[2, t-1] + I4t.f[2, t-1] + I5t.f[2, t-1] + I6t.f[2, t-1] + I7t.f[2, t-1] + I8t.f[2, t-1] + I9t.f[2, t-1] + I10t.f[2, t-1])
+    I_juv <- (I1t.f[2, t-1] + I2t.f[2, t-1] + I3t.f[2, t-1] + I4t.f[2, t-1] +
+                I5t.f[2, t-1] + I6t.f[2, t-1] + I7t.f[2, t-1] + I8t.f[2, t-1] +
+                I9t.f[2, t-1] + I10t.f[2, t-1])
 
-    I_adults <- (I1t.f[3:n.age.cats, t-1] + I2t.f[3:n.age.cats, t-1] + I3t.f[3:n.age.cats, t-1] + I4t.f[3:n.age.cats, t-1] + I5t.f[3:n.age.cats, t-1] + I6t.f[3:n.age.cats, t-1] + I7t.f[3:n.age.cats, t-1] + I8t.f[3:n.age.cats, t-1] + I9t.f[3:n.age.cats, t-1] + I10t.f[3:n.age.cats, t-1])
+    I_adults <- (I1t.f[3:n.age.cats, t-1] + I2t.f[3:n.age.cats, t-1] +
+                   I3t.f[3:n.age.cats, t-1] + I4t.f[3:n.age.cats, t-1] +
+                   I5t.f[3:n.age.cats, t-1] + I6t.f[3:n.age.cats, t-1] +
+                   I7t.f[3:n.age.cats, t-1] + I8t.f[3:n.age.cats, t-1] +
+                   I9t.f[3:n.age.cats, t-1] + I10t.f[3:n.age.cats, t-1])
 
 
-    St.f[1, t] <- ((St.f[1, t-1] + I_fawn)* fawn.rep + (St.f[2, t-1] + I_juv) * juv.rep +
+    St.f[1, t] <- ((St.f[1, t-1] + I_fawn)* fawn.rep +
+                     (St.f[2, t-1] + I_juv) * juv.rep +
                      sum((St.f[3:n.age.cats, t-1] + I_adults)) * ad.rep) * 0.5
 
 
-    St.m[1, t] <- ((St.f[1, t-1] + I_fawn)* fawn.rep + (St.f[2, t-1] + I_juv) * juv.rep +
+    St.m[1, t] <- ((St.f[1, t-1] + I_fawn)* fawn.rep +
+                     (St.f[2, t-1] + I_juv) * juv.rep +
                      sum((St.f[3:n.age.cats, t-1] + I_adults)) * ad.rep) * 0.5
   }
 
@@ -231,8 +258,6 @@ for(t in 2:(n.years*12)){
   I9.m.move<-round(I9t.m[,t] * p)
   I10.m.move<-round(I10t.m[,t]* p)
 
-
-
   I1t.m[, t] <- foi * ((St.m[,t] * (1 - hunt.mort.m * hunt.mo[t])) * Sur.m) +
     (((I1t.m[,t]-I1.m.move) * (1 - hunt.mort.i.m * hunt.mo[t])) * Sur.m) #suceptibles that survive hunt and natural mortality and then become infected, plus I1 individuals that stay and survive hunt and natural mortality
 
@@ -262,24 +287,29 @@ for(t in 2:(n.years*12)){
           I9t.m[,t] + I10t.m[,t]) <= 0) break
 }
 
-
-output <- list(St.f = St.f, St.m = St.m, It.f = It.f, It.m = It.m)
+output <- list(St.f = St.f, St.m = St.m,
+               I1t.f = I1t.f, I2t.f = I2t.f, I3t.f = I3t.f, I4t.f = I4t.f,
+               I5t.f = I5t.f, I6t.f = I6t.f, I7t.f = I7t.f, I8t.f = I8t.f,
+               I9t.f = I9t.f, I10t.f = I10t.f, I1t.m = I1t.m, I2t.m = I2t.m,
+               I3tm = I3t.m, I4t.m = I4t.m, I5t.m = I5t.m, I6t.m = I6t.m,
+               I7t.m = I7t.m, I8t.m = I8t.m, I9t.m = I9t.m, I10t.m = I10t.m)
 
 #load functions
 source("./code/plot_fxns.r")
 
-#plots
-plot.tots(output, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
+#PLOTS
+plot.tots(output, type = "l", ylab = "Total population", xlab = "Year",
+          ylim = c(0, 2000), lwd = 3,
           cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
 
 # all months, ages, sex, disease cat
-plot.all(output)
-
-# only years, ages, sex, disease cat
-plot.all.yr(output)
+plot.all(output, years.only = F)
 
 # prevalence plot over time.
 plot.prev(output, type = "l", col = "red", xlab = "year", ylab = "prevalence")
 
-#plot the fawn to doe ratio
-plot.fawn.adult(output, type = "l", xlab = "year", ylab = "fawn:doe")
+#plot the fawn to adult ratio
+plot.fawn.adult(output, type = "l", xlab = "year", ylab = "fawn:adult")
+
+#plot the buck to doe ratio
+plot.buck.doe(output, type = "l", xlab = "year", ylab = "buck:doe")
