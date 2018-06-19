@@ -1,5 +1,19 @@
 det.pop.model <- function(params){
 
+  # write the list objects to the local environment
+  for (v in 1:length(params)) assign(names(params)[v], params[[v]])
+
+  #monthly index
+  months <- seq(1, n.years*12)
+  hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
+  hunt.mo[months %% 12 == 7] <- 1 # hunt.mo==1 on Nov
+
+  #Natural monthly survival rates
+  fawn.sur <- fawn.an.sur^(1/12)
+  juv.sur <- juv.an.sur^(1/12)
+  ad.f.sur <- ad.an.f.sur^(1/12)
+  ad.m.sur <- ad.an.m.sur^(1/12)
+
   #########CREATE INITIAL CONDITIONS##########
   # Create the survival and birth vectors
   Sur.an.f <- c(fawn.an.sur, juv.an.sur, rep(ad.an.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
