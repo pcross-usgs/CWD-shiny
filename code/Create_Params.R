@@ -23,7 +23,7 @@ preg.ad <- ifelse(fawns.ad==1, ad.rep, ad.rep/2)
 n.age.cats <- 12 # age categories
 n0 <- 2000 # initial population size
 ini.prev <- 0.03 # initial prevalence
-foi <- 1 - (0.95^(1/12)) # monthly probability of becoming infected
+foi <- 1 - (0.98^(1/12)) # monthly probability of becoming infected
 
 dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
 p <- 0.43 #probability of transitioning between infectious box cars
