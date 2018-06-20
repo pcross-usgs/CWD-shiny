@@ -15,10 +15,13 @@ plot.tots(output, type = "l", ylab = "Total population", xlab = "Year",
           cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
 # all months, ages, sex, disease cat
 # if years.only == TRUE then only plot one point per year, otherwise plot every month
-plot.all(output, years.only = F)
+plot.all(output, years.only = T)
 
 # prevalence plot over time.
 plot.prev(output, type = "l", col = "red", xlab = "year", ylab = "prevalence")
+
+# prevalence plot by age over time
+plot.prev.age(output, by.sex = T)
 
 #plot the fawn to adult ratio
 plot.fawn.adult(output, type = "l", xlab = "year", ylab = "fawn:adult")
