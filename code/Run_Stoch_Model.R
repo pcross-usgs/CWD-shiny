@@ -4,6 +4,8 @@ library(popbio)
 library(reshape2)
 library(tidyverse)
 source("./code/stoch_pop_model_fxn.r")
+source("./code/plot_stoch_fxns.r")
+
 load("./output/params.RData")
 
 #Run the model
@@ -24,9 +26,11 @@ out.sims.long$disease <- as.factor(out.sims.long$disease)
 
 summary(out.sims.long)
 
+#save(out.sims.long, file = "./output/out.RData")
+
 #plot the totals
-plot.stoch.tots(out.sims.long, all.lines = T, error.bars = c(0.05, 0.95),
-                by.sexage = F)
+plot.stoch.tots(out.sims.long, all.lines = T, error.bars = c(0.25, 0.75),
+                by.sexage = T)
 
 # prev by age
 plot.stoch.prev.age(out.sims.long, by.sex = T)
