@@ -112,14 +112,18 @@ stoch.pop.model <- function(params){
       I10t.m[2:n.age.cats, t] <- I10t.m[1:n.age.cats-1, t-1]
 
       # reproduction
-      I_fawn <- (I1t.f[1, t-1] + I2t.f[1, t-1] + I3t.f[1, t-1] + I4t.f[1, t-1] + I5t.f[1, t-1] + I6t.f[1, t-1] + I7t.f[1, t-1] + I8t.f[1, t-1] + I9t.f[1, t-1] + I10t.f[1, t-1])
+      I_fawn <- (I1t.f[1, t-1] + I2t.f[1, t-1] + I3t.f[1, t-1] + I4t.f[1, t-1] +
+                   I5t.f[1, t-1] + I6t.f[1, t-1] + I7t.f[1, t-1] + I8t.f[1, t-1] +
+                   I9t.f[1, t-1] + I10t.f[1, t-1])
 
       I_juv <- (I1t.f[2, t-1] + I2t.f[2, t-1] + I3t.f[2, t-1] + I4t.f[2, t-1] + I5t.f[2, t-1] + I6t.f[2, t-1] + I7t.f[2, t-1] + I8t.f[2, t-1] + I9t.f[2, t-1] + I10t.f[2, t-1])
 
       I_adults <- (I1t.f[3:n.age.cats, t-1] + I2t.f[3:n.age.cats, t-1] + I3t.f[3:n.age.cats, t-1] + I4t.f[3:n.age.cats, t-1] + I5t.f[3:n.age.cats, t-1] + I6t.f[3:n.age.cats, t-1] + I7t.f[3:n.age.cats, t-1] + I8t.f[3:n.age.cats, t-1] + I9t.f[3:n.age.cats, t-1] + I10t.f[3:n.age.cats, t-1])
 
 
-      fawns_born <- sum(rbinom(n.age.cats, (St.f[1, t-1] + I_fawn), preg.fawn)*fawns.fawn) + sum(rbinom(n.age.cats, (St.f[2, t-1] + I_juv), preg.juv)*fawns.juv) + rbinom(1, (sum(St.f[3:n.age.cats, t-1]) + sum(I_adults)), preg.ad)*fawns.ad
+      fawns_born <- sum(rbinom(1, (St.f[1, t-1] + I_fawn), preg.fawn)*fawns.fawn) +
+        sum(rbinom(1, (St.f[2, t-1] + I_juv), preg.juv)*fawns.juv) +
+        rbinom(1, (sum(St.f[3:n.age.cats, t-1]) + sum(I_adults)), preg.ad)*fawns.ad
 
       St.f[1, t] <- rbinom(1, fawns_born, 0.5)
       St.m[1, t] <- fawns_born - St.f[1, t]

@@ -7,7 +7,7 @@ source("./code/stoch_pop_model_fxn.r")
 load("./output/params.RData")
 
 #Run the model
-sims <- 2
+sims <- 30
 out.sims <- vector("list",sims)
 
 for(i in 1:sims){
@@ -21,4 +21,18 @@ out.sims.long <- melt(out.sims) %>%
          disease = "no")
 out.sims.long$disease[str_sub(out.sims.long$category, 1,1) == "I"] = "yes"
 out.sims.long$disease <- as.factor(out.sims.long$disease)
+
 summary(out.sims.long)
+
+#plot the totals
+plot.stoch.tots(out.sims.long, all.lines = T, error.bars = c(0.05, 0.95),
+                by.sexage = F)
+
+# prev by age
+plot.stoch.prev.age(out.sims.long, by.sex = T)
+
+#plot fawn.adult and buck:doe
+library(cowplot)
+p1 <- plot.stoch.fawn.adult(out.sims.long, all.lines = T, error.bars = c(0.05, 0.95))
+p2 <- plot.stoch.buck.doe(out.sims.long, all.lines = T, error.bars = c(0.05, 0.95))
+plot_grid(p1, p2, labels = c("A", "B"))
