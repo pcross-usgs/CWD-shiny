@@ -2,7 +2,7 @@
 
 ######PARAMETER VALUES######
 #Natural Annual survival rates
-fawn.an.sur <- 0.6
+fawn.an.sur <- 0.4
 juv.an.sur <- 0.7
 ad.an.f.sur <- 0.9
 ad.an.m.sur <- 0.8
