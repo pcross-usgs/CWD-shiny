@@ -68,10 +68,10 @@ pl.beta(ad.m.sur.alpha, ad.m.sur.beta)
 
 
 #monthly stochastic survival rates that will be used to initalize the Leslie matrix
-   fawn.sur<- (rbeta(1, fawn.sur.alpha, fawn.sur.beta, ncp = 0))^(1/12)
-   juv.sur <- (rbeta(1, juv.sur.alpha, juv.sur.beta, ncp = 0))^(1/12)
-   ad.f.sur <- (rbeta(1, ad.f.sur.alpha, ad.f.sur.beta, ncp = 0))^(1/12)
-   ad.m.sur <- (rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
+fawn.sur<- (rbeta(1, fawn.sur.alpha, fawn.sur.beta, ncp = 0))^(1/12)
+juv.sur <- (rbeta(1, juv.sur.alpha, juv.sur.beta, ncp = 0))^(1/12)
+ad.f.sur <- (rbeta(1, ad.f.sur.alpha, ad.f.sur.beta, ncp = 0))^(1/12)
+ad.m.sur <- (rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
 
 # annual reproductive rates of fawns/doe; input by user
 fawn.rep <- 0
@@ -114,9 +114,9 @@ pl.beta(juv.repro.alpha, juv.repro.beta)
 pl.beta(ad.repro.alpha, ad.repro.beta)
 
 #monthly stochastic reproductive rates that will be used to initalize the Leslie matrix - need to multiply by 2 in the Leslie matrix
-  fawn.preg.draw <- ifelse(fawn.rep==0, 0, (rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
-   juv.preg.draw <- (rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
-   ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
+fawn.preg.draw <- ifelse(fawn.rep==0, 0, (rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
+juv.preg.draw <- (rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
+ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
 
 n.age.cats <- 12 # age categories
 n0 <- 2000 # initial population size
@@ -135,7 +135,6 @@ foi <- 1 - (0.98^(1/12)) # monthly probability of becoming infected
 
 #dis.mort is addressed by using 10 infectious box cars with a defined probability of transitioning, p.
 p <- 0.43 #probability of transitioning between infectious box cars; determines disease-induced mortality rate
-
 
 #Assuming hunting mortality is drawn from a distribution:
 #Mean additive hunt mortality; user input
@@ -169,17 +168,16 @@ hunt.mort.i.m.alpha <- estBetaParams(hunt.mort.i.m.mean, hunt.mort.i.m.var)$alph
 hunt.mort.i.m.beta <- estBetaParams(hunt.mort.i.m.mean, hunt.mort.i.m.var)$beta
 
 #stochastic hunting survival rates; right now, it's drawing the hunting mort for each age class
-   hunt.mort.f<- (rbeta(n.age.cats, hunt.mort.f.alpha, hunt.mort.f.beta, ncp = 0)) # added annual hunting mortality over the entire season for females
-   hunt.mort.m<- (rbeta(n.age.cats, hunt.mort.m.alpha, hunt.mort.m.beta, ncp = 0))# added annual hunting mortality over the entire season for males
-   hunt.mort.i.f<- (rbeta(n.age.cats, hunt.mort.i.f.alpha, hunt.mort.i.f.beta, ncp = 0))#hunting mortality associated with infected females - hot-spot removal
-   hunt.mort.i.m<- (rbeta(n.age.cats, hunt.mort.i.m.alpha, hunt.mort.i.m.beta, ncp = 0))#hunting mortality associated with infected males - hot-spot removal
+hunt.mort.f<- (rbeta(n.age.cats, hunt.mort.f.alpha, hunt.mort.f.beta, ncp = 0)) # added annual hunting mortality over the entire season for females
+hunt.mort.m<- (rbeta(n.age.cats, hunt.mort.m.alpha, hunt.mort.m.beta, ncp = 0))# added annual hunting mortality over the entire season for males
+hunt.mort.i.f<- (rbeta(n.age.cats, hunt.mort.i.f.alpha, hunt.mort.i.f.beta, ncp = 0))#hunting mortality associated with infected females - hot-spot removal
+hunt.mort.i.m<- (rbeta(n.age.cats, hunt.mort.i.m.alpha, hunt.mort.i.m.beta, ncp = 0))#hunting mortality associated with infected males - hot-spot removal
 
 n.years <- 10 # number of years for the simulation
 
 months <- seq(1, n.years*12)
 hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
 hunt.mo[months %% 12 == 7] <- 1 # hunt.mo==1 on Nov
-
 
 #########CREATE INITIAL CONDITIONS##########
 # Create the survival and birth vectors
@@ -200,29 +198,14 @@ lambda(M)
 
 # pre-allocate the output matrices
 St.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I1t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I2t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I3t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I4t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I5t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I6t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I7t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I8t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I9t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I10t.f <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
 
-St.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I1t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I2t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I3t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I4t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I5t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I6t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I7t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I8t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I9t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-I10t.m <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
-
+# we could instead make this a list of arrays
+for(i in 1:10){
+  assign(paste("I", i, "t.f", sep = ""),
+         matrix(0, nrow = n.age.cats, ncol = n.years*12))
+  assign(paste("I", i, "t.m", sep = ""),
+         matrix(0, nrow = n.age.cats, ncol = n.years*12))
+}
 
 #No stochasticity built into starting prevalence...
 
@@ -297,16 +280,13 @@ for(t in 2:(n.years*12)){
                    I7t.f[3:n.age.cats, t-1] + I8t.f[3:n.age.cats, t-1] +
                    I9t.f[3:n.age.cats, t-1] + I10t.f[3:n.age.cats, t-1])
 
-
-
     fawns_born <- sum(rbinom(1, (St.f[1, t-1] + I_fawn), fawn.preg.draw) *  fawns.fawn) +
       sum(rbinom(1, (St.f[2, t-1] + I_juv), juv.preg.draw)*fawns.juv) +
       rbinom(1, (sum(St.f[3:n.age.cats, t-1]) + sum(I_adults)), ad.preg.draw)*fawns.ad
 
     St.f[1, t] <- rbinom(1, fawns_born, 0.5)
     St.m[1, t] <- fawns_born - St.f[1, t]
-
-  }
+}
   if(t %% 12 != 2){
     #updating the next month
     St.f[, t] <- St.f[, t-1]
@@ -435,11 +415,11 @@ output <- list(St.f = St.f, St.m = St.m,
                I9t.f = I9t.f, I10t.f = I10t.f, I1t.m = I1t.m, I2t.m = I2t.m,
                I3tm = I3t.m, I4t.m = I4t.m, I5t.m = I5t.m, I6t.m = I6t.m,
                I7t.m = I7t.m, I8t.m = I8t.m, I9t.m = I9t.m, I10t.m = I10t.m)
-#load functions
-#source("./code/plot_fxns.r")
-source("./plot_fxns.r")
 
-#plots
+#load functions
+source("./code/plot_fxns.r")
+#source("./plot_fxns.r")
+
 #PLOTS
 plot.tots(output, type = "l", ylab = "Total population", xlab = "Year",
           ylim = c(0, 1000), lwd = 3,
@@ -463,32 +443,6 @@ N.m<-(I1t.f[,] +  I2t.f[,] + I3t.f[,] + I4t.f[,] + I5t.f[,] + I6t.f[,] + I7t.f[,
 #matplot(months, t(It.f))
 #matplot(months, t(N.m))
 round(St.f[,1:14])
-output <- list(St.f = St.f, St.m = St.m, It.f = It.f, It.m = It.m)
-
-
-plot()
-#load functions
-source("./code/plot_stoch_fxns.r")
-source("./code/plot_fxns.r")
-
-#PLOT the results
-par(mfrow = c(1,1))
-plot.tots(output, type = "l", ylab = "Total population", xlab = "Year",
-          ylim = c(0, 2000), lwd = 3,
-          cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
-# all months, ages, sex, disease cat
-# if years.only == TRUE then only plot one point per year, otherwise plot every month
-plot.all(output, years.only = T)
-
-# prevalence plot over time.
-plot.prev(output, type = "l", col = "red", xlab = "year", ylab = "prevalence")
-
-# prevalence plot by age over time
-plot.prev.age(output, by.sex = T)
-
-#plot the fawn to adult ratio
-plot.fawn.adult(output, type = "l", xlab = "year", ylab = "fawn:adult")
-plot.buck.doe(output, type = "l", xlab = "year", ylab = "buck:doe")
 
 # matplot(months, t(St.f))
 # matplot(months, t(It.f))
