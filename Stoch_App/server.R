@@ -7,7 +7,6 @@ library(tidyverse)
 source("./code/model_stochastic_2_fxn.r")
 source("./code/plot_stoch_fxns.r")
 
-
 #DEFINITELY NOT WORKING.
 # Need to figure out the reactive components and feed those to the simulation
 
