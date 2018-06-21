@@ -5,7 +5,6 @@ library(reshape2)
 library(tidyverse)
 source("./code/stoch_pop_model_fxn.r")
 source("./code/plot_stoch_fxns.r")
-
 load("./output/params.RData")
 
 #Run the model
