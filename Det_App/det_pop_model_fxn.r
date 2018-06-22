@@ -1,5 +1,5 @@
 det.pop.model <- function(params){
-  browser()
+  #browser()
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 

@@ -4,7 +4,6 @@ library(popbio)
 library(reshape2)
 library(tidyverse)
 library(cowplot)
-
 source("stoch_model_fxn_ver2.r", local = T)
 source("plot_stoch_fxns.r", local = T)
 
