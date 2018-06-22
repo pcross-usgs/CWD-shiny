@@ -11,8 +11,6 @@ source("plot_stoch_fxns.r", local = T)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
-  #react.params <- reactiveValues()
-
   react.params <- reactive({
     #Function to estimate alpha and beta for a beta distribution
     estBetaParams <- function(mu, var) {

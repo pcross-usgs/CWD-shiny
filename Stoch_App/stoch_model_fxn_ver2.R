@@ -1,9 +1,9 @@
 #Stochastic.2b monthly age and sex structured model that incorporates random draws from distibutions of natural survival, reproduction, and hunt mortality. Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
-browser()
+  #browser()
   # write the list objects to the local environment
-  e <- list2env(params)
-  #for (v in 1:length(params)){assign(names(params)[v], params[[v]])}
+  #e <- list2env(params)
+  for (v in 1:length(params)){assign(names(params)[v], params[[v]])}
 
   #########CREATE INITIAL CONDITIONS##########
   months <- seq(1, n.years*12)

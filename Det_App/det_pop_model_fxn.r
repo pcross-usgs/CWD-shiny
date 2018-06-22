@@ -1,5 +1,5 @@
 det.pop.model <- function(params){
-
+  browser()
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -152,7 +152,6 @@ det.pop.model <- function(params){
     }
 
     ##HUNT MORT then NATURAL MORT, THEN TRANSMISSION
-    #browser()
     St.f[, t] <- (1 - foi) * ((St.f[,t] * (1 - hunt.mort.f * hunt.mo[t])) * Sur.f)
 
     I1.f.move<-(I1t.f[,t] * p) #deterministic movement of individuals from I1 to I2

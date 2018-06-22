@@ -22,7 +22,7 @@ shinyUI(fluidPage(
                                            value = 1.7, min = 0.7, max = 2, step = 0.1)),
 
                         column(width = 3, h4("Disease & Simulation"),
-                               sliderInput("n.years","# of years",
+                               sliderInput("n.years", "# of years",
                                            value = 10,min = 3,max = 15,step = 1),
                                sliderInput("sims", "# of sims",
                                            value = 10,min = 1, max = 100, step = 5),
