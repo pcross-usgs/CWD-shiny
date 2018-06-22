@@ -25,7 +25,7 @@ n0 <- 2000 # initial population size
 ini.prev <- 0.03 # initial prevalence
 foi <- 1 - (0.98^(1/12)) # monthly probability of becoming infected
 
-dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
+#dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
 p <- 0.43 #probability of transitioning between infectious box cars
 
 hunt.mort.f <- rep(0.1,12) # added annual hunting mortality over the entire season for females
@@ -36,16 +36,22 @@ hunt.mort.i.m <- rep(0.2,12) #hunting mortality associated with infected males -
 n.years <- 10 # number of years for the simulation
 
 #bundle them into a list
-params <- list(fawn.an.sur = fawn.an.sur, juv.an.sur = juv.an.sur,
-               ad.an.f.sur = ad.an.f.sur, ad.an.m.sur = ad.an.m.sur,
-               fawn.rep = fawn.rep, juv.rep = juv.rep,
+params <- list(fawn.an.sur = fawn.an.sur,
+               juv.an.sur = juv.an.sur,
+               ad.an.f.sur = ad.an.f.sur,
+               ad.an.m.sur = ad.an.m.sur,
+               fawn.rep = fawn.rep,
+               juv.rep = juv.rep,
                ad.rep = ad.rep,
-               dis.mort = dis.mort, ini.prev = ini.prev,
-               foi = foi, n0= n0, n.years = n.years,
                hunt.mort.f = hunt.mort.f,
                hunt.mort.m = hunt.mort.m,
                hunt.mort.i.f = hunt.mort.i.f,
                hunt.mort.i.m = hunt.mort.i.m,
-               n.age.cats = n.age.cats, p = p)
+               n.age.cats = n.age.cats,
+               p = p,
+               ini.prev = ini.prev,
+               foi = foi,
+               n0 = n0,
+               n.years = n.years)
 
 save(params, file = "./output/params.RData")

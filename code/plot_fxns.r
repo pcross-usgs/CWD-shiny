@@ -28,7 +28,7 @@ plot.tots <- function(dat, ...){
   require(tidyverse)
 
   # create the indices for the start of each year
-  indices <- which(seq(1,dim(dat[[1]])[2]) %% 12 == 1)
+  indices <- which(seq(1, dim(dat[[1]])[2]) %% 12 == 1)
 
   # organize the data into long form
   dat.lon <- melt(dat) %>%
