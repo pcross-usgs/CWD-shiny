@@ -27,7 +27,7 @@ shinyServer(function(input, output) {
          p =  0.43,
          ini.prev = input$ini.prev,
          foi =  1 - ((1-input$an.foi)^(1/12)),
-         n0 = 2000,
+         n0 = input$n0,
          n.years = input$n.years)
   })
 
@@ -35,8 +35,7 @@ shinyServer(function(input, output) {
 
   output$TotalsPlot <- renderPlot({
    out <- simout()
-   plot.tots(out, type = "l", ylab = "Total population", xlab = "Year",
-              ylim = c(0, 2000), lwd = 3,
+   plot.tots(out, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
               cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
   })
 

@@ -5,11 +5,11 @@ library(shiny)
 # Application title
 shinyUI(fluidPage(
   titlePanel("CWD Model"),
-  navbarPage("Navbar",
-           tabPanel("Parameters",
+  #navbarPage("Navbar",
+  #         tabPanel("Parameters",
                     # Sidebar with a slider input for number of bins
                     fluidRow(
-                      column(width = 3, h4("Vital rates"),
+                      column(width = 2, h4("Vital rates"),
                              sliderInput("fawn.an.sur", "Fawn survival",
                                          value = 0.4, min = 0.1, max = 1, step = 0.05),
                              sliderInput("juv.an.sur", "Juvenile survival",
@@ -22,14 +22,16 @@ shinyUI(fluidPage(
                                          value = 0.8, min = 0.2, max = 1.5, step = 0.1),
                              sliderInput("ad.rep", "Fawns per adult",
                                          value = 1.7, min = 0.7, max = 2, step = 0.1)),
-                      column(width = 3, h4("Disease & Simulation"),
+                      column(width = 2, h4("Disease & Simulation"),
+                             sliderInput("n0","Initial population size",
+                                         value = 2000, min = 100, max = 6000,step = 10),
+                             sliderInput("n.years","# of years",
+                                         value = 10,min = 3,max = 15,step = 1),
                              sliderInput("an.foi", "Force of infection",
                                          value = 0.02, min = 0, max = 0.1, step = 0.01),
                              sliderInput("ini.prev", "Initial prevalence",
-                                         value = 0.03, min = 0, max = 0.1, step = 0.01),
-                             sliderInput("n.years","# of years",
-                                         value = 10,min = 3,max = 15,step = 1)),
-                      column(width = 3, h4("Hunting"),
+                                         value = 0.03, min = 0, max = 0.4, step = 0.01)),
+                      column(width = 2, h4("Hunting"),
                              sliderInput("hunt.mort.fawn","% fawns hunted",
                                          value = 0.03,min = 0,max = 0.1,step = 0.01),
                              sliderInput("hunt.mort.juv","% juv hunted",
@@ -41,14 +43,18 @@ shinyUI(fluidPage(
                              sliderInput("hunt.mort.i.f","% Infected does hunted",
                                          value = 0.1,min = 0,max = 0.3,step = 0.05),
                              sliderInput("hunt.mort.i.m","% infected bucks hunted",
-                                         value = 0.2,min = 0,max = 0.3,step = 0.05))
+                                         value = 0.2,min = 0,max = 0.3,step = 0.05)),
+                      column(width = 6, h4("Plots"),
+                             plotOutput('TotalsPlot'),
+                             #plotOutput('prevPlot'),
+                             plotOutput('classPlot'))
                       )
-                    ),
-           tabPanel("Plots",
-                    plotOutput('TotalsPlot'),
-                    plotOutput('prevPlot'),
-                    plotOutput('classPlot')
-                    )
+                    )#,
+          # tabPanel("Plots",
+                    #plotOutput('TotalsPlot'),
+                    #plotOutput('prevPlot'),
+                    #plotOutput('classPlot')
+           #         )
            )
-  )
-)
+#  )
+#)
