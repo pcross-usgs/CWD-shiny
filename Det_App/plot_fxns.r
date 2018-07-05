@@ -44,15 +44,22 @@ plot.tots <- function(dat, ...){
     group_by(year, disease) %>%
     summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
-    mutate(tots = no + yes)
+    mutate(tots = no + yes, prev = yes / (no + yes))
+
 
   #plot
-  par(mar = c(4,5, 1,1))
-  plot(dat.sum$year, dat.sum$tots, ...)
-  lines(dat.sum$year, dat.sum$yes, col = "red", lwd = 2)
-  lines(dat.sum$year, dat.sum$no, col = "blue", lwd = 2)
-  legend("topright", c("total", "infected", "healthy"),
-         col = c("black", "red", "blue"), lwd = 2)
+  par(mar = c(4,4, 4, 4))
+  with(dat.sum, plot(year, tots, ylim = c(0, max(dat.sum$tots)), ...))
+  #lines(dat.sum$year, dat.sum$yes, col = "red", lwd = 2)
+  #lines(dat.sum$year, dat.sum$no, col = "blue", lwd = 2)
+
+  par(new = T)
+  with(dat.sum, plot(year, prev, type = "l", ylim = c(0, max(dat.sum$prev) + 0.1),
+                     axes=F, xlab=NA, ylab=NA, col = "red", lwd = 2))
+  axis(side = 4, col = "red")
+  mtext(side = 4, line = 3, 'Prevalence', cex = 1.25, col = "red")
+  legend("topright", c("total", "prevalence"),
+         col = c("black", "red"), lwd = 2, bty = "n")
 }
 
 # plot all ages all months
@@ -67,7 +74,9 @@ plot.all <- function(dat, years.only, ...){
   # create the indices for the start of each year
   indices <- which(seq(1,dim(dat[[1]])[2]) %% 12 == 1)
 
-  # organize the data into long form
+  if(missing(by.sex)){by.sex = F}
+
+    # organize the data into long form
   dat.lon <- melt(dat) %>%
     dplyr::rename(age = Var1, month = Var2, population = value,
                   category = L1) %>%
