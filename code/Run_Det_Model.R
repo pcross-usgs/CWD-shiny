@@ -10,6 +10,7 @@ load("./output/params.RData")
 output <- det.pop.model(params)
 
 #PLOT the results
+
 plot.tots(output, type = "l", ylab = "Total population", xlab = "Year",
           ylim = c(0, 2000), lwd = 3,
           cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
