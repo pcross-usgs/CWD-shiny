@@ -80,7 +80,7 @@ plot.all <- function(dat, years.only, ...){
       filter(month %in% indices)}
 
   plot1 <- ggplot(dat.lon, aes(year, population, color = age)) +
-    geom_point() + facet_wrap(~disease + sex, ncol = 2)
+    geom_point() + facet_wrap(~disease + sex, ncol = 2, scales = "free")
   plot1
 }
 
@@ -130,59 +130,50 @@ plot.prev.age <- function(dat, by.sex, ...){
   # create the indices for the start of each year
   indices <- which(seq(1,dim(dat[[1]])[2]) %% 12 == 1)
 
-  if(missing(by.sex)){by.sex = F}
+  if(missing(by.sex)){by.sex <- F}
 
+  # organize the data into long form
+  dat.lon <- melt(dat) %>%
+    dplyr::rename(age = Var1, month = Var2, population = value,
+                  category = L1) %>%
+    filter(month %in% indices) %>%
+    arrange(category, age, month) %>%
+    mutate(year = (month-1)/12, sex = as.factor(str_sub(category, -1)),
+           disease = "no")
+  dat.lon$disease[str_sub(dat.lon$category, 1,1) == "I"] = "yes"
+
+  # summarize by year and disease status, calculate the prevalence
   if(by.sex == F){
-    # organize the data into long form
-    dat.lon <- melt(dat) %>%
-      dplyr::rename(age = Var1, month = Var2, population = value,
-                    category = L1) %>%
-      filter(month %in% indices) %>%
-      arrange(category, age, month) %>%
-      mutate(year = (month-1)/12, sex = as.factor(str_sub(category, -1)),
-             disease = "no")
-    dat.lon$disease[str_sub(dat.lon$category, 1,1) == "I"] = "yes"
-
-    # summarize by year and disease status, calculate the prevalence
     dat.sum <- dat.lon %>%
-      group_by(year, age, disease) %>%
+    group_by(year, age, disease) %>%
       summarize(n = sum(population)) %>%
       spread(key = disease, value = n) %>%
       mutate(prev = yes/ (no + yes))
-
-    p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
-      geom_line() + theme_light() + theme(panel.grid.minor = element_blank(),
-                                          panel.grid.major.x = element_blank())
-
-    p
   }
 
   if(by.sex == T){
-    # organize the data into long form
-    dat.lon <- melt(dat) %>%
-      dplyr::rename(age = Var1, month = Var2, population = value,
-                    category = L1) %>%
-      filter(month %in% indices) %>%
-      arrange(category, age, month) %>%
-      mutate(year = (month-1)/12, sex = as.factor(str_sub(category, -1)),
-             disease = "no")
-    dat.lon$disease[str_sub(dat.lon$category, 1,1) == "I"] = "yes"
-
-    # summarize by year and disease status, calculate the prevalence
     dat.sum <- dat.lon %>%
-      group_by(year, age, sex, disease) %>%
+    group_by(year, age, sex, disease)%>%
       summarize(n = sum(population)) %>%
       spread(key = disease, value = n) %>%
       mutate(prev = yes/ (no + yes))
-
-    p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
-      geom_line() + facet_wrap(~sex) +
-      theme_light() + theme(panel.grid.minor = element_blank(),
-                                          panel.grid.major.x = element_blank())
-
-    p
-
   }
+
+
+
+  #create the plot
+  if(by.sex == T){
+    p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
+    geom_line() + facet_wrap(~sex)
+  }
+  if(by.sex == F){
+    p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
+      geom_line()
+  }
+  p <- p + theme_light() +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
 }
 
 # plot the fawn:adult

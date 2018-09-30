@@ -49,7 +49,7 @@ stoch.pop.model.2 <- function(params){
   lambda(M)
 
   # pre-allocate the output matrices (and put I into a list)
-  tmp <- matrix(1, nrow = n.age.cats, ncol = n.years*12)
+  tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
   It.m <- list()

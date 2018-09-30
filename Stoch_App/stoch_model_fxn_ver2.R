@@ -1,9 +1,8 @@
 #Stochastic.2b monthly age and sex structured model that incorporates random draws from distibutions of natural survival, reproduction, and hunt mortality. Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
-  #browser()
+
   # write the list objects to the local environment
-  #e <- list2env(params)
-  for (v in 1:length(params)){assign(names(params)[v], params[[v]])}
+  for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
   #########CREATE INITIAL CONDITIONS##########
   months <- seq(1, n.years*12)
@@ -27,7 +26,8 @@ stoch.pop.model.2 <- function(params){
   ad.m.sur <- (rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
 
   #monthly stochastic reproductive rates that will be used to initalize the Leslie matrix - need to multiply by 2 in the Leslie matrix
-  fawn.preg.draw <- 0 #when the mean is 0, the beta distribution doesn't work...
+  fawn.preg.draw <- ifelse(fawn.rep == 0, 0,
+                           (rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
   juv.preg.draw <- (rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
   ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
 
@@ -49,7 +49,7 @@ stoch.pop.model.2 <- function(params){
   lambda(M)
 
   # pre-allocate the output matrices (and put I into a list)
-  tmp <- matrix(1, nrow = n.age.cats, ncol = n.years*12)
+  tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
   It.m <- list()
@@ -85,7 +85,8 @@ stoch.pop.model.2 <- function(params){
       ad.m.sur <- (rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
 
       #pull annual reproductive rates from a beta distribution:
-      fawn.preg.draw <- 0
+      fawn.preg.draw <- ifelse(fawn.rep == 0, 0,
+                               (rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
       juv.preg.draw <- (rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
       ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
 
