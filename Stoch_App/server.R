@@ -4,7 +4,7 @@ library(popbio)
 library(reshape2)
 library(tidyverse)
 library(cowplot)
-source("stoch_model_fxn_ver2.r", local = T)
+source("stoch_model_fxn_ver2.R", local = T)
 source("plot_stoch_fxns.r", local = T)
 
 # Define server logic required to draw a histogram
@@ -48,7 +48,8 @@ shinyServer(function(input, output) {
     list(sims = input$sims,
          n.age.cats = 12,
          n0 = 2000, # initial population size
-         p = 0.43, #probability of transitioning between infectious box cars; determines disease-induced mortality rate
+         p = 0.43, #probability of transitioning between infectious box cars;
+         # determines disease-induced mortality rate
          foi = 1 - ((1-input$an.foi)^(1/12)), # monthly probability of becoming infected
          n.years = input$n.years,
 
@@ -108,20 +109,20 @@ shinyServer(function(input, output) {
 
   output$TotalsPlot <- renderPlot({
     #plot the totals
-    plot.stoch.tots(simout(), all.lines = T, error.bars = c(0.25, 0.75),
-                    by.sexage = T)
-  })
+   p1 <- plot.stoch.tots(simout(), all.lines = T, error.bars = c(0.25, 0.75),
+                    by.sexage = F)
+   p2 <- plot.stoch.prev(simout(), all.lines = T, error.bars = TRUE,
+                         cis = c(0.25, 0.75))
+   plot_grid(p1, p2, labels = c("A", "B"))
+   })
 
-  output$prevPlot <- renderPlot({
-    # prev by age
-    plot.stoch.prev.age(simout(), by.sex = T)
-  })
+  #output$prevPlot <- renderPlot({})
 
   output$classPlot <- renderPlot({
     #plot fawn.adult and buck:doe
     p1 <- plot.stoch.fawn.adult(simout(), all.lines = T, error.bars = c(0.05, 0.95))
     p2 <- plot.stoch.buck.doe(simout(), all.lines = T, error.bars = c(0.05, 0.95))
-    plot_grid(p1, p2, labels = c("A", "B"))
+    plot_grid(p1, p2, labels = c("C", "D"))
   })
 
 })

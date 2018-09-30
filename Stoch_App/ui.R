@@ -2,11 +2,11 @@
 library(shiny)
 shinyUI(fluidPage(
   titlePanel("CWD Model"),
-  navbarPage("Navbar",
-             tabPanel("Parameters",
+ # navbarPage("Navbar",
+ #            tabPanel("Parameters",
                       # Sidebar with a slider input for number of bins
                       fluidRow(
-                        column(width = 3, h4("Vital rates"),
+                        column(width = 2, h4("Vital rates"),
                                sliderInput("fawn.an.sur", "Fawn survival",
                                            value = 0.4, min = 0.1, max = 1, step = 0.05),
                                sliderInput("juv.an.sur", "Juvenile survival",
@@ -21,7 +21,7 @@ shinyUI(fluidPage(
                                sliderInput("ad.rep", "Fawns per adult",
                                            value = 1.7, min = 0.7, max = 2, step = 0.1)),
 
-                        column(width = 3, h4("Disease & Simulation"),
+                        column(width = 2, h4("Disease & Simulation"),
                                sliderInput("n.years", "# of years",
                                            value = 10,min = 3,max = 15,step = 1),
                                sliderInput("sims", "# of sims",
@@ -37,7 +37,7 @@ shinyUI(fluidPage(
                                sliderInput("ini.ad.m.prev", "Initial buck prevalence",
                                            value = 0.03, min = 0, max = 0.1, step = 0.01)),
 
-                        column(width = 3, h4("Hunting"),
+                        column(width = 2, h4("Hunting"),
                                sliderInput("hunt.mort.fawn","% fawns hunted",
                                            value = 0.03,min = 0,max = 0.1,step = 0.01),
                                sliderInput("hunt.mort.juv","% juv hunted",
@@ -49,14 +49,17 @@ shinyUI(fluidPage(
                                sliderInput("hunt.mort.i.f.mean","% Infected does hunted",
                                            value = 0.1,min = 0,max = 0.3,step = 0.05),
                                sliderInput("hunt.mort.i.m.mean","% infected bucks hunted",
-                                           value = 0.2,min = 0,max = 0.3,step = 0.05))
-                      )
-             ),
-             tabPanel("Plots",
-                      plotOutput('TotalsPlot'),
-                      plotOutput('prevPlot'),
-                      plotOutput('classPlot')
-             )
-  )
+                                           value = 0.2,min = 0,max = 0.3,step = 0.05)),
+                        column(width = 6, h4("Plots"),
+                               plotOutput('TotalsPlot'),
+                             #  plotOutput('prevPlot'),
+                               plotOutput('classPlot'))
+             )#,
+ #            tabPanel("Plots",
+#                      plotOutput('TotalsPlot'),
+#                      plotOutput('prevPlot'),
+#                      plotOutput('classPlot')
+#             )
+#  )
 )
 )
