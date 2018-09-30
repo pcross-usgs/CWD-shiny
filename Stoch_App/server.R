@@ -4,7 +4,7 @@ library(popbio)
 library(reshape2)
 library(tidyverse)
 library(cowplot)
-source("stoch_model_fxn_ver2.R", local = T)
+source("stoch_model_fxn_ver2.R", local = T) #NOTE shinyapps.io is case-sensitive on the "R"
 source("plot_stoch_fxns.r", local = T)
 
 # Define server logic required to draw a histogram
