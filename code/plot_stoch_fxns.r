@@ -31,7 +31,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
     dat$age.cat[dat$age == 1] <- "fawn"
 
     dat.sum <- dat %>%
-      filter(month %% 12 == 1) %>%
+      filter(month %% 12 == 10) %>%
       group_by(year, age.cat, sex, sim) %>%
       summarize(n = sum(population)) %>%
       unite(sex.age, sex, age.cat) %>%
@@ -52,7 +52,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
 
   if(by.sexage == F){
     dat.sum <- dat %>%
-      filter(month %% 12 == 1) %>%
+      filter(month %% 12 == 10) %>%
       group_by(year, sim) %>%
       summarize(n = sum(population)) %>%
       arrange(sim, year)
@@ -91,7 +91,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
 
 
   if(by.sexage == T){
-    p <- p + facet_wrap(~sex.age)
+    p <- p + facet_wrap(~ sex.age)
   }
 
   # adjust the theme
@@ -126,7 +126,7 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
   if(by.sex == F){
     # summarize by year and sex
     dat.sum <- dat %>%
-      filter(month %% 12 == 1) %>%
+      filter(month %% 12 == 7) %>%
       group_by(year, age, disease, sim) %>%
       summarize(n = sum(population)) %>%
       arrange(sim, year) %>%
@@ -139,17 +139,13 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
       summarize(avg = mean(prev))
 
     p <- ggplot(dat.mean, aes(year, avg, group = age, color = age)) +
-      geom_line() + xlab("Year") + ylab("Prevalence") +
-      theme_light() + theme(panel.grid.minor = element_blank(),
-                                          panel.grid.major.x = element_blank())
-
-    p
+      geom_line()
   }
 
   if(by.sex == T){
     # summarize by year and sex
     dat.sum <- dat %>%
-      filter(month %% 12 == 1) %>%
+      filter(month %% 12 == 7) %>%
       group_by(year, age, sex, disease, sim) %>%
       summarize(n = sum(population)) %>%
       spread(key = disease, value = n) %>%
@@ -161,15 +157,89 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
       summarize(avg = mean(prev))
 
     p <- ggplot(dat.mean, aes(year, avg, group = age, color = age)) +
-      geom_line() + xlab("Year") + ylab("Prevalence") +
-      facet_wrap(~sex) +
-      theme_light() + theme(panel.grid.minor = element_blank(),
-                            panel.grid.major.x = element_blank())
-
-    p
+      geom_line() + facet_wrap(~sex)
 
   }
 
+  p <- p + xlab("Year") + ylab("Prevalence") +
+    theme_light() + theme(panel.grid.minor = element_blank(),
+                        panel.grid.major.x = element_blank())
+  p
+}
+
+# plot the prevalence over time
+plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
+  # INPUT
+  # dat = data.frame with columns of
+  # age = numeric
+  # month = numeric index
+  # population = numeric
+  # category = text
+  # sim = number of simulation
+  # year = year of the simulation (numeric)
+  # sex = f/m (factor)
+  # disease = yes/no (factor)
+  #
+  # all.lines = plot all simulations
+  # error.bars = plot the error bars?
+  # OUTPUT
+  # plot of the prevalence over time
+
+  require(reshape2)
+  require(tidyverse)
+
+  if(missing(all.lines)){all.lines = TRUE}
+  if(missing(error.bars)){
+    error.bars <- FALSE
+    cis <- c(0.1, 0.9)
+  }
+  if(missing(cis)){
+    warning('no arguments for the cis were provided')
+    cis <- c(0.1, 0.9)
+  }
+
+
+  # summarize by year and sex
+  dat.sum <- dat %>%
+    filter(month %% 12 == 7) %>%
+    group_by(year, sim, disease) %>%
+    summarize(n = sum(population)) %>%
+    spread(key = disease, value = n) %>%
+    mutate(prev = yes/ (no + yes)) %>%
+    arrange(sim, year)
+
+  # calculate mean, lo and hi percentiles.
+  dat.errors <- dat.sum %>%
+      group_by(year) %>%
+      summarize(avg.prev = mean(prev),
+                lo = quantile(prev, cis[1]),
+                hi = quantile(prev, cis[2]))
+
+  # Start constructing the plot
+  if(all.lines == TRUE){
+    p <- ggplot(data = dat.sum, aes(x = year, y = prev, group = sim)) +
+      geom_line(color = "grey") +
+      geom_line(data = dat.errors, aes(x = year, y = avg.prev, group = NULL),
+                size = 1.5)
+  }
+
+  if(all.lines == FALSE){
+    p <- ggplot(data = dat.errors, aes(x = year, y = avg.prev, group = NULL)) +
+      geom_line(size = 1.5)
+  }
+
+  if(error.bars == TRUE){
+    # plot the error bars
+    p <- p + geom_line(data = dat.errors, aes(x = year, y = lo, group = NULL),
+                       linetype = "dashed", color = "red") +
+            geom_line(data = dat.errors, aes(x = year, y = hi, group = NULL),
+                      linetype = "dashed", color = "red")
+  }
+
+  p <- p + xlab("Year") + ylab("Prevalence") + theme_light() +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
 }
 
 # plot the fawn:adult
@@ -197,7 +267,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
 
   # summarize by year and sex
   dat.sum <- dat %>%
-    filter(month %% 12 == 1) %>%
+    filter(month %% 12 == 11) %>%
     group_by(year, age.cat, sim) %>%
     summarize(n = sum(population)) %>%
     spread(key = age.cat, value = n) %>%
