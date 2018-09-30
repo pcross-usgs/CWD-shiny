@@ -2,7 +2,7 @@
 rm(list =)
 ##########CONSTANTS#########
 n.age.cats <- 12 # age categories
-n0 <- 2000 # initial population size
+n0 <- 3000 # initial population size
 n.years <- 10 # number of years for the simulation
 
 #dis.mort is addressed by using 10 infectious box cars with a defined probability of transitioning, p.
@@ -24,7 +24,7 @@ hunt.mort.i.m.var <- 0.005
 ini.fawn.prev <- 0
 ini.juv.prev <- 0.01
 ini.ad.f.prev <- 0.02
-ini.ad.m.prev <- 0.08
+ini.ad.m.prev <- 0.02
 
 #Natural Annual survival rates - means; input by user
 fawn.an.sur <- 0.4

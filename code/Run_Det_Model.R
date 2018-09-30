@@ -22,7 +22,7 @@ plot.all(output, years.only = T)
 plot.prev(output, type = "l", col = "red", xlab = "year", ylab = "prevalence")
 
 # prevalence plot by age over time
-plot.prev.age(output, by.sex = T)
+plot.prev.age(output, by.sex = F)
 
 #plot the fawn to adult ratio
 plot.fawn.adult(output, type = "l", xlab = "year", ylab = "fawn:adult")

@@ -24,8 +24,10 @@ det.pop.model <- function(params){
 
   # Construct the sex-age projection matrix
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
+
   # replace the -1 off-diagonal with the survival rates
   M[row(M) == (col(M) + 1)] <- c(Sur.an.f[1:(n.age.cats-1)], 0, Sur.an.m[1:(n.age.cats-1)])
+
   # insert the fecundity vector
   M[1, 1:n.age.cats] <- Bir * 0.5
   M[n.age.cats +1, 1:n.age.cats] <- Bir * 0.5

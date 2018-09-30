@@ -7,8 +7,6 @@ source("./code/stoch_model_fxn_ver2.r")
 source("./code/plot_stoch_fxns.r")
 load("./output/params_stoch.RData")
 
-out <- stoch.pop.model.2(params)
-
 #Run the model
 sims <- 20
 out.sims <- vector("list",sims)
@@ -32,6 +30,9 @@ summary(out.sims.long)
 #plot the totals
 plot.stoch.tots(out.sims.long, all.lines = T, error.bars = c(0.25, 0.75),
                 by.sexage = T)
+
+#plot the prevalence
+plot.stoch.prev(out.sims.long, all.lines = T, error.bars = TRUE, cis = c(0.25, 0.75))
 
 # prev by age
 plot.stoch.prev.age(out.sims.long, by.sex = T)
