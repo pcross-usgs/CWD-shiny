@@ -32,20 +32,23 @@ stoch.pop.model.2 <- function(params){
   ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
 
   # Create the survival and birth vectors
-  Sur.an.f <- c(fawn.sur^12, juv.sur^12, rep(ad.f.sur^12, n.age.cats - 2)) # vector of survival rates for 12 age classes
-  Sur.an.m <- c(fawn.sur^12, juv.sur^12, rep(ad.m.sur^12, n.age.cats - 2)) # vector of survival rates for 12 age classes
+  Sur.an.f <- c(juv.sur^12, rep(ad.f.sur^12, n.age.cats - 2))
+  Sur.an.m <- c(juv.sur^12, rep(ad.m.sur^12, n.age.cats - 2))
   Bir <- c(fawn.preg.draw * fawns.fawn, juv.preg.draw * fawns.juv,
            rep(ad.preg.draw * fawns.ad, n.age.cats - 2)) # vector of birth rates
-  Sur.f <- c(fawn.sur, juv.sur, rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
-  Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+
+  Sur.f <- c(juv.sur, rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+  Sur.m <- c(juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 
   # Construct the sex-age projection matrix
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
   # replace the -1 off-diagonal with the survival rates
   M[row(M) == (col(M) + 1)] <- c(Sur.an.f[1:(n.age.cats-1)], 0, Sur.an.m[1:(n.age.cats-1)])
   # insert the fecundity vector
-  M[1, 1:n.age.cats] <- Bir * 0.5
-  M[n.age.cats +1, 1:n.age.cats] <- Bir * 0.5
+  M[1, 1:n.age.cats] <- Bir * 0.5 * fawn.sur^11 # prebirth census
+  M[n.age.cats +1, 1:n.age.cats] <- Bir * 0.5 * fawn.sur^11 # prebirth census
+  M[n.age.cats, n.age.cats] <- ad.f.sur^12 # adult female survival in top age cat
+  M[n.age.cats*2, n.age.cats*2] <- ad.m.sur^12 # adult female survival in top age cat
   lambda(M)
 
   # pre-allocate the output matrices (and put I into a list)
