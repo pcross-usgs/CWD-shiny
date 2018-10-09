@@ -1,6 +1,6 @@
 #Stochastic.2b monthly age and sex structured model that incorporates random draws from distibutions of natural survival, reproduction, and hunt mortality. Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
-
+  require(popbio)
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -19,25 +19,26 @@ stoch.pop.model.2 <- function(params){
   ini.m.prev <- c(ini.fawn.prev, ini.juv.prev, rep(ini.ad.m.prev, (n.age.cats-2))) # initial male prevalence
 
   #monthly stochastic survival rates that will be used to initalize the Leslie matrix
-  fawn.sur <- (rbeta(1, fawn.sur.alpha, fawn.sur.beta, ncp = 0))^(1/12)
-  juv.sur <- (rbeta(1, juv.sur.alpha, juv.sur.beta, ncp = 0))^(1/12)
-  ad.f.sur <- (rbeta(1, ad.f.sur.alpha, ad.f.sur.beta, ncp = 0))^(1/12)
-  ad.m.sur <- (rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
+  fawn.sur <- rbeta(1, fawn.sur.alpha, fawn.sur.beta, ncp = 0)^(1/12)
+  juv.sur <- rbeta(1, juv.sur.alpha, juv.sur.beta, ncp = 0)^(1/12)
+  ad.f.sur <- rbeta(1, ad.f.sur.alpha, ad.f.sur.beta, ncp = 0)^(1/12)
+  ad.m.sur <- rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0)^(1/12)
 
-  #monthly stochastic reproductive rates that will be used to initalize the Leslie matrix - need to multiply by 2 in the Leslie matrix
+    #monthly stochastic reproductive rates that will be used to initalize the Leslie matrix - need to multiply by 2 in the Leslie matrix
   fawn.preg.draw <- ifelse(fawn.rep == 0, 0,
                            (rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
-  juv.preg.draw <- (rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
-  ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
+  juv.preg.draw <- rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0)
+  ad.preg.draw <- rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0)
 
   # Create the survival and birth vectors
-  Sur.an.f <- c(juv.sur^12, rep(ad.f.sur^12, n.age.cats - 2))
-  Sur.an.m <- c(juv.sur^12, rep(ad.m.sur^12, n.age.cats - 2))
+  # assuming no disease mort in the stable age dist
+  Sur.an.f <- c(juv.sur^12, rep(ad.f.sur^12, n.age.cats - 2)) - hunt.mort.f.mean[1:n.age.cats - 1]
+  Sur.an.m <- c(juv.sur^12, rep(ad.m.sur^12, n.age.cats - 2)) - hunt.mort.m.mean[1:n.age.cats - 1]
   Bir <- c(fawn.preg.draw * fawns.fawn, juv.preg.draw * fawns.juv,
            rep(ad.preg.draw * fawns.ad, n.age.cats - 2)) # vector of birth rates
 
-  Sur.f <- c(juv.sur, rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
-  Sur.m <- c(juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+  Sur.f <- c(juv.sur, rep(ad.f.sur, n.age.cats - 2))
+  Sur.m <- c(juv.sur, rep(ad.m.sur, n.age.cats - 2))
 
   # Construct the sex-age projection matrix
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
@@ -63,7 +64,7 @@ stoch.pop.model.2 <- function(params){
   }
 
   #No stochasticity built into starting prevalence...
-  # Intializing with the stabe age distribution
+  # Intializing with the stable age distribution.
   St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
   St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                       (1-ini.m.prev))
@@ -81,26 +82,32 @@ stoch.pop.model.2 <- function(params){
     if(t %% 12 == 2){  # births happen in June, model starts in May
 
       #Parameter Draws
-      fawn.sur<- (rbeta(1, fawn.sur.alpha, fawn.sur.beta, ncp = 0))^(1/12)
-      juv.sur <- (rbeta(1, juv.sur.alpha, juv.sur.beta, ncp = 0))^(1/12)
-      ad.f.sur <- (rbeta(1, ad.f.sur.alpha, ad.f.sur.beta, ncp = 0))^(1/12)
-      ad.m.sur <- (rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
+      fawn.sur <- ifelse(fawn.an.sur == 0, 0,
+                         rbeta(1, fawn.sur.alpha, fawn.sur.beta, ncp = 0))^(1/12)
+      juv.sur  <- ifelse(juv.an.sur == 0, 0,
+                         rbeta(1, juv.sur.alpha, juv.sur.beta, ncp = 0))^(1/12)
+      ad.f.sur <- ifelse(ad.an.f.sur == 0, 0,
+                         rbeta(1, ad.f.sur.alpha, ad.f.sur.beta, ncp = 0))^(1/12)
+      ad.m.sur <- ifelse(ad.an.m.sur == 0, 0,
+                         rbeta(1, ad.m.sur.alpha, ad.m.sur.beta, ncp = 0))^(1/12)
 
       #pull annual reproductive rates from a beta distribution:
       fawn.preg.draw <- ifelse(fawn.rep == 0, 0,
-                               (rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
-      juv.preg.draw <- (rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
-      ad.preg.draw <- (rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
+                               rbeta(1, fawn.repro.alpha, fawn.repro.beta, ncp = 0)) #when the mean is 0, the beta distribution doesn't work...
+      juv.preg.draw <- ifelse(juv.rep == 0, 0,
+                              rbeta(1, juv.repro.alpha, juv.repro.beta, ncp = 0))
+      ad.preg.draw <- ifelse(ad.rep == 0, 0,
+                             rbeta(1, ad.repro.alpha, ad.repro.beta, ncp = 0))
 
       # Create the survival and birth vectors
       Sur.f <- c(fawn.sur, juv.sur, rep(ad.f.sur, n.age.cats - 2))
       Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2))
 
       #stochastic hunting survival rates; right now, it's drawing the hunting mort for each age class
-      hunt.mort.f <- (rbeta(n.age.cats, hunt.mort.f.alpha, hunt.mort.f.beta, ncp = 0)) # added annual hunting mortality over the entire season for females
-      hunt.mort.m <- (rbeta(n.age.cats, hunt.mort.m.alpha, hunt.mort.m.beta, ncp = 0))# added annual hunting mortality over the entire season for males
-      hunt.mort.i.f <- (rbeta(n.age.cats, hunt.mort.i.f.alpha, hunt.mort.i.f.beta, ncp = 0))#hunting mortality associated with infected females - hot-spot removal
-      hunt.mort.i.m <- (rbeta(n.age.cats, hunt.mort.i.m.alpha, hunt.mort.i.m.beta, ncp = 0))#hunting mortality associated with infected males - hot-spot removal
+      hunt.mort.f <- rbeta(n.age.cats, hunt.mort.f.alpha, hunt.mort.f.beta, ncp = 0) # added annual hunting mortality over the entire season for females
+      hunt.mort.m <- rbeta(n.age.cats, hunt.mort.m.alpha, hunt.mort.m.beta, ncp = 0)# added annual hunting mortality over the entire season for males
+      hunt.mort.i.f <- rbeta(n.age.cats, hunt.mort.i.f.alpha, hunt.mort.i.f.beta, ncp = 0)#hunting mortality associated with infected females - hot-spot removal
+      hunt.mort.i.m <- rbeta(n.age.cats, hunt.mort.i.m.alpha, hunt.mort.i.m.beta, ncp = 0)#hunting mortality associated with infected males - hot-spot removal
 
       # aging
       St.f[2:n.age.cats, t] <- St.f[1:n.age.cats-1, t-1]
@@ -122,7 +129,7 @@ stoch.pop.model.2 <- function(params){
                     rbinom(1, (sum(St.f[3:n.age.cats, t-1]) + sum(I_adults)), ad.preg.draw)*fawns.ad
 
       St.f[1, t] <- rbinom(1, fawns_born, 0.5)
-      St.m[1, t] <- fawns_born - St.f[1, t]
+      St.m[1, t] <- rbinom(1, fawns_born, 0.5)
     }
 
     if(t %% 12 != 2){

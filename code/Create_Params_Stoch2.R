@@ -1,5 +1,6 @@
 # script to create some initial parameters.
-rm(list =)
+rm(list =ls())
+library(tidyverse)
 ##########CONSTANTS#########
 n.age.cats <- 12 # age categories
 n0 <- 3000 # initial population size
@@ -59,9 +60,24 @@ preg.juv <- juv.rep/2
 preg.ad <- ad.rep/2
 
 #Function to estimate alpha and beta for a beta distribution
+# NOT WORKING FOR VECTORS OF MU, VAR.
+
 estBetaParams <- function(mu, var) {
-  alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
-  beta <- alpha * (1 / mu - 1)
+#  if(mu > 0){
+#    if(mu < 1){
+      alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
+      beta <- alpha * (1 / mu - 1)
+#    }
+#  }
+#  if(mu == 0){
+#    alpha <- 1
+#    beta <- 1000
+#  }
+#  if(mu == 1){
+#    alpha <- 1000
+#    beta <- 1
+#  }
+
   return(params = list(alpha = alpha, beta = beta))
 }
 
@@ -81,7 +97,7 @@ juv.repro.var <- (1/2)^2 * juv.an.repro.var
 ad.repro.var <- (1/2)^2 * ad.an.repro.var
 
 #Estimate alpha & beta values for the beta distribution of probability of reproducing
-fawn.repro.alpha <- estBetaParams(preg.fawn, fawn.repro.var)$alpha
+fawn.repro.alpha <- (estBetaParams(preg.fawn, fawn.repro.var)$alpha)
 fawn.repro.beta <- estBetaParams(preg.fawn, fawn.repro.var)$beta
 juv.repro.alpha <- estBetaParams(preg.juv, juv.repro.var)$alpha
 juv.repro.beta <- estBetaParams(preg.juv, juv.repro.var)$beta
@@ -110,7 +126,12 @@ hunt.mort.i.f <- (rbeta(n.age.cats, hunt.mort.i.f.alpha, hunt.mort.i.f.beta, ncp
 hunt.mort.i.m <- (rbeta(n.age.cats, hunt.mort.i.m.alpha, hunt.mort.i.m.beta, ncp = 0))#hunting mortality associated with infected males - hot-spot removal
 
 #bundle them into a list
-params <- list(fawn.sur.alpha = fawn.sur.alpha,
+params <- list(fawn.an.sur = fawn.an.sur,
+               juv.an.sur = juv.an.sur,
+               ad.an.f.sur = ad.an.f.sur,
+               ad.an.m.sur = ad.an.m.sur,
+
+               fawn.sur.alpha = fawn.sur.alpha,
                fawn.sur.beta = fawn.sur.beta,
                juv.sur.alpha = juv.sur.alpha,
                juv.sur.beta = juv.sur.beta,
@@ -135,10 +156,19 @@ params <- list(fawn.sur.alpha = fawn.sur.alpha,
                hunt.mort.i.f.beta = hunt.mort.i.f.beta,
                hunt.mort.i.m.beta = hunt.mort.i.m.beta,
 
+               hunt.mort.f.mean = hunt.mort.f.mean,
+               hunt.mort.m.mean = hunt.mort.m.mean,
+               hunt.mort.i.f.mean = hunt.mort.i.f.mean,
+               hunt.mort.i.m.mean = hunt.mort.i.m.mean,
+
                ini.fawn.prev = ini.fawn.prev,
                ini.juv.prev = ini.juv.prev,
                ini.ad.f.prev = ini.ad.f.prev,
                ini.ad.m.prev = ini.ad.m.prev,
+
+               fawn.rep = fawn.rep,
+               juv.rep = juv.rep,
+               ad.rep  = ad.rep,
 
                foi = foi,
                n0 = n0,
