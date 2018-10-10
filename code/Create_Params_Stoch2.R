@@ -12,6 +12,10 @@ fawn.an.repro.var <- 0
 juv.an.repro.var <- 0.005
 ad.an.repro.var <- 0.005
 
+#Annual variance on survival; input by user?
+fawn.an.sur.var <- 0.005
+an.sur.var <- 0.005
+
 #Variance of additive hunt mortality; user input?
 #Right now, fixed across all age/sex classes
 hunt.mort.var <- 0.005
@@ -33,10 +37,6 @@ fawn.an.sur <- 0.4
 juv.an.sur <- 0.7
 ad.an.f.sur <- 0.9
 ad.an.m.sur <- 0.8
-
-#Annual variance on survival; input by user?
-fawn.an.sur.var <- 0.005
-an.sur.var <- 0.005
 
 #Mean additive hunt mortality; user input
 hunt.mort.fawn <- 0.03
@@ -75,7 +75,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
                hunt.mort.ad.m = hunt.mort.ad.m,
                hunt.mort.var = hunt.mort.var,
 
-               hunt.mort.i = hunt.mort.i,
+               #hunt.mort.i = hunt.mort.i,
 
                fawn.repro = fawn.repro,
                juv.repro = juv.repro,
