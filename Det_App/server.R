@@ -16,27 +16,47 @@ shinyServer(function(input, output) {
          juv.an.sur = input$juv.an.sur,
          ad.an.f.sur = input$ad.an.f.sur,
          ad.an.m.sur = input$ad.an.m.sur,
-         fawn.rep = 0,
-         juv.rep = input$juv.rep,
-         ad.rep = input$ad.rep,
-         hunt.mort.f = input$hunt.mort.f,
-         hunt.mort.m = input$hunt.mort.m,
-         hunt.mort.i.f = input$hunt.mort.i.f,
-         hunt.mort.i.m = input$hunt.mort.i.m,
+
+         fawn.repro = 0,
+         juv.repro = input$juv.repro,
+         ad.repro = input$ad.repro,
+
+         hunt.mort.fawn = input$hunt.mort.fawn,
+         hunt.mort.juv = input$hunt.mort.juv,
+         hunt.mort.ad.f = input$hunt.mort.ad.f,
+         hunt.mort.ad.m = input$hunt.mort.ad.m,
+
          n.age.cats = 12,
          p =  0.43,
-         ini.prev = input$ini.prev,
+
+         ini.fawn.prev = input$ini.fawn.prev,
+         ini.juv.prev = input$ini.juv.prev,
+         ini.ad.f.prev = input$ini.ad.f.prev,
+         ini.ad.m.prev = input$ini.ad.m.prev,
+
          foi =  1 - ((1-input$an.foi)^(1/12)),
          n0 = input$n0,
          n.years = input$n.years)
   })
 
-  simout <- reactive({det.pop.model(react.params())})
+  simout <- reactive({
+    params <- react.params()
+    out <- det.pop.model(react.params())
+
+    out.long <- melt(out) %>%
+      rename(age = Var1, month = Var2, population = value,
+             category = L1) %>%
+      mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
+             disease = "no")
+    out.long$disease[str_sub(out.long$category, 1,1) == "I"] = "yes"
+    out.long$disease <- as.factor(out.long$disease)
+    out.long
+    })
 
   output$TotalsPlot <- renderPlot({
    out <- simout()
    plot.tots(out, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
-              cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+             cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
   })
 
   output$prevPlot <- renderPlot({
