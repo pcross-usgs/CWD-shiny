@@ -1,5 +1,6 @@
 #Stochastic.2b monthly age and sex structured model that incorporates
-#random draws from distibutions of natural survival, reproduction, and hunt mortality. Currently does not include a distribution on FOI.
+#random draws from distibutions of natural survival, reproduction, and hunt mortality.
+#Currently does not include a distribution on FOI.
 
 stoch.pop.model.2 <- function(params){
   require(popbio)
@@ -58,13 +59,8 @@ stoch.pop.model.2 <- function(params){
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
-  It.m <- list()
-  It.f <- list()
-
-  for(i in 1:10){
-    It.m[[i]] <- tmp
-    It.f[[i]] <- tmp
-  }
+  It.m <- rep(list(tmp),10)
+  It.f <- rep(list(tmp),10)
 
   # Intializing with the stable age distribution.
   St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
