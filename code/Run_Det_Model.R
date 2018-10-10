@@ -4,27 +4,35 @@ library(popbio)
 library(tidyverse)
 source("./code/det_pop_model_fxn.r")
 source("./code/plot_fxns.r")
-load("./output/params.RData")
+load("./output/params_deterministic.RData")
 
 ##RUN THE model
-output <- det.pop.model(params)
+out <- det.pop.model(params)
+
+out.long <- melt(out) %>%
+  rename(age = Var1, month = Var2, population = value,
+         category = L1) %>%
+  mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
+         disease = "no")
+out.long$disease[str_sub(out.long$category, 1,1) == "I"] = "yes"
+out.long$disease <- as.factor(out.long$disease)
+
+summary(out.long)
 
 #PLOT the results
-
-plot.tots(output, type = "l", ylab = "Total population", xlab = "Year",
+plot.tots(out.long, type = "l", ylab = "Total population", xlab = "Year",
           ylim = c(0, 2000), lwd = 3,
           cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
-# all months, ages, sex, disease cat
-# if years.only == TRUE then only plot one point per year, otherwise plot every month
-plot.all(output, years.only = T)
+
+plot.all(out.long)
 
 # prevalence plot over time.
-plot.prev(output, type = "l", col = "red", xlab = "year", ylab = "prevalence")
+plot.prev(out.long, type = "l", col = "red", xlab = "year", ylab = "prevalence")
 
 # prevalence plot by age over time
-plot.prev.age(output, by.sex = F)
+plot.prev.age(out.long, by.sex = T)
 
 #plot the fawn to adult ratio
-plot.fawn.adult(output, type = "l", xlab = "year", ylab = "fawn:adult")
-plot.buck.doe(output, type = "l", xlab = "year", ylab = "buck:doe")
+plot.fawn.adult(out.long, type = "l", xlab = "year", ylab = "fawn:adult")
+plot.buck.doe(out.long, type = "l", xlab = "year", ylab = "buck:doe")
 
