@@ -1,4 +1,6 @@
-#Stochastic.2b monthly age and sex structured model that incorporates random draws from distibutions of natural survival, reproduction, and hunt mortality. Currently does not include a distribution on FOI.
+#Stochastic.2b monthly age and sex structured model that incorporates
+#random draws from distibutions of natural survival, reproduction, and hunt mortality.
+#Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
   require(popbio)
   source("./code/estBetaParams.r")
@@ -35,7 +37,7 @@ stoch.pop.model.2 <- function(params){
   # Create the Leslie Matrix to start the population at stable age dist
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur-hunt.mort.juv,
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur - hunt.mort.juv,
                                  rep(ad.an.f.sur-hunt.mort.ad.f, n.age.cats - 2),
                                  0, #spacer
                                c(juv.an.sur,
@@ -47,7 +49,7 @@ stoch.pop.model.2 <- function(params){
   # insert the fecundity vector
   # prebirth census
   M[1, 1:n.age.cats] <- c(fawn.repro, juv.repro,
-                          rep(ad.repro, n.age.cats -2) * 0.5 * fawn.an.sur)
+                          rep(ad.repro, n.age.cats -2)) * 0.5 * fawn.an.sur * (1-hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
   #  lambda(M)
 

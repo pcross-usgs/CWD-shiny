@@ -39,11 +39,11 @@ stoch.pop.model.2 <- function(params){
   # Create the Leslie Matrix to start the population at stable age dist
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur-hunt.mort.juv,
-                                 rep(ad.an.f.sur-hunt.mort.ad.f, n.age.cats - 2),
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1-hunt.mort.juv),
+                                 rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
                                  0, #spacer
-                               c(juv.an.sur,
-                                 rep(ad.an.m.sur-hunt.mort.ad.m, n.age.cats - 2)))
+                               c(juv.an.sur*(1-hunt.mort.juv),
+                                 rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
   # if you want the top age category to continue to survive
   #  M[n.age.cats, n.age.cats] <- ad.an.f.sur # adult female survival in top age cat
   #  M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur # adult female survival in top age cat
@@ -51,7 +51,7 @@ stoch.pop.model.2 <- function(params){
   # insert the fecundity vector
   # prebirth census
   M[1, 1:n.age.cats] <- c(fawn.repro, juv.repro,
-                          rep(ad.repro, n.age.cats -2) * 0.5 * fawn.an.sur)
+                          rep(ad.repro, n.age.cats -2)) * 0.5 * fawn.an.sur * (1-hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
   #  lambda(M)
 
