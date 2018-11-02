@@ -8,8 +8,8 @@ source("./code/plot_stoch_fxns.r")
 load("./output/params_stoch.RData")
 
 #Run the model
-sims <- 20
-out.sims <- vector("list",sims)
+sims <- 10
+out.sims <- vector("list", sims)
 
 for(i in 1:sims){
   out.sims[[i]] <- stoch.pop.model.2(params)

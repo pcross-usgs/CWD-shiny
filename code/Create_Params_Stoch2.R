@@ -51,8 +51,8 @@ foi <- 1 - (0.98^(1/12)) # monthly probability of becoming infected
 #dis.mort is addressed by using 10 infectious box cars with a defined probability of transitioning, p.
 p <- 0.43 #probability of transitioning between infectious box cars; determines disease-induced mortality rate
 
-#additive disease induced hunting mortality
-hunt.mort.i <- 0.05
+#relative risk of hunting a positive case
+rel.risk <- 1.1
 ###########
 
 #rescaling variance since can't just divide by 2....need to check this step
@@ -75,7 +75,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
                hunt.mort.ad.m = hunt.mort.ad.m,
                hunt.mort.var = hunt.mort.var,
 
-               #hunt.mort.i = hunt.mort.i,
+               rel.risk = rel.risk,
 
                fawn.repro = fawn.repro,
                juv.repro = juv.repro,
