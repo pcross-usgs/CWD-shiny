@@ -51,7 +51,8 @@ stoch.pop.model.2 <- function(params){
   # insert the fecundity vector
   # prebirth census
   M[1, 1:n.age.cats] <- c(fawn.repro, juv.repro,
-                          rep(ad.repro, n.age.cats -2)) * 0.5 * fawn.an.sur * (1-hunt.mort.fawn)
+                          rep(ad.repro, n.age.cats -2)) * 0.5 * fawn.an.sur *
+                        (1-hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
   #  lambda(M)
 
