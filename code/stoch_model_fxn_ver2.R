@@ -3,6 +3,7 @@
 stoch.pop.model.2 <- function(params){
   require(popbio)
   source("./code/estBetaParams.r")
+  source("./code/allocateDeaths.r")
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -57,18 +58,17 @@ stoch.pop.model.2 <- function(params){
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
-  It.m <- rep(list(tmp), 10)
-  It.f <- rep(list(tmp), 10)
+  It.m <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
+  It.f <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
 
   # Intializing with the stable age distribution.
   St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
   St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                       (1-ini.m.prev))
 
-  # equally allocating prevalence across ages.
-  It.m[[1]][,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * ini.m.prev)
-  It.f[[1]][,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
-                      ini.f.prev)
+  # randomly allocating infecteds across ages and categories.
+  It.m[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
+  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
 
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
@@ -98,28 +98,27 @@ stoch.pop.model.2 <- function(params){
 
     # on birthdays add in recruits and age everyone by one year
     # also on birthdays do the random parameter draws
-    if(t %% 12 == 2){  # births happen in June, model starts in May
+
+     if(t %% 12 == 2){  # births happen in June, model starts in May
 
       # aging
       # the last age category remains in place and doesn't die
+      St.f[2:(n.age.cats-1), t] <- St.f[1:(n.age.cats-2), t-1]
+      St.f[n.age.cats, t] <- St.f[n.age.cats, t-1] + St.f[(n.age.cats-1), t-1]
 
-      St.f[2:(n.age.cats-1), t] <- St.f[1:(n.age.cats-2), (t-1)]
-      St.m[2:(n.age.cats-1), t] <- St.m[1:(n.age.cats-2), (t-1)]
-      St.f[n.age.cats, t] <- St.f[n.age.cats, t-1] + St.f[(n.age.cats-1), (t-1)]
-      St.m[n.age.cats, t] <- St.m[n.age.cats, t-1] + St.m[(n.age.cats-1), (t-1)]
 
-      for(j in 1:10){
-        It.f[[j]][2:(n.age.cats-1), t] = It.f[[j]][1:(n.age.cats-2), (t-1)]
-        It.m[[j]][2:(n.age.cats-1), t] = It.m[[j]][1:(n.age.cats-2), (t-1)]
-        It.f[[j]][n.age.cats, t] <- It.f[[j]][n.age.cats, (t-1)] + It.f[[j]][(n.age.cats-1), (t-1)]
-        It.m[[j]][n.age.cats, t] <- It.m[[j]][n.age.cats, (t-1)] + It.m[[j]][(n.age.cats-1),(t-1)]
-      }
+      St.m[2:(n.age.cats-1), t] <- St.m[1:(n.age.cats-2), t-1]
+      St.m[n.age.cats, t] <- St.m[n.age.cats, t-1] + St.m[(n.age.cats-1), t-1]
+
+      It.f[2:(n.age.cats-1), t, ] = It.f[1:(n.age.cats-2), t-1, ]
+      It.f[n.age.cats, t, ] <- It.f[n.age.cats, t-1, ] + It.f[(n.age.cats-1), t-1, ]
+
+      It.m[2:(n.age.cats-1), t, ] = It.m[1:(n.age.cats-2), t-1, ]
+      It.m[n.age.cats, t, ] <- It.m[n.age.cats, t-1, ] + It.m[(n.age.cats-1), t-1, ]
 
       # reproduction
-      # I_fawn <- sapply(It.f, colSums)
-      #I_fawn <- Reduce("+", It.f)[1, t-1] # sums across all objects in the list, age = 1
-      I_juv <- Reduce("+", It.f)[2, t]
-      I_adults <- Reduce("+", It.f)[3:n.age.cats, t]
+      I_juv    <- sum(It.f[2, t, ])
+      I_adults <-  sum(It.f[3:n.age.cats, t, ])
 
       fawns_born <- rbinom(1, (St.f[2, t] + I_juv), juv.preg.draw) * 2 +
                     rbinom(1, (sum(St.f[3:n.age.cats, t]) + sum(I_adults)), ad.preg.draw) * 2
@@ -132,37 +131,34 @@ stoch.pop.model.2 <- function(params){
       #updating the next month
       St.f[, t] <- St.f[, t-1]
       St.m[, t] <- St.m[, t-1]
-
-      for(j in 1:10){
-        It.f[[j]][, t] <- It.f[[j]][, t-1]
-        It.m[[j]][, t] <- It.m[[j]][, t-1]
-      }
+      It.f[, t, ] <- It.f[, t-1, ]
+      It.m[, t, ] <- It.m[, t-1, ]
     }
+
+    if(length(which(It.f[,t,] < 0)) > 0)browser()
+    if(length(which(It.m[,t,] < 0)) > 0)browser()
 
     ##Disease MORT then HUNT MORT then NATURAL MORT, THEN TRANSMISSION
     #stochastic movement of individuals from I1 to I2
-    I.f.move <- vector("list", 10)
-    I.m.move <- vector("list", 10)
-
     # disease induced mortality here by advancing all I's
     # and only a proportion of the 10th category remains
-    for(j in 1:10){
-      I.f.move[[j]] <- rbinom(n.age.cats, It.f[[j]][ ,t], p)
-      I.m.move[[j]] <- rbinom(n.age.cats, It.m[[j]][ ,t], p)
+    I.f.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
+    I.m.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
+
+    for(i in 1:10){
+      I.f.move[ ,i] <- rbinom(n.age.cats, It.f[ , t, i], p)
+      I.m.move[ ,i] <- rbinom(n.age.cats, It.m[ , t, i], p)
     }
 
+    It.f[ , t, 1]    <- It.f[ ,t, 1] - I.f.move[ ,1]
+    It.f[ , t, 2:10] <- It.f[ , t, 2:10] - I.f.move[ , 2:10] + I.f.move[, 1:9]
 
-    It.f[[1]][,t] <- It.f[[1]][ ,t] - I.f.move[[1]]
-    It.m[[1]][,t] <- It.m[[1]][ ,t] - I.m.move[[1]]
-
-    for(k in 2:10){
-      It.f[[k]][,t] <- It.f[[k]][ ,t] - I.f.move[[k]] + I.f.move[[k-1]]
-      It.m[[k]][,t] <- It.m[[k]][ ,t] - I.m.move[[k]] + I.f.move[[k-1]]
-    }
+    It.m[ , t, 1]   <- It.m[ ,t, 1] - I.m.move[ ,1]
+    It.m[ , t, 2:10] <- It.m[ , t, 2:10] - I.m.move[ , 2:10] + I.m.move[, 1:9]
 
     # hunting mortality
-    Iall.f <- Reduce("+", It.f)[,t]
-    Iall.m <- Reduce("+", It.m)[,t]
+    Iall.f <- rowSums(It.f[ ,t,])
+    Iall.m <- rowSums(It.m[ ,t,])
     Nt.f <- St.f[, t] + Iall.f
     Nt.m <- St.m[, t] + Iall.m
 
@@ -174,8 +170,12 @@ stoch.pop.model.2 <- function(params){
                                            hunt.m.draw) * hunt.mo[t])
 
     # those hunted in the I class overall
-    hunted.i.f <- (rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f)
-    hunted.i.m <- (rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m)
+    # can result in a divide by 0 and NA.
+    # can also result in hunting more than are possible. Set to the max in that case.
+    hunted.i.f <- round((rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f))
+    hunted.i.m <- round((rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m))
+    hunted.i.f[which(is.na(hunted.i.f))] <- 0
+    hunted.i.m[which(is.na(hunted.i.m))] <- 0
 
     # those hunted in the S class
     hunted.s.f <- hunted.f - hunted.i.f
@@ -185,19 +185,23 @@ stoch.pop.model.2 <- function(params){
     survive.s.f <- rbinom(n.age.cats, St.f[,t] - hunted.s.f, Sur.f)
     survive.s.m <- rbinom(n.age.cats, St.m[,t] - hunted.s.m, Sur.m)
 
+    hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
+    hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
+
     survive.i.f <- rbinom(n.age.cats, Iall.f - hunted.i.f, Sur.f)
     survive.i.m <- rbinom(n.age.cats, Iall.m - hunted.i.m, Sur.m)
 
     deaths.i.f <- Iall.f - survive.i.f
     deaths.i.m <- Iall.m - survive.i.m
 
+    if(length(which(is.na(deaths.i.f))) > 0) browser()
+    if(length(which(is.na(deaths.i.m))) > 0) browser()
+
     # allocate those deaths across the Icategories
-    # This is currently broken: need to find positions in the It.x list for the current timestep
-    # that are greater than zero. Then I need to allocate the deaths randomly to those positions
-    # in the It.x list
+    It.f[ , t, ] <- allocate.deaths(deaths.i.f, It.f[ , t, ])
+    It.m[ , t, ] <- allocate.deaths(deaths.i.m, It.m[ , t, ])
 
-
-     #infection
+    #infection
     transmission.f <- rbinom(n.age.cats, survive.s.f, foi)
     transmission.m <- rbinom(n.age.cats, survive.s.m, foi)
 
@@ -205,30 +209,23 @@ stoch.pop.model.2 <- function(params){
     St.m[, t] <- survive.s.m - transmission.m
 
     # update with the new infections
-    It.f[[1]][,t] <- transmission.f + round(survive.i.f * (It.f[[1]][,t] / Iall.f))
-    It.m[[1]][,t] <- transmission.m + round(survive.i.m * (It.m[[1]][,t] / Iall.m))
+    It.f[, t, 1] <- transmission.f + It.f[ ,t, 1]
+    It.m[, t, 1] <- transmission.m + It.m[ ,t, 1]
 
-    for(k in 2:10){
-      It.f[[k]][, t] <- round(survive.i.f * It.f[[k]][,t] / Iall.f)
-      It.m[[k]][, t] <- round(survive.i.m * It.m[[k]][,t] / Iall.m)
-    }
+    if(length(which(It.f[,t,] < 0)) > 0)browser()
+    if(length(which(It.m[,t,] < 0)) > 0)browser()
+
   }
 
-  # Reorganize the output so that it is not lists of lists, but a list of arrays
-  for(i in 1:10){
-    assign(paste0("I", i, "t.f"), It.f[[i]])
-    assign(paste0("I", i, "t.m"), It.m[[i]])
-    }
-
   output <- list(St.f = St.f, St.m = St.m,
-                 I1t.f = I1t.f, I1t.m = I1t.m,
-                 I2t.f = I1t.f, I2t.m = I1t.m,
-                 I3t.f = I1t.f, I3t.m = I1t.m,
-                 I4t.f = I1t.f, I4t.m = I1t.m,
-                 I5t.f = I1t.f, I5t.m = I1t.m,
-                 I6t.f = I1t.f, I6t.m = I1t.m,
-                 I7t.f = I1t.f, I7t.m = I1t.m,
-                 I8t.f = I1t.f, I8.m = I1t.m,
-                 I9t.f = I1t.f, I9t.m = I1t.m,
-                 I10t.f = I1t.f, I10t.m = I1t.m)
+                 I1t.f = It.f[,,1], I1t.m = It.m[,,1],
+                 I2t.f = It.f[,,2], I2t.m = It.m[,,2],
+                 I3t.f = It.f[,,3], I3t.m = It.m[,,3],
+                 I4t.f = It.f[,,4], I4t.m = It.m[,,4],
+                 I5t.f = It.f[,,5], I5t.m = It.m[,,5],
+                 I6t.f = It.f[,,6], I6t.m = It.m[,,6],
+                 I7t.f = It.f[,,7], I7t.m = It.m[,,7],
+                 I8t.f = It.f[,,8], I8t.m = It.m[,,8],
+                 I9t.f = It.f[,,9], I9t.m = It.m[,,9],
+                 I10t.f = It.f[,,10], I10t.m = It.m[,,10])
 }
