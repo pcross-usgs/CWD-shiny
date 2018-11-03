@@ -32,6 +32,7 @@ shinyServer(function(input, output) {
          ini.juv.prev = input$ini.juv.prev,
          ini.ad.f.prev = input$ini.ad.f.prev,
          ini.ad.m.prev = input$ini.ad.m.prev,
+         rel.risk = input$rel.risk,
 
          fawn.an.sur = input$fawn.an.sur,
          juv.an.sur = input$juv.an.sur,

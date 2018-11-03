@@ -23,9 +23,9 @@ hunt.mort.var <- 0.005
 #######USER INPUTS#############
 #Initial prevalences; user input
 ini.fawn.prev <- 0
-ini.juv.prev <- 0.01
-ini.ad.f.prev <- 0.02
-ini.ad.m.prev <- 0.02
+ini.juv.prev <- 0.1
+ini.ad.f.prev <- 0.2
+ini.ad.m.prev <- 0.2
 
 # Annual reproductive rates of fawns/doe; input by user
 fawn.repro <- 0

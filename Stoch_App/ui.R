@@ -15,12 +15,10 @@ shinyUI(fluidPage(
                                            value = 0.8,min = 0.5, max = .99, step = 0.01),
                                sliderInput("ad.an.m.sur", "Adult male survival",
                                            value = 0.7, min = 0.5, max = .99, step = 0.01),
-
                                sliderInput("juv.repro", "Fawns per Juv",
                                            value = 0.7, min = 0.2, max = 1.5, step = 0.1),
                                sliderInput("ad.repro", "Fawns per adult",
                                            value = 1.6, min = 0.5, max = 2, step = 0.1)),
-
                         column(width = 2, h4("Disease"),
                               sliderInput("an.foi", "Force of infection",
                                            value = 0.02, min = 0, max = 0.2, step = 0.01),
@@ -31,8 +29,9 @@ shinyUI(fluidPage(
                                sliderInput("ini.ad.f.prev", "Doe prevalence",
                                            value = 0.03, min = 0, max = 0.1, step = 0.01),
                                sliderInput("ini.ad.m.prev", "Buck prevalence",
-                                           value = 0.03, min = 0, max = 0.1, step = 0.01)),
-
+                                           value = 0.03, min = 0, max = 0.1, step = 0.01),
+                              sliderInput("rel.risk", "Relative Risk hunting infecteds",
+                                          value = 1, min = .1, max = 4, step = 0.1)),
                         column(width = 2, h4("Hunting & Simulation"),
                                sliderInput("n.years", "# of years",
                                            value = 10, min = 3, max = 20, step = 1),
