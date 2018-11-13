@@ -2,8 +2,8 @@
 #Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
   require(popbio)
-  source("./code/estBetaParams.r")
-  source("./code/allocateDeaths.r")
+  source("./estBetaParams.r", local = T)
+  source("./allocateDeaths.r", local = T)
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -38,19 +38,19 @@ stoch.pop.model.2 <- function(params){
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
 
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur - hunt.mort.juv,
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv),
                                  rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
                                  0, #spacer
-                               c(juv.an.sur,
-                                 rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
+                                 c(juv.an.sur*(1- hunt.mort.juv),
+                                   rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
   # if you want the top age category to continue to survive
-    M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
-    M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult female survival in top age cat
+  M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
+  M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult male survival in top age cat
 
   # insert the fecundity vector
   # prebirth census
   M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
-                          0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
+    0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
   #  lambda(M)
 
@@ -68,7 +68,7 @@ stoch.pop.model.2 <- function(params){
 
   # randomly allocating infecteds across ages and categories.
   It.m[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
-  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
+  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.f.prev)
 
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
@@ -99,7 +99,7 @@ stoch.pop.model.2 <- function(params){
     # on birthdays add in recruits and age everyone by one year
     # also on birthdays do the random parameter draws
 
-     if(t %% 12 == 2){  # births happen in June, model starts in May
+    if(t %% 12 == 2){  # births happen in June, model starts in May
 
       # aging
       # the last age category remains in place and doesn't die
@@ -121,7 +121,7 @@ stoch.pop.model.2 <- function(params){
       I_adults <-  sum(It.f[3:n.age.cats, t, ])
 
       fawns_born <- rbinom(1, (St.f[2, t] + I_juv), juv.preg.draw) * 2 +
-                    rbinom(1, (sum(St.f[3:n.age.cats, t]) + sum(I_adults)), ad.preg.draw) * 2
+        rbinom(1, (sum(St.f[3:n.age.cats, t]) + sum(I_adults)), ad.preg.draw) * 2
 
       St.f[1, t] <- rbinom(1, fawns_born, 0.5)
       St.m[1, t] <- fawns_born - St.f[1, t]
@@ -164,14 +164,14 @@ stoch.pop.model.2 <- function(params){
 
     # binomial draw on the total hunted
     hunted.f <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.draw,
-                                         hunt.f.draw) * hunt.mo[t])
+                                           hunt.f.draw) * hunt.mo[t])
 
     hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.draw,
                                            hunt.m.draw) * hunt.mo[t])
 
     # those hunted in the I class overall
     # can result in a divide by 0 and NA.
-    # can also result in hunting more than are possible. Set to the max in that case.
+    # this can also result in more hunting of a category than are available.
     hunted.i.f <- round((rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f))
     hunted.i.m <- round((rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m))
     hunted.i.f[which(is.na(hunted.i.f))] <- 0

@@ -38,14 +38,14 @@ stoch.pop.model.2 <- function(params){
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
 
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur - hunt.mort.juv,
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv),
                                  rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
                                  0, #spacer
-                               c(juv.an.sur,
+                               c(juv.an.sur*(1- hunt.mort.juv),
                                  rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
   # if you want the top age category to continue to survive
     M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
-    M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult female survival in top age cat
+    M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult male survival in top age cat
 
   # insert the fecundity vector
   # prebirth census
@@ -68,7 +68,7 @@ stoch.pop.model.2 <- function(params){
 
   # randomly allocating infecteds across ages and categories.
   It.m[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
-  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
+  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.f.prev)
 
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
