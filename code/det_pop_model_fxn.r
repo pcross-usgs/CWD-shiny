@@ -2,7 +2,7 @@ det.pop.model <- function(params){
   require(popbio)
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
- # browser()
+ #browser()
 
   #monthly index
   months <- seq(1, n.years*12)
@@ -41,6 +41,7 @@ det.pop.model <- function(params){
   M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
     0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
+#browser()
 
   # pre-allocate the output matrices
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
@@ -55,8 +56,8 @@ det.pop.model <- function(params){
                       (1-ini.m.prev)
 
   # equally allocating prevalence across ages.
-  It.m[ , 1, 1:10] <- stable.stage(M)[1:n.age.cats] * n0 * ini.m.prev
-  It.f[ , 1, 1:10] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
+  It.m[ , 1, 1:10] <- stable.stage(M)[1:n.age.cats] * n0/10 * ini.m.prev
+  It.f[ , 1, 1:10] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0/10 *
                            ini.f.prev
 
   #######POPULATION MODEL############
@@ -145,12 +146,13 @@ det.pop.model <- function(params){
     It.m[ , t, 1]    <- It.m[ ,t, 1] * (1-p)
     It.m[ , t, 2:10] <- It.m[ , t, 2:10] *(1-p) + It.m[ , t, 1:9] * p
 
+    #browser()
     #Disease transmission here
     St.f[,t] <- St.f[ ,t]*(1-foi)
     St.m[,t] <- St.m[ ,t]*(1-foi)
 
-    It.f[ ,t ,1] <- St.f[ ,t]*foi
-    It.m[ ,t, 1] <- St.f[ ,t]*foi
+    It.f[ ,t, 1] <-  It.f[ ,t, 1] + St.f[ ,t]*foi
+    It.m[ ,t, 1] <-  It.m[ ,t, 1] + St.m[ ,t]*foi
   }
 
   output <- list(St.f = St.f, St.m = St.m,
