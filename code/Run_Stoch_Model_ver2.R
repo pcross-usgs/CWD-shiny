@@ -23,10 +23,6 @@ out.sims.long <- melt(out.sims) %>%
 out.sims.long$disease[str_sub(out.sims.long$category, 1,1) == "I"] = "yes"
 out.sims.long$disease <- as.factor(out.sims.long$disease)
 
-summary(out.sims.long)
-
-#save(out.sims.long, file = "./output/out.RData")
-
 #plot the totals
 plot.stoch.tots(out.sims.long, all.lines = T, error.bars = c(0.25, 0.75),
                 by.sexage = T)
