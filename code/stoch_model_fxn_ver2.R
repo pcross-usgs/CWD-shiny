@@ -2,8 +2,8 @@
 #Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
   require(popbio)
-  source("./estBetaParams.r", local = T)
-  source("./allocateDeaths.r", local = T)
+  source("./code/estBetaParams.r", local = T)
+  source("./code/allocateDeaths.r", local = T)
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -29,8 +29,7 @@ stoch.pop.model.2 <- function(params){
   hunt.f.b <- estBetaParams(hunt.mort.ad.f, hunt.mort.var)
   hunt.m.b <- estBetaParams(hunt.mort.ad.m, hunt.mort.var)
 
-  #fawn.rep <- 0
-  # group into a vector
+ # group into a vector
   ini.f.prev <- c(ini.fawn.prev, ini.juv.prev, rep(ini.ad.f.prev, (n.age.cats-2))) # initial female prevalence
   ini.m.prev <- c(ini.fawn.prev, ini.juv.prev, rep(ini.ad.m.prev, (n.age.cats-2))) # initial male prevalence
 
@@ -52,9 +51,8 @@ stoch.pop.model.2 <- function(params){
   M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
     0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
-  #  lambda(M)
 
-  # pre-allocate the output matrices (and put I into a list)
+  # pre-allocate the output matrices
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
@@ -135,10 +133,63 @@ stoch.pop.model.2 <- function(params){
       It.m[, t, ] <- It.m[, t-1, ]
     }
 
-    if(length(which(It.f[,t,] < 0)) > 0)browser()
-    if(length(which(It.m[,t,] < 0)) > 0)browser()
+    ##Natural Mort then hunt then disease mort THEN TRANSMISSION
 
-    ##Disease MORT then HUNT MORT then NATURAL MORT, THEN TRANSMISSION
+    #Natural Mortality
+    St.f[ ,t] <- rbinom(n.age.cats, St.f[ ,t], Sur.f)
+    St.m[ ,t] <- rbinom(n.age.cats, St.m[ ,t], Sur.m)
+
+    for(i in 1:10){
+      It.f[ ,t, i] <- rbinom(n.age.cats, It.f[ ,t, i], Sur.f)
+      It.m[ ,t, i] <- rbinom(n.age.cats, It.m[ ,t, i], Sur.m)
+    }
+
+    # Hunt mortality
+    if(hunt.mo[t]==1){
+
+      #browser()
+      # hunting mortality
+      Iall.f <- rowSums(It.f[ ,t,])
+      Iall.m <- rowSums(It.m[ ,t,])
+      Nt.f <- St.f[, t] + Iall.f
+      Nt.m <- St.m[, t] + Iall.m
+
+      # binomial draw on the total hunted
+      hunted.f <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.draw,
+                                             hunt.f.draw))
+
+      hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.draw,
+                                             hunt.m.draw))
+
+      # those hunted in the I class overall
+      # can result in a divide by 0 and NA.
+      # this can also result in more hunting of a category than are available.
+      hunted.i.f <- round((rel.risk * Iall.f * hunted.f) /
+                            (St.f[,t] + rel.risk * Iall.f))
+      hunted.i.m <- round((rel.risk * Iall.m * hunted.m) /
+                            (St.m[,t] + rel.risk * Iall.m))
+      hunted.i.f[which(is.na(hunted.i.f))] <- 0
+      hunted.i.m[which(is.na(hunted.i.m))] <- 0
+
+      # those hunted in the S class
+      hunted.s.f <- hunted.f - hunted.i.f
+      hunted.s.m <- hunted.m - hunted.i.m
+
+      hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
+      hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
+
+      St.f[,t] <- St.f[,t] - hunted.s.f
+      St.m[,t] <- St.m[,t] - hunted.s.m
+
+      #if(length(which(is.na(deaths.i.f))) > 0) browser()
+      #if(length(which(is.na(deaths.i.m))) > 0) browser()
+
+      # allocate those deaths across the Icategories
+      It.f[ , t, ] <- allocate.deaths(hunted.i.f, It.f[ , t, ])
+      It.m[ , t, ] <- allocate.deaths(hunted.i.m, It.m[ , t, ])
+    }
+
+    #Disease mortality
     #stochastic movement of individuals from I1 to I2
     # disease induced mortality here by advancing all I's
     # and only a proportion of the 10th category remains
@@ -156,64 +207,16 @@ stoch.pop.model.2 <- function(params){
     It.m[ , t, 1]   <- It.m[ ,t, 1] - I.m.move[ ,1]
     It.m[ , t, 2:10] <- It.m[ , t, 2:10] - I.m.move[ , 2:10] + I.m.move[, 1:9]
 
-    # hunting mortality
-    Iall.f <- rowSums(It.f[ ,t,])
-    Iall.m <- rowSums(It.m[ ,t,])
-    Nt.f <- St.f[, t] + Iall.f
-    Nt.m <- St.m[, t] + Iall.m
+    #Transmission
+    transmission.f <- rbinom(n.age.cats, St.f[,t], foi)
+    transmission.m <- rbinom(n.age.cats, St.m[,t], foi)
 
-    # binomial draw on the total hunted
-    hunted.f <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.draw,
-                                           hunt.f.draw) * hunt.mo[t])
-
-    hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.draw,
-                                           hunt.m.draw) * hunt.mo[t])
-
-    # those hunted in the I class overall
-    # can result in a divide by 0 and NA.
-    # this can also result in more hunting of a category than are available.
-    hunted.i.f <- round((rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f))
-    hunted.i.m <- round((rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m))
-    hunted.i.f[which(is.na(hunted.i.f))] <- 0
-    hunted.i.m[which(is.na(hunted.i.m))] <- 0
-
-    # those hunted in the S class
-    hunted.s.f <- hunted.f - hunted.i.f
-    hunted.s.m <- hunted.m - hunted.i.m
-
-    # natural mort
-    survive.s.f <- rbinom(n.age.cats, St.f[,t] - hunted.s.f, Sur.f)
-    survive.s.m <- rbinom(n.age.cats, St.m[,t] - hunted.s.m, Sur.m)
-
-    hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
-    hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
-
-    survive.i.f <- rbinom(n.age.cats, Iall.f - hunted.i.f, Sur.f)
-    survive.i.m <- rbinom(n.age.cats, Iall.m - hunted.i.m, Sur.m)
-
-    deaths.i.f <- Iall.f - survive.i.f
-    deaths.i.m <- Iall.m - survive.i.m
-
-    if(length(which(is.na(deaths.i.f))) > 0) browser()
-    if(length(which(is.na(deaths.i.m))) > 0) browser()
-
-    # allocate those deaths across the Icategories
-    It.f[ , t, ] <- allocate.deaths(deaths.i.f, It.f[ , t, ])
-    It.m[ , t, ] <- allocate.deaths(deaths.i.m, It.m[ , t, ])
-
-    #infection
-    transmission.f <- rbinom(n.age.cats, survive.s.f, foi)
-    transmission.m <- rbinom(n.age.cats, survive.s.m, foi)
-
-    St.f[, t] <- survive.s.f - transmission.f
-    St.m[, t] <- survive.s.m - transmission.m
+    St.f[, t] <- St.f[ ,t] - transmission.f
+    St.m[, t] <- St.m[ ,t] - transmission.m
 
     # update with the new infections
     It.f[, t, 1] <- transmission.f + It.f[ ,t, 1]
     It.m[, t, 1] <- transmission.m + It.m[ ,t, 1]
-
-    if(length(which(It.f[,t,] < 0)) > 0)browser()
-    if(length(which(It.m[,t,] < 0)) > 0)browser()
 
   }
 
