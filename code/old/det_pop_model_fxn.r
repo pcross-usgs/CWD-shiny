@@ -21,27 +21,24 @@ det.pop.model <- function(params){
   ini.m.prev <- c(ini.fawn.prev, ini.juv.prev, rep(ini.ad.m.prev, (n.age.cats-2))) # initial male prevalence
 
   # Create the survival and birth vectors
-#    Sur.an.f <- c(fawn.an.sur, juv.an.sur, rep(ad.an.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
-#    Sur.an.m <- c(fawn.an.sur, juv.an.sur, rep(ad.an.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes    Bir <- c(fawn.repro, juv.repro, rep(ad.repro, n.age.cats - 2)) # vector of birth rates
   Sur.f <- c(fawn.sur, juv.sur, rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
   Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 
   # Create the Leslie Matrix to start the population at stable age dist
-  M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur-hunt.mort.juv,
-                                 rep(ad.an.f.sur-hunt.mort.ad.f, n.age.cats - 2),
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv),
+                                 rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
                                  0, #spacer
-                                 c(juv.an.sur,
-                                   rep(ad.an.m.sur-hunt.mort.ad.m, n.age.cats - 2)))
+                                 c(juv.an.sur*(1- hunt.mort.juv),
+                                   rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
   # if you want the top age category to continue to survive
-  #  M[n.age.cats, n.age.cats] <- ad.an.f.sur # adult female survival in top age cat
-  #  M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur # adult female survival in top age cat
+  M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
+  M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult male survival in top age cat
 
   # insert the fecundity vector
   # prebirth census
-  M[1, 1:n.age.cats] <- c(fawn.repro, juv.repro,
-                          rep(ad.repro, n.age.cats -2) * 0.5 * fawn.an.sur)
+  M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
+    0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
   #  lambda(M)
 
@@ -49,8 +46,8 @@ det.pop.model <- function(params){
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
-  It.m <- rep(list(tmp),10)
-  It.f <- rep(list(tmp),10)
+  It.m <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
+  It.f <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
 
   # Intializing with the stable age distribution.
   St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
@@ -69,28 +66,30 @@ det.pop.model <- function(params){
     if(t %% 12 == 2){  # births happen in June, model starts in May
 
       # aging
-      St.f[2:n.age.cats, t] <- St.f[1:n.age.cats-1, t-1]
-      St.m[2:n.age.cats, t] <- St.m[1:n.age.cats-1, t-1]
+      # the last age category remains in place and doesn't die
+      St.f[2:(n.age.cats-1), t] <- St.f[1:(n.age.cats-2), t-1]
+      St.f[n.age.cats, t] <- St.f[n.age.cats, t-1] + St.f[(n.age.cats-1), t-1]
 
-      for(j in 1:10){
-        It.f[[j]][2:n.age.cats, t] <- It.f[[j]][1:n.age.cats-1, t-1]
-        It.m[[j]][2:n.age.cats, t] <- It.m[[j]][1:n.age.cats-1, t-1]
-      }
+
+      St.m[2:(n.age.cats-1), t] <- St.m[1:(n.age.cats-2), t-1]
+      St.m[n.age.cats, t] <- St.m[n.age.cats, t-1] + St.m[(n.age.cats-1), t-1]
+
+      It.f[2:(n.age.cats-1), t, ] = It.f[1:(n.age.cats-2), t-1, ]
+      It.f[n.age.cats, t, ] <- It.f[n.age.cats, t-1, ] + It.f[(n.age.cats-1), t-1, ]
+
+      It.m[2:(n.age.cats-1), t, ] = It.m[1:(n.age.cats-2), t-1, ]
+      It.m[n.age.cats, t, ] <- It.m[n.age.cats, t-1, ] + It.m[(n.age.cats-1), t-1, ]
 
       # reproduction
-      I_fawn <- sapply(It.f, colSums)
-      I_fawn <- Reduce("+", It.f)[1, t-1] # sums across all objects in the list, age = 1
-      I_juv <- Reduce("+", It.f)[2, t-1]
-      I_adults <- Reduce("+", It.f)[3:n.age.cats, t-1]
+      I_juv    <- sum(It.f[2, t, ])
+      I_adults <-  sum(It.f[3:n.age.cats, t, ])
 
-      St.f[1, t] <- ((St.f[1, t-1] + I_fawn)* fawn.repro +
-                       (St.f[2, t-1] + I_juv) * juv.repro +
-                       sum((St.f[3:n.age.cats, t-1] + I_adults)) * ad.repro) * 0.5
+      St.f[1, t] <- ((St.f[2, t-1] + I_juv) * juv.repro +
+                       sum(St.f[3:n.age.cats, t-1] + I_adults) * ad.repro) * 0.5
 
 
-      St.m[1, t] <- ((St.f[1, t-1] + I_fawn)* fawn.repro +
-                       (St.f[2, t-1] + I_juv) * juv.repro +
-                       sum((St.f[3:n.age.cats, t-1] + I_adults)) * ad.repro) * 0.5
+      St.m[1, t] <- ((St.f[2, t-1] + I_juv) * juv.repro +
+                       sum(St.f[3:n.age.cats, t-1] + I_adults) * ad.repro) * 0.5
     }
 
     if(t %% 12 != 2){
@@ -98,27 +97,64 @@ det.pop.model <- function(params){
       St.f[, t] <- St.f[, t-1]
       St.m[, t] <- St.m[, t-1]
 
-      for(j in 1:10){
-        It.f[[j]][, t] <- It.f[[j]][, t-1]
-        It.m[[j]][, t] <- It.m[[j]][, t-1]
-      }
+      It.f[, t, ] <- It.f[, t-1, ]
+      It.m[, t, ] <- It.m[, t-1, ]
     }
 
     I.f.move <- list()
     I.m.move <- list()
 
     # disease induced mortality here
-    for(j in 1:10){
-      I.f.move[[j]] <- It.f[[j]][,t] * p
-      I.m.move[[j]] <- It.m[[j]][,t] * p
+    for(i in 1:10){
+      I.f.move[ ,i] <- It.f[ , t, i]* p
+      I.m.move[ ,i] <- It.m[ , t, i]* p
     }
 
-    ##HUNT MORT then NATURAL MORT, THEN TRANSMISSION
-    survive.s.f = St.f[,t] * (1 - c(hunt.mort.fawn, hunt.mort.juv,
-                                    rep(hunt.mort.ad.f, n.age.cats - 2)) * hunt.mo[t]) * Sur.f
+    It.f[ , t, 1]    <- It.f[ ,t, 1] - I.f.move[ ,1]
+    It.f[ , t, 2:10] <- It.f[ , t, 2:10] - I.f.move[ , 2:10] + I.f.move[, 1:9]
 
-    survive.s.m = St.m[,t] * (1 - c(hunt.mort.fawn, hunt.mort.juv,
-                                    rep(hunt.mort.ad.m, n.age.cats - 2)) * hunt.mo[t]) * Sur.m
+    It.m[ , t, 1]   <- It.m[ ,t, 1] - I.m.move[ ,1]
+    It.m[ , t, 2:10] <- It.m[ , t, 2:10] - I.m.move[ , 2:10] + I.m.move[, 1:9]
+
+    # hunting mortality
+    Iall.f <- rowSums(It.f[ ,t,])
+    Iall.m <- rowSums(It.m[ ,t,])
+    Nt.f <- St.f[, t] + Iall.f
+    Nt.m <- St.m[, t] + Iall.m
+    # binomial draw on the total hunted
+    hunted.f <- Nt.f * c(hunt.mort.fawn, hunt.mort.juv,
+                         rep(hunt.mort.ad.f, n.age.cats - 2)) * hunt.mo[t]
+    hunted.m <- Nt.m * c(hunt.mort.fawn, hunt.mort.juv,
+                     rep(hunt.mort.ad.m, n.age.cats - 2)) * hunt.mo[t]
+
+    # those hunted in the I class overall
+    # can result in a divide by 0 and NA.
+    # this can also result in more hunting of a category than are available.
+    hunted.i.f <- round((rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f))
+    hunted.i.m <- round((rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m))
+    hunted.i.f[which(is.na(hunted.i.f))] <- 0
+    hunted.i.m[which(is.na(hunted.i.m))] <- 0
+
+    # those hunted in the S class
+    hunted.s.f <- hunted.f - hunted.i.f
+    hunted.s.m <- hunted.m - hunted.i.m
+
+    # natural mort
+    survive.s.f <- (St.f[,t] - hunted.s.f) * Sur.f
+    survive.s.m <- (St.m[,t] - hunted.s.m) * Sur.m
+
+    hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
+    hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
+
+    survive.i.f <- (Iall.f - hunted.i.f) * Sur.f
+    survive.i.m <- (Iall.m - hunted.i.m) * Sur.m
+
+    deaths.i.f <- Iall.f - survive.i.f
+    deaths.i.m <- Iall.m - survive.i.m
+
+    browser()
+    # converting I from list to array. Also need to figure out how to allocate
+    # deaths across the I array in the deterministic model.
 
     transmission.f = survive.s.f * foi #number of individuals becoming infected
     transmission.m = survive.s.m * foi #number of individuals becoming infected
