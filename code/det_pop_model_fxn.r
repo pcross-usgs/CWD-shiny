@@ -140,19 +140,26 @@ det.pop.model <- function(params){
 
 
    # disease induced mortality here
-    It.f[ , t, 1]    <- It.f[ ,t, 1] * (1-p)
-    It.f[ , t, 2:10] <- It.f[ , t, 2:10] *(1-p) + It.f[ , t, 1:9] * p
+   f.move <- It.f[ , t, ] * p
+   m.move <- It.m[ , t, ] * p
 
-    It.m[ , t, 1]    <- It.m[ ,t, 1] * (1-p)
-    It.m[ , t, 2:10] <- It.m[ , t, 2:10] *(1-p) + It.m[ , t, 1:9] * p
+   It.f[ , t, 1]    <- It.f[ ,t, 1]  - f.move[ ,1]
+   It.f[ , t, 2:10] <- It.f[ , t, 2:10] - f.move[ ,2:10] + f.move[ ,1:9]
+   It.m[ , t, 1]    <- It.m[ ,t, 1]  - m.move[ ,1]
+   It.m[ , t, 2:10] <- It.m[ , t, 2:10] - m.move[ ,2:10] + m.move[ ,1:9]
+
 
     #browser()
     #Disease transmission here
-    St.f[,t] <- St.f[ ,t]*(1-foi)
-    St.m[,t] <- St.m[ ,t]*(1-foi)
+   cases.f <- St.f[ ,t] * foi
+   cases.m <- St.m[ ,t] * foi
 
-    It.f[ ,t, 1] <-  It.f[ ,t, 1] + St.f[ ,t]*foi
-    It.m[ ,t, 1] <-  It.m[ ,t, 1] + St.m[ ,t]*foi
+   St.f[ ,t] <- St.f[ ,t] - cases.f
+   St.m[ ,t] <- St.m[ ,t] - cases.m
+
+   It.f[ ,t, 1] <-  It.f[ ,t, 1] + cases.f
+   It.m[ ,t, 1] <-  It.m[ ,t, 1] + cases.m
+
   }
 
   output <- list(St.f = St.f, St.m = St.m,
