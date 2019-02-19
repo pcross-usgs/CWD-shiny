@@ -36,7 +36,8 @@ shinyServer(function(input, output) {
 
          foi =  1 - ((1-input$an.foi)^(1/12)),
          n0 = input$n0,
-         n.years = input$n.years)
+         n.years = input$n.years,
+         rel.risk = input$rel.risk)
   })
 
   simout <- reactive({

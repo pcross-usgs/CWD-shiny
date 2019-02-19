@@ -44,6 +44,8 @@ shinyUI(fluidPage(
                                          value = 0.07,min = 0.01, max = 0.15,step = 0.01),
                              sliderInput("hunt.mort.ad.f","% Does hunted",
                                          value = 0.1,min = 0.01, max = 0.3,step = 0.05),
+                             sliderInput("rel.risk","Relative risk",
+                                         value = 1, min = 0.1, max = 2, step = 0.1),
                              sliderInput("hunt.mort.ad.m","% bucks hunted",
                                          value = 0.2,min = 0.01, max = 0.3,step = 0.05)),
                       column(width = 6, h4("Plots"),
