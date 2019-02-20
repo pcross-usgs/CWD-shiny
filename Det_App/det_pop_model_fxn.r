@@ -55,14 +55,14 @@ det.pop.model <- function(params){
   St.m[,1] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                       (1-ini.m.prev)
 
-  # equally allocating prevalence across ages.
-  It.m[ , 1, 1:10] <- stable.stage(M)[1:n.age.cats] * n0/10 * ini.m.prev
-  It.f[ , 1, 1:10] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0/10 *
+  # equally allocating prevalence across ages in first I cat.
+  It.m[ , 1, 1] <- stable.stage(M)[1:n.age.cats] * n0 * ini.m.prev
+  It.f[ , 1, 1] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                            ini.f.prev
 
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
-
+    #if(t == 25) {browser()}
     # on birthdays add in recruits and age everyone by one year
     if(t %% 12 == 2){  # births happen in June, model starts in May
 
@@ -74,22 +74,22 @@ det.pop.model <- function(params){
       St.m[2:(n.age.cats-1), t] <- St.m[1:(n.age.cats-2), t-1]
       St.m[n.age.cats, t] <- St.m[n.age.cats, t-1] + St.m[(n.age.cats-1), t-1]
 
-      It.f[2:(n.age.cats-1), t, ] = It.f[1:(n.age.cats-2), t-1, ]
+      It.f[2:(n.age.cats-1), t, ] <- It.f[1:(n.age.cats-2), t-1, ]
       It.f[n.age.cats, t, ] <- It.f[n.age.cats, t-1, ] + It.f[(n.age.cats-1), t-1, ]
 
-      It.m[2:(n.age.cats-1), t, ] = It.m[1:(n.age.cats-2), t-1, ]
+      It.m[2:(n.age.cats-1), t, ] <- It.m[1:(n.age.cats-2), t-1, ]
       It.m[n.age.cats, t, ] <- It.m[n.age.cats, t-1, ] + It.m[(n.age.cats-1), t-1, ]
 
       # reproduction
-      I_juv    <- sum(It.f[2, t, ])
-      I_adults <-  sum(It.f[3:n.age.cats, t, ])
+      I_juv    <- sum(It.f[2, t-1, ])
+      I_adults <-  sum(It.f[3:n.age.cats, t-1, ])
 
       St.f[1, t] <- ((St.f[2, t-1] + I_juv) * juv.repro +
-                       sum(St.f[3:n.age.cats, t-1] + I_adults) * ad.repro) * 0.5
+                       (sum(St.f[3:n.age.cats, t-1]) + I_adults) * ad.repro) * 0.5
 
 
       St.m[1, t] <- ((St.f[2, t-1] + I_juv) * juv.repro +
-                       sum(St.f[3:n.age.cats, t-1] + I_adults) * ad.repro) * 0.5
+                       (sum(St.f[3:n.age.cats, t-1]) + I_adults) * ad.repro) * 0.5
     }
 
     if(t %% 12 != 2){
@@ -127,17 +127,20 @@ det.pop.model <- function(params){
      # can result in a divide by 0 and NA.
      hunted.i.f <- (rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f)
      hunted.i.m <- (rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m)
+
      hunted.i.f[which(is.na(hunted.i.f))] <- 0
      hunted.i.m[which(is.na(hunted.i.m))] <- 0
 
-       # those hunted in the S class
-     St.f[ ,t] <- St.f[,t] - hunted.f - hunted.i.f
-     St.m[ ,t] <- St.m[,t] - hunted.m - hunted.i.m
+     hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
+     hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
 
-     It.f[ , t, ] <- It.f[ , t, ] * (1- hunted.i.f/Iall.f)
-     It.m[ , t, ] <- It.m[ , t, ] * (1- hunted.i.m/Iall.m)
+     # those hunted in the S class
+     St.f[ ,t] <- St.f[,t] - (hunted.f - hunted.i.f)
+     St.m[ ,t] <- St.m[,t] - (hunted.m - hunted.i.m)
+
+     It.f[ , t, ] <- It.f[ , t, ] * (1 - hunted.i.f / Iall.f)
+     It.m[ , t, ] <- It.m[ , t, ] * (1 - hunted.i.m / Iall.m)
     }
-
 
    # disease induced mortality here
    f.move <- It.f[ , t, ] * p
@@ -148,6 +151,8 @@ det.pop.model <- function(params){
    It.m[ , t, 1]    <- It.m[ ,t, 1]  - m.move[ ,1]
    It.m[ , t, 2:10] <- It.m[ , t, 2:10] - m.move[ ,2:10] + m.move[ ,1:9]
 
+
+
     #Disease transmission here
    cases.f <- St.f[ ,t] * foi
    cases.m <- St.m[ ,t] * foi
@@ -157,6 +162,7 @@ det.pop.model <- function(params){
 
    It.f[ ,t, 1] <-  It.f[ ,t, 1] + cases.f
    It.m[ ,t, 1] <-  It.m[ ,t, 1] + cases.m
+
   }
 
   output <- list(St.f = St.f, St.m = St.m,

@@ -2,7 +2,14 @@
 
 ######PARAMETER VALUES######
 #relative risk of hunting a positive case
-rel.risk <- 1.1
+rel.risk <- 1
+n.years <- 30 # number of years for the simulation
+
+
+foi <- 1 - (0.95^(1/12)) # monthly probability of becoming infected
+
+#dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
+p <- .43 #probability of transitioning between infectious box cars
 
 #Natural Annual survival rates
 fawn.an.sur <- 0.5
@@ -32,18 +39,11 @@ ini.juv.prev <- 0.1
 ini.ad.f.prev <- 0.2
 ini.ad.m.prev <- 0.2
 
-foi <- 1 - (0.95^(1/12)) # monthly probability of becoming infected
-
-#dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
-p <- 0.43 #probability of transitioning between infectious box cars
-
 #Mean additive hunt mortality; user input
-hunt.mort.fawn <- 0.0
-hunt.mort.juv <- 0.07
+hunt.mort.fawn <- 0.02
+hunt.mort.juv <- 0.1
 hunt.mort.ad.f <- 0.1
-hunt.mort.ad.m <- 0.15
-
-n.years <- 10 # number of years for the simulation
+hunt.mort.ad.m <- 0.2
 
 #bundle them into a list
 params <- list(fawn.an.sur = fawn.an.sur,

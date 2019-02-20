@@ -115,11 +115,11 @@ stoch.pop.model.2 <- function(params){
       It.m[n.age.cats, t, ] <- It.m[n.age.cats, t-1, ] + It.m[(n.age.cats-1), t-1, ]
 
       # reproduction
-      I_juv    <- sum(It.f[2, t, ])
-      I_adults <-  sum(It.f[3:n.age.cats, t, ])
+      I_juv    <- sum(It.f[2, t-1, ])
+      I_adults <-  sum(It.f[3:n.age.cats, t-1, ])
 
-      fawns_born <- rbinom(1, (St.f[2, t] + I_juv), juv.preg.draw) * 2 +
-        rbinom(1, (sum(St.f[3:n.age.cats, t]) + sum(I_adults)), ad.preg.draw) * 2
+      fawns_born <- rbinom(1, (St.f[2, t-1] + I_juv), juv.preg.draw) * 2 +
+        rbinom(1, (sum(St.f[3:n.age.cats, t-1]) + I_adults), ad.preg.draw) * 2
 
       St.f[1, t] <- rbinom(1, fawns_born, 0.5)
       St.m[1, t] <- fawns_born - St.f[1, t]
