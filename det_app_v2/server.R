@@ -58,8 +58,9 @@ shinyServer(function(input, output) {
 
   output$TotalsPlot <- renderPlot({
    out <- simout()
-   plot.tots(out, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
-             cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+   par(mar = c(1,4,2,2))
+   plot.tots(out, type = "l", ylab = "population", xlab = "year", lwd = 3,
+             cex = 1.5, cex.lab = 1.5, cex.axis = 1.5,bty = "l")
   })
 
   output$prevPlot <- renderPlot({
@@ -69,8 +70,11 @@ shinyServer(function(input, output) {
 
   output$classPlot <- renderPlot({
     out <- simout()
-    par(mfrow = c(1,2))
-    plot.fawn.adult(out, type = "l", xlab = "year", ylab = "fawn:adult")
-    plot.buck.doe(out, type = "l", xlab = "year", ylab = "buck:doe")
+    par(mfrow = c(1,2), mar = c(6,4,2,2))
+    plot.fawn.adult(out, type = "l", xlab = "year", ylab = "fawn:adult", bty = "l",
+                    cex = 1.5, lwd =  3, cex.lab = 1.5, cex.axis = 1.5)
+    plot.buck.doe(out, type = "l", xlab = "year", ylab = "buck:doe", bty = "l",
+                  cex = 1.5, lwd =  3, cex.lab = 1.5, cex.axis = 1.5)
+
   })
 })
