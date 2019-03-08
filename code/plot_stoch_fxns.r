@@ -326,9 +326,8 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
   # sex = f/m (factor)
   # disease = yes/no (factor)
   #
-  # by.sex = TRUE....facet by sex
   # OUTPUT
-  # plot of the fawn.adult ratio
+  # plot of the buck:doe ratio
 
   require(reshape2)
   require(tidyverse)
