@@ -2,7 +2,6 @@ det.pop.model.v2 <- function(params){
   require(popbio)
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
- #browser()
 
   #monthly index
   months <- seq(1, n.years*12)
@@ -41,7 +40,6 @@ det.pop.model.v2 <- function(params){
   M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
     0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
-#browser()
 
   # pre-allocate the output matrices
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
@@ -49,6 +47,16 @@ det.pop.model.v2 <- function(params){
   St.m <- tmp
   It.m <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
   It.f <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
+
+  # tracking the # hunted
+  Ht.f <- tmp
+  Ht.m <- tmp
+  # natural deaths
+  Dt.f <- tmp
+  Dt.m <- tmp
+  # disease deaths
+  CWDt.f <- tmp
+  CWDt.m <- tmp
 
   # Intializing with the stable age distribution.
   St.f[,1] <- stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev)
@@ -62,7 +70,7 @@ det.pop.model.v2 <- function(params){
 
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
- #if(t == 25){browser()}
+    #if(t == 2){browser()}
     # on birthdays add in recruits and age everyone by one year
     if(t %% 12 == 2){  # births happen in June, model starts in May
 
@@ -107,6 +115,9 @@ det.pop.model.v2 <- function(params){
 
    It.f[ , t, ] <- It.f[ , t, ] * Sur.f
    It.m[ , t, ] <- It.m[ , t, ] * Sur.m
+   #browser()
+   Dt.f[, t] <- St.f[, t] +  rowSums(It.f[ , t, ])  * (1 - Sur.f)
+   Dt.m[, t] <- St.m[, t] +  rowSums(It.m[ , t, ])  * (1 - Sur.m)
 
    # Hunt mortality
    if(hunt.mo[t]==1){
@@ -122,6 +133,10 @@ det.pop.model.v2 <- function(params){
                           rep(hunt.mort.ad.f, n.age.cats - 2))
      hunted.m <- Nt.m * c(hunt.mort.fawn, hunt.mort.juv,
                           rep(hunt.mort.ad.m, n.age.cats - 2))
+
+     # tracking the # hunted
+     Ht.f[,t] <- hunted.f
+     Ht.m[,t] <- hunted.m
 
      # those hunted in the I class overall
      # can result in a divide by 0 and NA.
@@ -149,12 +164,16 @@ det.pop.model.v2 <- function(params){
     It.m[ , t, 1]    <- It.m[ ,t, 1]  - m.move[ ,1]
     It.m[ , t, 2:10] <- It.m[ , t, 2:10] - m.move[ ,2:10] + m.move[ ,1:9]
 
+    #store info on those that die directly from disease
+    CWDt.f[ ,t] <- f.move[,10]
+    CWDt.m[ ,t] <- m.move[,10]
+
     # Direct transmission
     #considering all I's are equal
     Iall <- sum(It.f[ ,t, ] + It.m[ ,t,])
     Nall <- sum(St.f[,t] + St.m[,t]) + Iall
 
-    foi <- 1-exp(-beta * Iall/Nall^theta)
+    foi <- 1 - exp(-beta * Iall/Nall^theta)
 
     cases.f <- St.f[ ,t] * foi
     cases.m <- St.m[ ,t] * foi
@@ -176,7 +195,7 @@ det.pop.model.v2 <- function(params){
     It.m[ ,t, 1] <-  It.m[ ,t, 1] + envcases.m
   }
 
-  output <- list(St.f = St.f, St.m = St.m,
+  counts <- list(St.f = St.f, St.m = St.m,
                  I1t.f = It.f[,,1], I1t.m = It.m[,,1],
                  I2t.f = It.f[,,2], I2t.m = It.m[,,2],
                  I3t.f = It.f[,,3], I3t.m = It.m[,,3],
@@ -187,4 +206,22 @@ det.pop.model.v2 <- function(params){
                  I8t.f = It.f[,,8], I8t.m = It.m[,,8],
                  I9t.f = It.f[,,9], I9t.m = It.m[,,9],
                  I10t.f = It.f[,,10], I10t.m = It.m[,,10])
+
+  deaths <- list(Ht.f = Ht.f, Ht.m = Ht.m, Dt.f = Dt.f, Dt.m = Dt.m,
+                CWDt.f = CWDt.f, CWDt.m = CWDt.m)
+
+  counts.long <- melt(counts) %>%
+    rename(age = Var1, month = Var2, population = value,
+           category = L1) %>%
+    mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
+           disease = "no")
+  counts.long$disease[str_sub(counts.long$category, 1,1) == "I"] = "yes"
+  counts.long$disease <- as.factor(counts.long$disease)
+
+  deaths.long <- melt(deaths) %>%
+    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    mutate(year = (month - 1) / 12,
+           sex = as.factor(str_sub(category, -1)))
+
+  output <- list(counts = counts.long, deaths = deaths.long)
 }

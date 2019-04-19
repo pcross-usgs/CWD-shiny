@@ -10,28 +10,15 @@ load("./output/params_det_v2.RData")
 ##RUN THE model
 out <- det.pop.model.v2(params)
 
-out.long <- melt(out) %>%
-  rename(age = Var1, month = Var2, population = value,
-         category = L1) %>%
-  mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
-         disease = "no")
-out.long$disease[str_sub(out.long$category, 1,1) == "I"] = "yes"
-out.long$disease <- as.factor(out.long$disease)
-
 #PLOT the results
-plot.tots(out.long, type = "l", ylab = "Total population", xlab = "Year",
-          ylim = c(0,10000), lwd = 3,
-          cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+par(mfrow = c(1,1))
+plot.tots(out$counts)
 
-#plot.all(out.long)
+# prevalence plots
+plot.prev.2(out$counts)
 
-# prevalence plot over time.
-plot.prev(out.long, type = "l", col = "red", xlab = "year", ylab = "prevalence")
+# plot the fawn:doe and buck:doe ratios
+plot.fawn.buck(out$counts)
 
-# prevalence plot by age
-#not sure if this is working
-plot.prev.age(out.long, by.sex = T)
-
-#plot the fawn to adult ratio
-plot.fawn.adult(out.long, type = "l", xlab = "year", ylab = "fawn:adult")
-plot.buck.doe(out.long, type = "l", xlab = "year", ylab = "buck:doe")
+plot.deaths(out$deaths)
+plot.perc.deaths(out$deaths)
