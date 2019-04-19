@@ -1,5 +1,5 @@
 # Functions to plot the output from a single simulation
-require(tidyverse)
+
 #parameter beta plot
 pl.beta <- function(a,b, asp = if(isLim) 1, ylim = if(isLim) c(0,1.1)) {
   if(isLim <- a == 0 || b == 0 || a == Inf || b == Inf) {
@@ -37,11 +37,11 @@ plot.tots <- function(dat, ...){
 
   #plot
   par(mar = c(4,5, 1,1))
-  plot(dat.sum$year, dat.sum$tots, ylim = c(0, max(dat.sum$tots)), ...)
+  plot(dat.sum$year, dat.sum$tots, ...)
   lines(dat.sum$year, dat.sum$yes, col = "red", lwd = 2)
   lines(dat.sum$year, dat.sum$no, col = "blue", lwd = 2)
   legend("topright", c("total", "infected", "healthy"),
-         col = c("black", "red", "blue"), lwd = 2)
+         col = c("black", "red", "blue"), lwd = 2, box.lty=0)
 }
 
 # plot all ages all months
@@ -127,6 +127,35 @@ plot.prev.age <- function(dat, by.sex, ...){
   p
 }
 
+
+# plot the prevalence by age at the end point
+plot.prev.age.end <- function(dat, ...){
+  # INPUT
+  # dat = list of the output matrices
+  #
+  # OUTPUT
+  # plot of the prevalence
+  require(reshape2)
+  require(tidyverse)
+
+  # summarize by year and disease status, calculate the prevalence
+  dat.sum <- dat %>%
+  filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+  group_by(age, sex, disease)%>%
+  summarize(n = sum(population)) %>%
+  spread(key = disease, value = n) %>%
+  mutate(prev = yes/ (no + yes))
+
+  #create the plot
+  p <- ggplot(dat.sum, aes(age, prev, color = sex)) +
+      geom_line()
+  p <- p + theme_light() +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
+}
+
+
 # plot the fawn:adult
 plot.fawn.adult <- function(dat, ...){
   # INPUT
@@ -174,4 +203,51 @@ plot.buck.doe <- function(dat, ...){
 
   plot(dat.sum$year, dat.sum$buck.doe, ...)
 
+}
+
+# plot both fawn:doe and buck:doe
+plot.fawn.buck <- function(dat, ...){
+  # INPUT
+  # dat = list of the output matrices
+  # OUTPUT
+  # plot of the prevalence
+  require(reshape2)
+  require(tidyverse)
+
+  dat$age.cat <- "adult"
+  dat$age.cat[dat$age == 1] <- "fawn"
+
+  # summarize by year and disease status, calculate the prevalence
+  dat.sum <- dat %>%
+    filter(month %% 12 == 8) %>% # december of every year
+    group_by(year, sex, age.cat) %>%
+    summarize(n = sum(population)) %>%
+    unite(sex.age, sex, age.cat) %>%
+    spread(key = sex.age, value = n) %>%
+    mutate(buck.doe = m_adult / f_adult)
+
+
+  # summarize by year and disease status, calculate the prevalence
+  dat.sum.2 <- dat %>%
+    filter(month %% 12 == 11) %>%
+    group_by(year, age.cat) %>%
+    summarize(n = sum(population)) %>%
+    spread(key = age.cat, value = n) %>%
+    mutate(fawn.adult = fawn / adult)
+
+  par(mfrow = c(2,1))
+  par(mar = c(2, 4, 1, 1))
+  plot(dat.sum$year, dat.sum$buck.doe, type = "l",
+       col = "blue", lwd = 2, bty = "o",
+       axes = F, ylab = "", ...)
+  axis(2, col = "blue", col.axis = "blue")
+  mtext("buck:doe", side=2, col="blue",line=2.5)
+  par(mar = c(4, 4,0,1))
+
+  plot(dat.sum.2$year, dat.sum.2$fawn.adult, type = "l",
+       axes = "F", col = "red", bty = "l", lwd = 2, ylab = "", xlab = "", ...)
+  axis(2, col = "red", col.axis = "red")
+  axis(1)
+  mtext("Year", side=1, col="black",line=2.5)
+  mtext("fawn:doe", side=2, col="red",line=2.5)
 }
