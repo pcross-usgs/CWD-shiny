@@ -76,7 +76,7 @@ shinyServer(function(input, output) {
                     by.sexage = F)
    p2 <- plot.stoch.prev(simout(), all.lines = T, error.bars = TRUE,
                          cis = c(0.25, 0.75))
-   plot_grid(p1, p2, labels = c("A", "B"))
+   plot_grid(p1, p2)
    })
 
   #output$prevPlot <- renderPlot({})
@@ -85,7 +85,7 @@ shinyServer(function(input, output) {
     #plot fawn.adult and buck:doe
     p1 <- plot.stoch.fawn.adult(simout(), all.lines = T, error.bars = c(0.05, 0.95))
     p2 <- plot.stoch.buck.doe(simout(), all.lines = T, error.bars = c(0.05, 0.95))
-    plot_grid(p1, p2, labels = c("C", "D"))
+    plot_grid(p1, p2)
   })
 
 })
