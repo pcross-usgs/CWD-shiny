@@ -45,36 +45,29 @@ shinyServer(function(input, output) {
   simout <- reactive({
     params <- react.params()
     out <- det.pop.model.v2(react.params())
-
-    out.long <- melt(out) %>%
-      rename(age = Var1, month = Var2, population = value,
-             category = L1) %>%
-      mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
-             disease = "no")
-    out.long$disease[str_sub(out.long$category, 1,1) == "I"] = "yes"
-    out.long$disease <- as.factor(out.long$disease)
-    out.long
+    out
     })
 
   output$TotalsPlot <- renderPlot({
    out <- simout()
-   par(mar = c(1,4,2,2))
-   plot.tots(out, type = "l", ylab = "population", xlab = "year", lwd = 3,
-             cex = 1.5, cex.lab = 1.5, cex.axis = 1.5,bty = "l")
+   par(cex = 1.5)
+   plot.tots(out$counts)
   })
 
   output$prevPlot <- renderPlot({
     out <- simout()
-    plot.prev.age(out, by.sex = T)
-    })
+    plot.prev.2(out$counts)
+    }, height = 600)
+
+  output$deathPlot <- renderPlot({
+    out <- simout()
+    p1 <- plot.deaths(out$deaths)
+    p2 <- plot.perc.deaths(out$deaths)
+    plot_grid(p1, p2, nrow = 2)
+    }, height = 600)
 
   output$classPlot <- renderPlot({
     out <- simout()
-    par(mfrow = c(1,2), mar = c(6,4,2,2))
-    plot.fawn.adult(out, type = "l", xlab = "year", ylab = "fawn:adult", bty = "l",
-                    cex = 1.5, lwd =  3, cex.lab = 1.5, cex.axis = 1.5)
-    plot.buck.doe(out, type = "l", xlab = "year", ylab = "buck:doe", bty = "l",
-                  cex = 1.5, lwd =  3, cex.lab = 1.5, cex.axis = 1.5)
-
+    plot.fawn.buck(out$counts, lwd = 3)
   })
 })
