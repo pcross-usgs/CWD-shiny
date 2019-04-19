@@ -95,7 +95,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
   }
 
   # adjust the theme
-  p <- p + xlab("Year") + ylab("Population") + theme_light(base_size = 16) +
+  p <- p + xlab("Year") + ylab("Population") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
@@ -162,7 +162,7 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
   }
 
   p <- p + xlab("Year") + ylab("Prevalence") +
-    theme_light(base_size = 16) + theme(panel.grid.minor = element_blank(),
+    theme_light(base_size = 18) + theme(panel.grid.minor = element_blank(),
                         panel.grid.major.x = element_blank())
   p
 }
@@ -236,7 +236,7 @@ plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
                       linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Prevalence") + theme_light(base_size = 16) +
+  p <- p + xlab("Year") + ylab("Prevalence") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
   p
@@ -304,7 +304,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
                 linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light(base_size = 16) +
+  p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
@@ -375,7 +375,7 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
                 linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Buck:Doe") + theme_light(base_size = 16) +
+  p <- p + xlab("Year") + ylab("Buck:Doe") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
