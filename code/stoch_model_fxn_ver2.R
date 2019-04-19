@@ -59,6 +59,16 @@ stoch.pop.model.2 <- function(params){
   It.m <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
   It.f <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
 
+  # tracking the # hunted
+  Ht.f <- tmp
+  Ht.m <- tmp
+  # natural deaths
+  Dt.f <- tmp
+  Dt.m <- tmp
+  # disease deaths
+  CWDt.f <- tmp
+  CWDt.m <- tmp
+
   # Intializing with the stable age distribution.
   St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
   St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
@@ -136,13 +146,27 @@ stoch.pop.model.2 <- function(params){
     ##Natural Mort then hunt then disease mort THEN TRANSMISSION
 
     #Natural Mortality
-    St.f[ ,t] <- rbinom(n.age.cats, St.f[ ,t], Sur.f)
-    St.m[ ,t] <- rbinom(n.age.cats, St.m[ ,t], Sur.m)
+
+    nat.s.f <- rbinom(n.age.cats, St.f[ ,t], (1-Sur.f))
+    nat.s.m <- rbinom(n.age.cats, St.m[ ,t], (1-Sur.m))
+
+    St.f[ ,t] <- St.f[,t] - nat.s.f
+    St.m[ ,t] <- St.m[,t] - nat.s.m
+
+    nat.i.f <- matrix(0, nrow = n.age.cats, ncol = 10)
+    nat.i.m <- matrix(0, nrow = n.age.cats, ncol = 10)
 
     for(i in 1:10){
-      It.f[ ,t, i] <- rbinom(n.age.cats, It.f[ ,t, i], Sur.f)
-      It.m[ ,t, i] <- rbinom(n.age.cats, It.m[ ,t, i], Sur.m)
+      nat.i.f[ ,i] <- rbinom(n.age.cats, It.f[ ,t, i], (1-Sur.f))
+      nat.i.m[ ,i] <- rbinom(n.age.cats, It.m[ ,t, i], (1-Sur.m))
     }
+
+    It.f[ , t, ] <- It.f[ ,t, ] - nat.i.f
+    It.m[ , t, ] <- It.m[ ,t, ] - nat.i.m
+
+    #browser()
+    Dt.f[, t] <- nat.s.f + rowSums(nat.i.f)
+    Dt.m[, t] <- nat.s.m + rowSums(nat.i.m)
 
     # Hunt mortality
     if(hunt.mo[t]==1){
@@ -160,6 +184,10 @@ stoch.pop.model.2 <- function(params){
 
       hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.draw,
                                              hunt.m.draw))
+
+      # tracking the # hunted
+      Ht.f[,t] <- hunted.f
+      Ht.m[,t] <- hunted.m
 
       # those hunted in the I class overall
       # can result in a divide by 0 and NA.
@@ -196,10 +224,16 @@ stoch.pop.model.2 <- function(params){
     I.f.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
     I.m.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
 
-    for(i in 1:10){
+    for(i in 1:9){
       I.f.move[ ,i] <- rbinom(n.age.cats, It.f[ , t, i], p)
       I.m.move[ ,i] <- rbinom(n.age.cats, It.m[ , t, i], p)
     }
+
+    #store info on those that die directly from disease
+    CWDt.f[ ,t] <- rbinom(n.age.cats, It.f[ , t, 10], p)
+    CWDt.m[ ,t] <- rbinom(n.age.cats, It.m[ , t, 10], p)
+    I.f.move[ ,10] <- CWDt.f[ ,t]
+    I.m.move[ ,10] <- CWDt.m[ ,t]
 
     It.f[ , t, 1]    <- It.f[ ,t, 1] - I.f.move[ ,1]
     It.f[ , t, 2:10] <- It.f[ , t, 2:10] - I.f.move[ , 2:10] + I.f.move[, 1:9]
@@ -220,7 +254,7 @@ stoch.pop.model.2 <- function(params){
 
   }
 
-  output <- list(St.f = St.f, St.m = St.m,
+  counts <- list(St.f = St.f, St.m = St.m,
                  I1t.f = It.f[,,1], I1t.m = It.m[,,1],
                  I2t.f = It.f[,,2], I2t.m = It.m[,,2],
                  I3t.f = It.f[,,3], I3t.m = It.m[,,3],
@@ -231,4 +265,21 @@ stoch.pop.model.2 <- function(params){
                  I8t.f = It.f[,,8], I8t.m = It.m[,,8],
                  I9t.f = It.f[,,9], I9t.m = It.m[,,9],
                  I10t.f = It.f[,,10], I10t.m = It.m[,,10])
+  deaths <- list(Ht.f = Ht.f, Ht.m = Ht.m, Dt.f = Dt.f, Dt.m = Dt.m,
+                 CWDt.f = CWDt.f, CWDt.m = CWDt.m)
+
+  counts.long <- melt(counts) %>%
+    rename(age = Var1, month = Var2, population = value,
+           category = L1) %>%
+    mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
+           disease = "no")
+  counts.long$disease[str_sub(counts.long$category, 1,1) == "I"] = "yes"
+  counts.long$disease <- as.factor(counts.long$disease)
+
+  deaths.long <- melt(deaths) %>%
+    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    mutate(year = (month - 1) / 12,
+           sex = as.factor(str_sub(category, -1)))
+output <- list(counts = counts.long, deaths = deaths.long)
+
 }

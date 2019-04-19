@@ -9,13 +9,16 @@ load("./output/params_stoch.RData")
 
 #Run the model
 sims <- 10
-out.sims <- vector("list", sims)
+counts.sims <- vector("list", sims)
+deaths.sims <- vector("list", sims)
 
 for(i in 1:sims){
-  out.sims[[i]] <- stoch.pop.model.2(params)
+  out <- stoch.pop.model.2(params)
+  counts.sims[[i]] <- out$counts
+  deaths.sims[[i]] <- out$deaths
 }
 
-out.sims.long <- melt(out.sims) %>%
+count.sims.long <- melt(counts.sims) %>%
   rename(age = Var1, month = Var2, population = value,
          category = L2, sim = L1) %>%
   mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
@@ -24,7 +27,7 @@ out.sims.long$disease[str_sub(out.sims.long$category, 1,1) == "I"] = "yes"
 out.sims.long$disease <- as.factor(out.sims.long$disease)
 
 #plot the totals
-plot.stoch.tots(out.sims.long, all.lines = T, error.bars = c(0.25, 0.75),
+plot.stoch.tots(out.sims$counts, all.lines = T, error.bars = c(0.25, 0.75),
                 by.sexage = T)
 
 #plot the prevalence
@@ -38,3 +41,4 @@ library(cowplot)
 p1 <- plot.stoch.fawn.adult(out.sims.long, all.lines = T, error.bars = c(0.05, 0.95))
 p2 <- plot.stoch.buck.doe(out.sims.long, all.lines = T, error.bars = c(0.05, 0.95))
 plot_grid(p1, p2, labels = c("A", "B"))
+
