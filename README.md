@@ -2,6 +2,20 @@
 
 This is a repo to test out interactive R Shiny applications of a CWD disease model. Currently there are 4 different models: 2 deterministic, 2 stochastic, and for each there is a model without disease dynamics (force of infection is a constant parameter) and a model with direct disease transmission that is a function of the number of infecteds as well as a constant probability of being infected from the environment. 
 
+### Webpages for the shiny apps###  
+
+Deterministic model constant transmission:  
+https://paulchafeecr.shinyapps.io/CWD_Det_App/  
+
+Deterministic model Dynamic transmission:   
+https://paulchafeecr.shinyapps.io/CWD_Deterministic_ver2/  
+
+Stochastic model constant transmission:  
+https://paulchafeecr.shinyapps.io/stoch_app/  
+
+Stochastic model with dynamic transmission:  
+https://paulchafeecr.shinyapps.io/StochApp_ver2/
+
 ### How do I get set up? ###
 
 Dependencies: shiny, popbio, tidyverse, cowplot, magrittr, reshape2   
@@ -23,7 +37,6 @@ output: stores some of the created parameter files. Only used for testing purpos
 3. No change in the environmental reservoir  
 4. Not sure how to implement hot spot targeted hunting. Currently allowing for positive individuals to be more likely to be hunted compared to the background prevalence via the "relative risk" parameter.
 5. all sex and age groups are currently equally susceptible, infections, and likely to due to CWD. So prevalence differences among males and females are minor.  
-
 
 
 ### Who do I talk to? ###
