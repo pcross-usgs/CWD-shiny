@@ -7,7 +7,7 @@ library(cowplot)
 library(ggridges)
 library(magrittr)
 
-source("stoch_model_fxn.R", local = T) #NOTE shinyapps.io is case-sensitive on the "R"
+source("stoch_model_fxn.r", local = T) #NOTE shinyapps.io is case-sensitive on the "R"
 source("plot_stoch_fxns.r", local = T)
 source("plot_params.r", local = T)
 source("estBetaParams.r", local = T)
