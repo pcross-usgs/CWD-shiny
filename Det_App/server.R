@@ -27,7 +27,7 @@ shinyServer(function(input, output) {
          hunt.mort.ad.m = input$hunt.mort.ad.m,
 
          n.age.cats = 12,
-         p =  0.43,
+         p = input$p,
 
          ini.fawn.prev = input$ini.fawn.prev,
          ini.juv.prev = input$ini.juv.prev,
@@ -56,8 +56,7 @@ shinyServer(function(input, output) {
 
   output$TotalsPlot <- renderPlot({
    out <- simout()
-   plot.tots(out, type = "l", ylab = "Total population", xlab = "Year", lwd = 3,
-             cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+   plot.tots(out)
   })
 
   output$prevPlot <- renderPlot({
