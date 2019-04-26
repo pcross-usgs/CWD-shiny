@@ -3,19 +3,19 @@ rm(list = ls())
 library(popbio)
 library(reshape2)
 library(tidyverse)
-source("./code/stoch_model_fxn_ver2.r")
+source("./code/stoch_model_fxn.r")
 source("./code/plot_stoch_fxns.r")
 source("./code/plot_params.r")
 source("./code/estBetaParams.r")
-load("./output/params_stoch_ver2.RData")
+load("./output/params_stoch.RData")
 
 #Run the model
-sims <- 5
+sims <- 10
 counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
 
 for(i in 1:sims){
-  out <- stoch.pop.model.2(params)
+  out <- stoch.pop.model(params)
   counts.sims[[i]] <- out$counts
   deaths.sims[[i]] <- out$deaths
 }
