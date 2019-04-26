@@ -1,4 +1,4 @@
-#Stochastic.2b monthly age and sex structured model that incorporates random draws from distibutions of natural survival, reproduction, and hunt mortality.
+#Stochastic.2 monthly age and sex structured model that incorporates random draws from distibutions of natural survival, reproduction, and hunt mortality.
 #Currently does not include a distribution on FOI.
 stoch.pop.model.2 <- function(params){
   require(popbio)
@@ -144,7 +144,6 @@ stoch.pop.model.2 <- function(params){
     }
 
     ##Natural Mort then hunt then disease mort THEN TRANSMISSION
-
     #Natural Mortality
 
     nat.s.f <- rbinom(n.age.cats, St.f[ ,t], (1-Sur.f))
@@ -170,8 +169,7 @@ stoch.pop.model.2 <- function(params){
 
     # Hunt mortality
     if(hunt.mo[t]==1){
-
-      #browser()
+#browser()
       # hunting mortality
       Iall.f <- rowSums(It.f[ ,t,])
       Iall.m <- rowSums(It.m[ ,t,])
@@ -209,9 +207,6 @@ stoch.pop.model.2 <- function(params){
       St.f[,t] <- St.f[,t] - hunted.s.f
       St.m[,t] <- St.m[,t] - hunted.s.m
 
-      #if(length(which(is.na(deaths.i.f))) > 0) browser()
-      #if(length(which(is.na(deaths.i.m))) > 0) browser()
-
       # allocate those deaths across the Icategories
       It.f[ , t, ] <- allocate.deaths(hunted.i.f, It.f[ , t, ])
       It.m[ , t, ] <- allocate.deaths(hunted.i.m, It.m[ , t, ])
@@ -241,7 +236,13 @@ stoch.pop.model.2 <- function(params){
     It.m[ , t, 1]   <- It.m[ ,t, 1] - I.m.move[ ,1]
     It.m[ , t, 2:10] <- It.m[ , t, 2:10] - I.m.move[ , 2:10] + I.m.move[, 1:9]
 
-    #Transmission
+    #if(t == 4){browser()}
+    # Direct transmission considering all I's are equal
+    Iall <- sum(It.f[ ,t, ] + It.m[ ,t,])
+    Nall <- sum(St.f[,t] + St.m[,t]) + Iall
+
+    foi <- 1 - exp(-beta * Iall/Nall^theta)
+
     transmission.f <- rbinom(n.age.cats, St.f[,t], foi)
     transmission.m <- rbinom(n.age.cats, St.m[,t], foi)
 
@@ -252,6 +253,15 @@ stoch.pop.model.2 <- function(params){
     It.f[, t, 1] <- transmission.f + It.f[ ,t, 1]
     It.m[, t, 1] <- transmission.m + It.m[ ,t, 1]
 
+    #Environmental transmission happens last
+    envcases.f <- rbinom(n.age.cats, St.f[ ,t], env.foi)
+    envcases.m <- rbinom(n.age.cats, St.m[ ,t], env.foi)
+
+    St.f[ ,t] <- St.f[ ,t] - envcases.f
+    St.m[ ,t] <- St.m[ ,t] - envcases.m
+
+    It.f[ ,t, 1] <-  It.f[ ,t, 1] + envcases.f
+    It.m[ ,t, 1] <-  It.m[ ,t, 1] + envcases.m
   }
 
   counts <- list(St.f = St.f, St.m = St.m,
