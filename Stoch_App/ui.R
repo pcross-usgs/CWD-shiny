@@ -1,7 +1,8 @@
 # CWD shiny app stochastic model user interface
 library(shiny)
 shinyUI(fluidPage(
-  titlePanel("CWD Model"),
+  navbarPage("Chronic Wasting Disease",
+   tabPanel("Model",
     fluidRow(
       column(4, h4("Parameters"),
          tabsetPanel(
@@ -9,13 +10,13 @@ shinyUI(fluidPage(
              sliderInput("fawn.an.sur", "Fawn survival",
                          value = 0.4, min = 0.1, max = .99, step = 0.05),
              sliderInput("juv.an.sur", "Juvenile survival",
-                         value = 0.6, min = 0.3, max = .99, step = 0.05),
+                         value = 0.7, min = 0.3, max = .99, step = 0.05),
              sliderInput("ad.an.f.sur",  "Adult female survival",
-                         value = 0.8,min = 0.5, max = .99, step = 0.01),
+                         value = 0.85,min = 0.5, max = .99, step = 0.01),
              sliderInput("ad.an.m.sur", "Adult male survival",
-                         value = 0.7, min = 0.5, max = .99, step = 0.01),
+                         value = 0.8, min = 0.5, max = .99, step = 0.01),
              sliderInput("juv.repro", "Fawns per Juv",
-                         value = 0.7, min = 0.2, max = 1.5, step = 0.1),
+                         value = 0.9, min = 0.2, max = 1.5, step = 0.1),
              sliderInput("ad.repro", "Fawns per adult",
                          value = 1.6, min = 0.5, max = 2, step = 0.1)),
           tabPanel("Disease",
@@ -30,7 +31,9 @@ shinyUI(fluidPage(
             sliderInput("ini.ad.m.prev", "Buck prevalence",
                        value = 0.03, min = 0, max = 0.1, step = 0.01),
             sliderInput("rel.risk", "Relative Risk hunting infecteds",
-                      value = 1, min = .1, max = 4, step = 0.1)),
+                      value = 1, min = .1, max = 4, step = 0.1),
+            sliderInput("p", "index of disease mortality",
+                        value = 0.43, min = 0, max = .9, step = 0.01)),
           tabPanel("Hunting & Simulation",
              sliderInput("n.years", "# of years",
                          value = 10, min = 3, max = 20, step = 1),
@@ -49,11 +52,16 @@ shinyUI(fluidPage(
       column(8, h4("Plots"),
              tabsetPanel(
                tabPanel("Totals", plotOutput('TotalsPlot')),
-               tabPanel("Classification", plotOutput('classPlot'))
+               tabPanel("Deaths", plotOutput('DeathsPlot')),
+               tabPanel("Classification", plotOutput('ClassPlot')),
+               tabPanel("Parameters", plotOutput('ParamsPlot'))
               )
              )
       )
+    ),
+      tabPanel("Description",
+               includeMarkdown("desc_stoch_app.md")
+      )
     )
 )
-
-
+)

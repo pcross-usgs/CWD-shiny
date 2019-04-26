@@ -1,13 +1,16 @@
 # CWD shiny app stochastic model user interface
 library(shiny)
-#library(popbio)
+library(popbio)
 library(reshape2)
 library(tidyverse)
 library(cowplot)
+library(ggridges)
+library(magrittr)
 
-source("stoch_model_fxn_ver2.R", local = T) #NOTE shinyapps.io is case-sensitive on the "R"
+source("stoch_model_fxn.R", local = T) #NOTE shinyapps.io is case-sensitive on the "R"
 source("plot_stoch_fxns.r", local = T)
-
+source("plot_params.r", local = T)
+source("estBetaParams.r", local = T)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
@@ -15,7 +18,7 @@ shinyServer(function(input, output) {
     list(sims = input$sims,
          n.age.cats = 12,
          n0 = 2000, # initial population size
-         p = 0.43, #probability of transitioning between infectious box cars;
+         p = input$p, #probability of transitioning between infectious box cars;
 
          fawn.an.sur.var = 0.005,
          an.sur.var = 0.005,
@@ -53,39 +56,58 @@ shinyServer(function(input, output) {
   simout <- reactive({
     params <- react.params()
 
-    out.sims <- vector("list", input$sims)
+    counts.sims <- vector("list", input$sims)
+    deaths.sims <- vector("list", input$sims)
 
     for(i in 1:input$sims){
-      out.sims[[i]] <- stoch.pop.model.2(params)
+      out <- stoch.pop.model(params)
+      counts.sims[[i]] <- out$counts
+      deaths.sims[[i]] <- out$deaths
     }
 
-    out.sims.long <- melt(out.sims) %>%
-      rename(age = Var1, month = Var2, population = value,
-             category = L2, sim = L1) %>%
-      mutate(year = (month - 1) / 12, sex = as.factor(str_sub(category, -1)),
-             disease = "no")
-    out.sims.long$disease[str_sub(out.sims.long$category, 1,1) == "I"] = "yes"
-    out.sims.long$disease <- as.factor(out.sims.long$disease)
+    counts.long <- melt(counts.sims,
+                         id = c("age", "month", "population", "category",
+                                "year", "sex", "disease")) %>% rename(sim = L1)
 
-    out.sims.long
+    deaths.long <- melt(deaths.sims,
+                         id = c("age", "month", "population", "category",
+                                "year", "sex")) %>% rename(sim = L1)
+
+    out <- list(counts = counts.long, deaths = deaths.long)
+    out
   })
 
   output$TotalsPlot <- renderPlot({
-    #plot the totals
-   p1 <- plot.stoch.tots(simout(), all.lines = T, error.bars = c(0.25, 0.75),
+
+  out <- simout()
+   #plot the totals
+   p1 <- plot.stoch.tots(out$counts, all.lines = T, error.bars = c(0.25, 0.75),
                     by.sexage = F)
-   p2 <- plot.stoch.prev(simout(), all.lines = T, error.bars = TRUE,
+   p2 <- plot.stoch.prev(out$counts, all.lines = T, error.bars = TRUE,
                          cis = c(0.25, 0.75))
    plot_grid(p1, p2)
-   })
+   }, height = 600)
 
-  #output$prevPlot <- renderPlot({})
+  output$DeathsPlot <- renderPlot({
+      out <- simout()
+      p1 <- plot.stoch.deaths(out$deaths, error.bars = c(0.05, 0.95))
+      p2 <- plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
+      plot_grid(p1, p2, nrow = 2)
+    }, height = 600)
 
-  output$classPlot <- renderPlot({
+   output$ParamsPlot <- renderPlot({
+     params <- react.params()
+     p1 <- plot.vitals(params)
+     p2 <- plot.ttd(params$p)
+     plot_grid(p1, p2, nrow = 2)
+   }, height = 600)
+
+  output$ClassPlot <- renderPlot({
+    out <- simout()
     #plot fawn.adult and buck:doe
-    p1 <- plot.stoch.fawn.adult(simout(), all.lines = T, error.bars = c(0.05, 0.95))
-    p2 <- plot.stoch.buck.doe(simout(), all.lines = T, error.bars = c(0.05, 0.95))
+    p1 <- plot.stoch.fawn.adult(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
+    p2 <- plot.stoch.buck.doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
     plot_grid(p1, p2)
-  })
+  }, height = 600)
 
 })

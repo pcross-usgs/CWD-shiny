@@ -4,8 +4,11 @@ library(shiny)
 library(popbio)
 library(reshape2)
 library(tidyverse)
+library(ggridges)
+library(cowplot)
 source("det_pop_model_fxn_ver2.r", local = T)
 source("plot_fxns.r", local = T)
+source("plot_params.r", local = T)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -27,7 +30,7 @@ shinyServer(function(input, output) {
          hunt.mort.ad.m = input$hunt.mort.ad.m,
 
          n.age.cats = 12,
-         p =  0.43,
+         p = input$p,
 
          ini.fawn.prev = input$ini.fawn.prev,
          ini.juv.prev = input$ini.juv.prev,
@@ -44,7 +47,7 @@ shinyServer(function(input, output) {
 
   simout <- reactive({
     params <- react.params()
-    out <- det.pop.model.v2(react.params())
+    out <- det.pop.model.v2(params)
     out
     })
 
@@ -65,6 +68,12 @@ shinyServer(function(input, output) {
     p2 <- plot.perc.deaths(out$deaths)
     plot_grid(p1, p2, nrow = 2)
     }, height = 600)
+
+  output$ParamsPlot <- renderPlot({
+    params <- react.params()
+    plot.ttd(params$p)
+  }, height = 600)
+
 
   output$classPlot <- renderPlot({
     out <- simout()
