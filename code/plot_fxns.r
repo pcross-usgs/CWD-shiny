@@ -281,7 +281,8 @@ plot.deaths <- function(dat){
   require(reshape2)
   require(tidyverse)
 
-  deaths <- out$deaths %>%
+  deaths <- dat %>%
+    filter(age >= 2) %>%
     mutate(category = as.factor(str_sub(category, 1, 1))) %>%
     mutate(category = fct_recode(category,
                                  "CWD" = "C",
@@ -293,7 +294,7 @@ plot.deaths <- function(dat){
 
 p <-   ggplot(data = deaths, aes(x = year, y = n, color = category)) +
     geom_line(size = 1.5) + facet_wrap(~sex) +
-    xlab("Year") + ylab("# of Deaths") + theme_light() +
+    xlab("Year") + ylab("# of Adult Deaths") + theme_light(base_size = 18) +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major.x = element_blank())
 p
@@ -309,7 +310,8 @@ plot.perc.deaths <- function(dat){
   require(reshape2)
   require(tidyverse)
 
-  deaths <- out$deaths %>%
+  deaths <- dat %>%
+    filter(age >= 2) %>%
     mutate(category = as.factor(str_sub(category, 1, 1))) %>%
     mutate(category = fct_recode(category,
                                  "CWD" = "C",
@@ -326,7 +328,7 @@ plot.perc.deaths <- function(dat){
 
   p <- ggplot(data = deaths, aes(x = year, y = percent, color = category)) +
           geom_line(size = 1.5) + facet_wrap(~sex) +
-          xlab("Year") + ylab("% of Deaths") + theme_light() +
+          xlab("Year") + ylab("% of Adult Deaths") + theme_light(base_size = 18) +
           theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 p
