@@ -1,16 +1,15 @@
 # script to create some initial parameters.
 
 ######PARAMETER VALUES######
-n.years <- 300 # number of years for the simulation
+n.years <- 20 # number of years for the simulation
 
 #relative risk of hunting a positive case
 rel.risk <- 1
 #Transmission
 env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
-beta <- 0.003 # direct transmission
-theta <- 0.5  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
+beta <- 0.035 # direct transmission
+theta <- 1  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
 
-#dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
 p <- .43#0.43 #probability of transitioning between infectious box cars
 
 #Natural Annual survival rates

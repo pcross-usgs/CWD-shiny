@@ -116,8 +116,8 @@ det.pop.model.v2 <- function(params){
    It.f[ , t, ] <- It.f[ , t, ] * Sur.f
    It.m[ , t, ] <- It.m[ , t, ] * Sur.m
    #browser()
-   Dt.f[, t] <- St.f[, t] +  rowSums(It.f[ , t, ])  * (1 - Sur.f)
-   Dt.m[, t] <- St.m[, t] +  rowSums(It.m[ , t, ])  * (1 - Sur.m)
+   Dt.f[, t] <- (St.f[, t] +  rowSums(It.f[ , t, ]))  * (1 - Sur.f)
+   Dt.m[, t] <- (St.m[, t] +  rowSums(It.m[ , t, ]))  * (1 - Sur.m)
 
    # Hunt mortality
    if(hunt.mo[t]==1){
