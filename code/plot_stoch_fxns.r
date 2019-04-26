@@ -95,7 +95,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
   }
 
   # adjust the theme
-  p <- p + xlab("Year") + ylab("Population") + theme_light() +
+  p <- p + xlab("Year") + ylab("Population") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
@@ -162,7 +162,7 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
   }
 
   p <- p + xlab("Year") + ylab("Prevalence") +
-    theme_light() + theme(panel.grid.minor = element_blank(),
+    theme_light(base_size = 18) + theme(panel.grid.minor = element_blank(),
                         panel.grid.major.x = element_blank())
   p
 }
@@ -236,7 +236,7 @@ plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
                       linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Prevalence") + theme_light() +
+  p <- p + xlab("Year") + ylab("Prevalence") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
   p
@@ -304,7 +304,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
                 linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light() +
+  p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
@@ -374,11 +374,122 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
                 linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Buck:Doe") + theme_light() +
+  p <- p + xlab("Year") + ylab("Buck:Doe") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
   p
 
 
+}
+
+
+
+# plot total deaths by type each year
+plot.stoch.deaths <- function(dat, error.bars){
+  # INPUT
+  # dat = list of the output matrices of deaths
+  # OUTPUT
+  # plot of the total deaths over time
+  require(reshape2)
+  require(tidyverse)
+
+  dat.sum <- dat %>%
+    filter(age >= 2) %>%
+    mutate(category = as.factor(str_sub(category, 1, 1))) %>%
+    mutate(category = fct_recode(category,
+                                 "CWD" = "C",
+                                 "Natural" = "D",
+                                 "Hunted" = "H"),
+           year = floor(year)) %>%
+    group_by(year, sex, category, sim) %>%
+    summarize(n = sum(population))
+
+  # calculate the mean
+  dat.mean <- dat.sum %>%
+    group_by(year, sex, category) %>%
+    summarize(avg = mean(n))
+
+  if(missing(error.bars) == F){# calculate the error bars
+    dat.mean <- dat.sum %>%
+      group_by(year, sex, category) %>%
+      summarize(lo = quantile(n, error.bars[1]),
+                hi = quantile(n, error.bars[2]),
+                avg = mean(n))
+  }
+
+  p <-   ggplot(data = dat.mean, aes(x = year, y = avg, color = category)) +
+    geom_line(size = 1.5) +
+    xlab("Year") + ylab("# of Adult Deaths")
+
+  if(missing(error.bars) == F){
+    p <- p + geom_line(data = dat.mean, aes(x = year, y = lo, color = category),
+                         linetype = "dashed") +
+        geom_line(data = dat.mean, aes(x = year, y = hi, color = category),
+                  linetype = "dashed")
+
+  }
+  p <- p + theme_light(base_size = 18) + facet_wrap(~sex) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
+
+
+
+
+}
+
+# plot total deaths by type each year
+plot.stoch.perc.deaths <- function(dat, error.bars){
+  # INPUT
+  # dat = list of the output matrices of deaths
+  # OUTPUT
+  # plot of the percentage of deaths by type over time
+  require(reshape2)
+  require(tidyverse)
+
+  dat.sum <- dat %>%
+    filter(age >= 2) %>%
+    mutate(category = as.factor(str_sub(category, 1, 1))) %>%
+    mutate(category = fct_recode(category,
+                                 "CWD" = "C",
+                                 "Natural" = "D",
+                                 "Hunted" = "H"),
+           year = floor(year)) %>%
+    group_by(year, sex, category, sim) %>%
+    summarize(n = sum(population)) %>%
+    spread(key = category, value = n) %>%
+    mutate(total = CWD + Natural + Hunted) %>%
+    mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total) %>%
+    select(year, sex, cwd.p, nat.p, hunt.p) %>%
+    gather("cwd.p", "nat.p", "hunt.p", key ="category", value = "percent" )
+
+
+  # calculate the mean
+  dat.mean <- dat.sum %>%
+    group_by(year, sex, category) %>%
+    summarize(avg.percent = mean(percent))
+
+  if(missing(error.bars) == F){# calculate the error bars
+    dat.mean <- dat.sum %>%
+      group_by(year, sex, category) %>%
+      summarize(lo = quantile(percent, error.bars[1]),
+                hi = quantile(percent, error.bars[2]),
+                avg.percent = mean(percent))
+  }
+
+  p <- ggplot(data = dat.mean, aes(x = year, y = avg.percent, color = category)) +
+    geom_line(size = 1.5)  + xlab("Year") + ylab("% of Adult Deaths")
+
+  if(missing(error.bars) == F){
+    p <- p + geom_line(data = dat.mean, aes(x = year, y = lo, color = category),
+                       linetype = "dashed") +
+      geom_line(data = dat.mean, aes(x = year, y = hi, color = category),
+                linetype = "dashed")
+  }
+
+ p <- p + facet_wrap(~sex) + theme_light(base_size = 18) +
+          theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
 }
