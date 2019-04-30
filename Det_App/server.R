@@ -35,6 +35,7 @@ shinyServer(function(input, output) {
          ini.ad.m.prev = input$ini.ad.m.prev,
 
          foi =  1 - ((1-input$an.foi)^(1/12)),
+         foi.m = input$foi.m,
          n0 = input$n0,
          n.years = input$n.years,
          rel.risk = input$rel.risk)

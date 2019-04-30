@@ -22,6 +22,8 @@ shinyUI(fluidPage(
         column(width = 2, h4("Disease"),
                sliderInput("an.foi", "Force of infection",
                            value = 0.02, min = 0, max = 0.1, step = 0.01),
+               sliderInput("foi.m", "Relative male infection",
+                           value = 1, min = 0.8, max = 1.4, step = 0.05),
                sliderInput("ini.fawn.prev", "Fawn prevalence",
                            value = 0.01, min = 0, max = 0.4, step = 0.01),
                sliderInput("ini.juv.prev", "Juv prevalence",
@@ -46,7 +48,7 @@ shinyUI(fluidPage(
                sliderInput("rel.risk","Relative risk",
                            value = 1, min = 0.1, max = 2, step = 0.1),
                sliderInput("hunt.mort.ad.m","% bucks hunted",
-                           value = 0.2,min = 0.01, max = 0.3,step = 0.05)),
+                           value = 0.2,min = 0.01, max = 0.5,step = 0.05)),
         column(width = 6, h4("Plots"),
                plotOutput('TotalsPlot'),
                plotOutput('classPlot')
