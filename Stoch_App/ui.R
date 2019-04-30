@@ -22,6 +22,8 @@ shinyUI(fluidPage(
           tabPanel("Disease",
             sliderInput("an.foi", "Force of infection",
                        value = 0.02, min = 0, max = 0.2, step = 0.01),
+            sliderInput("foi.m", "Relative male infection",
+                        value = 1, min = 0.8, max = 1.4, step = 0.05),
             sliderInput("ini.fawn.prev", "Fawn prevalence",
                        value = 0.01, min = 0, max = 0.1, step = 0.01),
             sliderInput("ini.juv.prev", "Juv prevalence",
@@ -46,12 +48,13 @@ shinyUI(fluidPage(
              sliderInput("hunt.mort.ad.f","% Does hunted",
                          value = 0.10, min = 0.01, max = 0.3,step = 0.05),
              sliderInput("hunt.mort.ad.m","% bucks hunted",
-                         value = 0.20, min = 0.01, max = 0.3,step = 0.05)
+                         value = 0.20, min = 0.01, max = 0.5,step = 0.05)
              )
          )),
       column(8, h4("Plots"),
              tabsetPanel(
                tabPanel("Totals", plotOutput('TotalsPlot')),
+               tabPanel("Prevalence", plotOutput('PrevPlot')),
                tabPanel("Deaths", plotOutput('DeathsPlot')),
                tabPanel("Classification", plotOutput('ClassPlot')),
                tabPanel("Parameters", plotOutput('ParamsPlot'))

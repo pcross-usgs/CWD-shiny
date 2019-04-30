@@ -30,6 +30,7 @@ shinyServer(function(input, output) {
 
          n.years = input$n.years,
          foi = 1 - ((1-input$an.foi)^(1/12)), # monthly infection probability
+         foi.m = input$foi.m,
 
          ini.fawn.prev = input$ini.fawn.prev,
          ini.juv.prev = input$ini.juv.prev,
@@ -78,15 +79,18 @@ shinyServer(function(input, output) {
   })
 
   output$TotalsPlot <- renderPlot({
+    out <- simout()
+    p1 <- plot.stoch.tots.2(out$counts, error.bars = c(0.05, 0.95))
+    p1
+  }, height = 600)
 
-  out <- simout()
-   #plot the totals
-   p1 <- plot.stoch.tots(out$counts, all.lines = T, error.bars = c(0.25, 0.75),
-                    by.sexage = F)
-   p2 <- plot.stoch.prev(out$counts, all.lines = T, error.bars = TRUE,
-                         cis = c(0.25, 0.75))
-   plot_grid(p1, p2)
-   }, height = 600)
+  output$PrevPlot <- renderPlot({
+    out <- simout()
+    p1 <- plot.stoch.prev(out$counts, all.lines = T, error.bars = T,
+                          cis <- c(0.05, 0.95))
+    p2 <- plot.stoch.prev.age.2(out$counts, error.bars = c(0.05, 0.95))
+    plot_grid(p1, p2, nrow = 2)
+  }, height = 600)
 
   output$DeathsPlot <- renderPlot({
       out <- simout()
