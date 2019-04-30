@@ -102,6 +102,67 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
   p
 }
 
+# plot totals, pos, and negatives by sex
+plot.stoch.tots.2 <- function(dat, error.bars){
+  # INPUT
+  # dat = data.frame with columns of
+  # age = numeric
+  # month = numeric index
+  # population = numeric
+  # category = text
+  # sim = number of simulation
+  # year = year of the simulation (numeric)
+  # sex = f/m (factor)
+  # disease = yes/no (factor)
+  #
+  # error bars = vector of high and low percentiles
+  #
+  # OUTPUT
+  # plot of the population totals split by sex and disease
+
+  require(reshape2)
+  require(tidyverse)
+
+  dat.sum <- dat %>%
+    filter(month %% 12 == 10) %>%
+    group_by(year, sim, disease) %>%
+    summarize(n = sum(population)) %>%
+    spread(key = disease, value = n) %>%
+    mutate(total = no + yes) %>%
+    gather ("no", "yes", "total", key = "disease", value = "n" ) %>%
+    mutate(disease = fct_recode(disease,
+                                "negative" = "no",
+                                "positive" = "yes",
+                                "total" = "total")) %>%
+    mutate(disease = fct_reorder(disease,n)) %>%
+    arrange(sim, year)
+
+  # calculate the mean
+  dat.mean <- dat.sum %>%
+    group_by(year, disease) %>%
+    summarize(lo = quantile(n, error.bars[1]),
+              hi = quantile(n, error.bars[2]),
+              avg = mean(n)) %>%
+    mutate(disease = fct_reorder(disease, avg))
+
+  p <-   ggplot(data = dat.mean, aes(x = year, y = avg, color = disease)) +
+    geom_line(size = 1.5) +
+    xlab("Year") + ylab("Population")
+
+  if(missing(error.bars) == F){
+    p <- p + geom_line(data = dat.mean, aes(x = year, y = lo, color = disease),
+                       linetype = "dashed") +
+         geom_line(data = dat.mean, aes(x = year, y = hi, color = disease),
+                linetype = "dashed")
+  }
+
+  p <- p + theme_light(base_size = 18) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
+
+}
+
 # plot the prevalence by age over time
 plot.stoch.prev.age <- function(dat, by.sex, ...){
   # INPUT
@@ -191,15 +252,14 @@ plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
   if(missing(all.lines)){all.lines = TRUE}
   if(missing(error.bars)){
     error.bars <- FALSE
-    cis <- c(0.1, 0.9)
+    cis <- c(0.05, 0.95)
   }
   if(missing(cis)){
     warning('no arguments for the cis were provided')
-    cis <- c(0.1, 0.9)
+    cis <- c(0.05, 0.95)
   }
 
-
-  # summarize by year and sex
+  # summarize by year and disease
   dat.sum <- dat %>%
     filter(month %% 12 == 7) %>%
     group_by(year, sim, disease) %>%
@@ -237,9 +297,49 @@ plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
   }
 
   p <- p + xlab("Year") + ylab("Prevalence") + theme_light(base_size = 18) +
+    ylim(0, 1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
   p
+}
+
+# plot the prevalence by age at the end point
+plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
+  # INPUT
+  # dat = list of the output matrices
+  # OUTPUT
+  # plot of the prevalence
+  require(reshape2)
+  require(tidyverse)
+
+  # summarize disease status on the last year, calculate the prevalence
+  dat.sum <- dat %>%
+    filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+    group_by(age, sex, sim, disease)%>%
+    summarize(n = sum(population)) %>%
+    spread(key = disease, value = n) %>%
+    mutate(prev = yes / (no + yes)) %>%
+    select(age, sex, prev, sim)
+
+  # calculate the mean
+  dat.mean <- dat.sum %>%
+    group_by(age, sex) %>%
+    summarize(lo = quantile(prev, error.bars[1], na.rm = T),
+              hi = quantile(prev, error.bars[2], na.rm = T),
+              avg = mean(prev, na.rm = T)) %>%
+    arrange(sex, age)
+
+  p <-   ggplot(data = dat.mean, aes(x = age, y = avg, color = sex)) +
+    geom_line(size = 1.5) +
+    xlab("Age") + ylab("Prevalence")
+
+    p <- p + geom_line(data = dat.mean, aes(x = age, y = lo, color = sex),
+                       linetype = "dashed") +
+      geom_line(data = dat.mean, aes(x = age, y = hi, color = sex),
+                linetype = "dashed") +  theme_light(base_size = 18) +
+      theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+    p
 }
 
 # plot the fawn:adult
@@ -305,6 +405,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
   }
 
   p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light(base_size = 18) +
+    ylim(0.2, 1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
@@ -375,6 +476,7 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
   }
 
   p <- p + xlab("Year") + ylab("Buck:Doe") + theme_light(base_size = 18) +
+    ylim(0.1,1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
 
@@ -382,8 +484,6 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
 
 
 }
-
-
 
 # plot total deaths by type each year
 plot.stoch.deaths <- function(dat, error.bars){
@@ -405,17 +505,20 @@ plot.stoch.deaths <- function(dat, error.bars){
     group_by(year, sex, category, sim) %>%
     summarize(n = sum(population))
 
+
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg = mean(n))
+    summarize(avg = mean(n)) %>%
+    mutate(category = fct_reorder(category, avg))
 
   if(missing(error.bars) == F){# calculate the error bars
     dat.mean <- dat.sum %>%
       group_by(year, sex, category) %>%
       summarize(lo = quantile(n, error.bars[1]),
                 hi = quantile(n, error.bars[2]),
-                avg = mean(n))
+                avg = mean(n)) %>%
+      mutate(category = fct_reorder(category, avg))
   }
 
   p <-   ggplot(data = dat.mean, aes(x = year, y = avg, color = category)) +
@@ -433,9 +536,6 @@ plot.stoch.deaths <- function(dat, error.bars){
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
   p
-
-
-
 
 }
 
@@ -462,20 +562,25 @@ plot.stoch.perc.deaths <- function(dat, error.bars){
     mutate(total = CWD + Natural + Hunted) %>%
     mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total) %>%
     select(year, sex, cwd.p, nat.p, hunt.p) %>%
-    gather("cwd.p", "nat.p", "hunt.p", key ="category", value = "percent" )
-
+    gather("cwd.p", "nat.p", "hunt.p", key ="category", value = "percent" ) %>%
+    mutate(category = fct_recode(category,
+                               "CWD" = "cwd.p",
+                               "Natural" = "nat.p",
+                               "Hunted" = "hunt.p"))
 
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg.percent = mean(percent))
+    summarize(avg.percent = mean(percent))%>%
+    mutate(category = fct_reorder(category, avg.percent))
 
   if(missing(error.bars) == F){# calculate the error bars
     dat.mean <- dat.sum %>%
       group_by(year, sex, category) %>%
       summarize(lo = quantile(percent, error.bars[1]),
                 hi = quantile(percent, error.bars[2]),
-                avg.percent = mean(percent))
+                avg.percent = mean(percent))%>%
+      mutate(category = fct_reorder(category, avg.percent))
   }
 
   p <- ggplot(data = dat.mean, aes(x = year, y = avg.percent, color = category)) +
