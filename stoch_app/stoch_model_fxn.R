@@ -243,7 +243,7 @@ stoch.pop.model <- function(params){
 
     #Transmission
     transmission.f <- rbinom(n.age.cats, St.f[,t], foi)
-    transmission.m <- rbinom(n.age.cats, St.m[,t], foi)
+    transmission.m <- rbinom(n.age.cats, St.m[,t], foi*foi.m)
 
     St.f[, t] <- St.f[ ,t] - transmission.f
     St.m[, t] <- St.m[ ,t] - transmission.m
