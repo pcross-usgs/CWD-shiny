@@ -8,8 +8,14 @@ n.years <- 30 # number of years for the simulation
 
 foi <- 1 - (0.95^(1/12)) # monthly probability of becoming infected
 
+# increase in transmission risk for males compared to females
+# 1.1 is 10% increase in transmission rate compared to females.
+foi.m <- 1.1
+
 #dis.mort <- 1-((1-0.3)^(1/12)) # additional disease induced mortality rates per month.
 p <- .43 #probability of transitioning between infectious box cars
+
+
 
 #Natural Annual survival rates
 fawn.an.sur <- 0.5
@@ -68,6 +74,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
                n.age.cats = n.age.cats,
                p = p,
                foi = foi,
+               foi.m = foi.m,
                n0 = n0,
                n.years = n.years,
                rel.risk = rel.risk)
