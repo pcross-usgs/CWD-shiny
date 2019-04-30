@@ -155,7 +155,7 @@ det.pop.model <- function(params){
 
     #Disease transmission here
    cases.f <- St.f[ ,t] * foi
-   cases.m <- St.m[ ,t] * foi
+   cases.m <- St.m[ ,t] * foi * foi.m
 
    St.f[ ,t] <- St.f[ ,t] - cases.f
    St.m[ ,t] <- St.m[ ,t] - cases.m
