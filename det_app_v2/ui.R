@@ -25,8 +25,10 @@ shinyUI(fluidPage(
                 tabPanel("Disease",
                    sliderInput("an.env.foi", "Envi FOI",
                                value = 0.02, min = 0, max = 0.1, step = 0.01),
-                   sliderInput("beta", "Direct transmission (beta)",
-                               value = 0.035, min = 0, max = .2, step = 0.0001),
+                   sliderInput("r0", "R_0",
+                               value = 1.5, min = .9, max = 5, step = .05),
+                   sliderInput("beta.m", "Relative male infection",
+                               value = 1, min = 0.8, max = 1.4, step = 0.05),
                    sliderInput("theta", "Theta",
                                value =1, min = 0, max = 1, step = 0.1),
                    sliderInput("ini.fawn.prev", "Fawn prevalence",
@@ -51,7 +53,7 @@ shinyUI(fluidPage(
                    sliderInput("hunt.mort.ad.f","% Does hunted",
                                value = 0.08,min = 0.01, max = 0.2,step = 0.01),
                    sliderInput("hunt.mort.ad.m","% bucks hunted",
-                               value = 0.15,min = 0.01, max = 0.3,step = 0.01),
+                               value = 0.15,min = 0.01, max = 0.5,step = 0.01),
                    sliderInput("rel.risk","Relative risk",
                                value = 1, min = 0.1, max = 2, step = 0.1))
              )

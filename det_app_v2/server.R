@@ -38,7 +38,16 @@ shinyServer(function(input, output) {
          ini.ad.m.prev = input$ini.ad.m.prev,
 
          env.foi =  1 - ((1-input$an.env.foi)^(1/12)),
-         beta = input$beta,
+
+         #calculate beta from r0_female
+         #R0 / (avg time to death * N^theta)
+         # for time to death first draw 1000 reps for each of the competing rates
+         # take the min of the three rates, take the mean of the mins.
+         beta = input$r0 / (mean(apply(cbind(rexp(1000, (1-input$ad.an.f.sur^(1/12))),
+                            rexp(1000, (1-(1-input$hunt.mort.ad.f)^(1/12))),
+                            rgamma(1000, 10, input$p)), 1, FUN = min)) * input$n0^input$theta),
+
+         beta.m = input$beta.m,
          theta = input$theta,
          n0 = input$n0,
          n.years = input$n.years,
@@ -59,7 +68,7 @@ shinyServer(function(input, output) {
 
   output$prevPlot <- renderPlot({
     out <- simout()
-    plot.prev.2(out$counts)
+    plot.prev.2(out$counts,ylim = c(0, .7))
     }, height = 600)
 
   output$deathPlot <- renderPlot({
@@ -77,6 +86,6 @@ shinyServer(function(input, output) {
 
   output$classPlot <- renderPlot({
     out <- simout()
-    plot.fawn.buck(out$counts, lwd = 3)
+    plot.fawn.buck(out$counts, ylim = c(0.2, 1), lwd = 3)
   })
 })
