@@ -33,16 +33,23 @@ plot.tots <- function(dat, ...){
     group_by(year, disease) %>%
     summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
-    mutate(tots = no + yes)
+    mutate(total = no + yes) %>%
+    gather ("no", "yes", "total", key = "disease", value = "n" ) %>%
+    mutate(disease = fct_recode(disease,
+                                "negative" = "no",
+                                "positive" = "yes",
+                                "total" = "total")) %>%
+    mutate(disease = fct_reorder(disease,n))
+
+
 
   #plot
-  plot(dat.sum$year, dat.sum$tots, type = "l",
-       ylab = "Population", xlab = "Year",
-       lwd = 3, bty = "l", ...)
-  lines(dat.sum$year, dat.sum$yes, col = "red", lwd = 2)
-  lines(dat.sum$year, dat.sum$no, col = "blue", lwd = 2)
-  legend("topright", c("total", "infected", "healthy"),
-         col = c("black", "red", "blue"), lwd = 2, box.lty=0)
+  p <- ggplot(dat.sum, aes(year, n, color = disease)) +
+    geom_line(size = 1.5) +
+    xlab("Year") + ylab("Population") + theme_light(base_size = 18) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
 }
 
 # plot all ages all months
@@ -79,7 +86,7 @@ plot.prev <- function(dat, ...){
     mutate(prev = yes/ (no + yes))
 
   plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
-       bty = "l", type = "l", lwd = 2, ...)
+       bty = "l", type = "l", lwd = 2, ylim = ylims, ...)
 }
 
 # plot the prevalence
@@ -156,11 +163,12 @@ plot.prev.2 <- function(dat, ...){
     select(age, sex, prev) %>%
     spread(key = sex, value = prev)
 
+
   #create the plot
  par(mfrow = c(2,1))
  plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
        bty = "l", type = "l", lwd = 2,
-      cex = 1.5, cex.lab = 1.5, cex.axis = 1.5, ...)
+      cex = 1.5, cex.lab = 1.5, cex.axis = 1.5,  ...)
  plot(dat.sum2$age, dat.sum2$f, type = "l", col = "red", xlab = "Age",
       ylab = "Prevalence", bty = "l", lwd = 2,
       cex = 1.5, cex.lab = 1.5, cex.axis = 1.5, ...)
@@ -290,7 +298,8 @@ plot.deaths <- function(dat){
                                  "Hunted" = "H"),
            year = floor(year)) %>%
     group_by(year, sex, category) %>%
-    summarize(n = sum(population))
+    summarize(n = sum(population)) %>%
+    mutate(category = fct_reorder(category, n))
 
 p <-   ggplot(data = deaths, aes(x = year, y = n, color = category)) +
     geom_line(size = 1.5) + facet_wrap(~sex) +
@@ -324,7 +333,13 @@ plot.perc.deaths <- function(dat){
     mutate(total = CWD + Natural + Hunted) %>%
     mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total) %>%
     select(year, sex, cwd.p, nat.p, hunt.p) %>%
-    gather("cwd.p", "nat.p", "hunt.p", key ="category", value = "percent" )
+    gather("cwd.p", "hunt.p", "nat.p", key ="category", value = "percent" ) %>%
+    mutate(category = fct_recode(category,
+                               "CWD" = "cwd.p",
+                               "Natural" = "nat.p",
+                               "Hunted" = "hunt.p")) %>%
+    mutate(category = fct_reorder(category, percent))
+
 
   p <- ggplot(data = deaths, aes(x = year, y = percent, color = category)) +
           geom_line(size = 1.5) + facet_wrap(~sex) +
