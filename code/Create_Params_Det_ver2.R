@@ -5,12 +5,8 @@ n.years <- 20 # number of years for the simulation
 
 #relative risk of hunting a positive case
 rel.risk <- 1
-#Transmission
-env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
-beta <- 0.035 # direct transmission
-theta <- 1  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
-
-p <- .43#0.43 #probability of transitioning between infectious box cars
+# disease mortality parameter
+p <- .43 #0.43 #probability of transitioning between infectious box cars
 
 #Natural Annual survival rates
 fawn.an.sur <- 0.5
@@ -43,8 +39,21 @@ ini.ad.m.prev <- 0.05
 #Mean additive hunt mortality; user input
 hunt.mort.fawn <- 0.0
 hunt.mort.juv <- 0.03
-hunt.mort.ad.f <- 0.05
+hunt.mort.ad.f <- 0.01
 hunt.mort.ad.m <- 0.15
+
+#Transmission
+env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
+r0 <- 1.5
+theta <- .5  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
+
+beta = r0 / (mean(apply(cbind(rexp(1000, (1 - ad.an.f.sur^(1/12))),
+                                    rexp(1000, (1-(1-hunt.mort.ad.f)^(1/12))),
+                                    rgamma(1000, 10, p)), 1, FUN = min)) * (n0^theta))
+
+#beta <- 0.035 # direct transmission
+beta.m <- 1.1 # transmission rate to males increased 10%
+
 
 #bundle them into a list
 params <- list(fawn.an.sur = fawn.an.sur,
@@ -70,6 +79,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
                p = p,
                env.foi = env.foi,
                beta = beta,
+               beta.m = beta.m,
                theta = theta,
                n0 = n0,
                n.years = n.years,
