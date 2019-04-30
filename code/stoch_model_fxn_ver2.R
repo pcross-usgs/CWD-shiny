@@ -242,9 +242,10 @@ stoch.pop.model.2 <- function(params){
     Nall <- sum(St.f[,t] + St.m[,t]) + Iall
 
     foi <- 1 - exp(-beta * Iall/Nall^theta)
+    foi.m <- 1 - exp(-beta * beta.m * Iall/Nall^theta)
 
     transmission.f <- rbinom(n.age.cats, St.f[,t], foi)
-    transmission.m <- rbinom(n.age.cats, St.m[,t], foi)
+    transmission.m <- rbinom(n.age.cats, St.m[,t], foi.m)
 
     St.f[, t] <- St.f[ ,t] - transmission.f
     St.m[, t] <- St.m[ ,t] - transmission.m

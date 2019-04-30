@@ -4,6 +4,7 @@ library(popbio)
 library(cowplot)
 library(tidyverse)
 library(reshape2)
+library(ggridges)
 source("./code/det_pop_model_fxn_ver2.r")
 source("./code/plot_fxns.r")
 source("./code/plot_params.r")
@@ -18,10 +19,11 @@ par(mfrow = c(1,1))
 plot.tots(out$counts)
 
 # prevalence plots
-plot.prev.2(out$counts)
+plot.prev.2(out$counts, ylim = c(0,1))
 
 # plot the fawn:doe and buck:doe ratios
-plot.fawn.buck(out$counts)
+plot.fawn.buck(out$counts, ylim = c(0.2, .8))
+
 # plot the deaths
 plot.deaths(out$deaths)
 plot.perc.deaths(out$deaths)
