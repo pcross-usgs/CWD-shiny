@@ -2,6 +2,7 @@
 rm(list = ls())
 library(popbio)
 library(reshape2)
+library(magrittr)
 library(tidyverse)
 source("./code/stoch_model_fxn_ver2.r")
 source("./code/plot_stoch_fxns.r")
@@ -31,14 +32,16 @@ deaths <- melt(deaths.sims,
 
 out <- list(counts = counts,deaths = deaths)
 #plot the totals
-plot.stoch.tots(out$counts, all.lines = T, error.bars = c(0.25, 0.75),
+plot.stoch.tots(out$counts, all.lines = T, error.bars = c(0.05, 0.95),
                 by.sexage = T)
 
+plot.stoch.tots.2(out$counts, error.bars = c(0.05, 0.95))
 #plot the prevalence
-plot.stoch.prev(out$counts, all.lines = T, error.bars = TRUE, cis = c(0.25, 0.75))
+plot.stoch.prev(out$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.95))
 
 # prev by age
 plot.stoch.prev.age(out$counts, by.sex = T)
+plot.stoch.prev.age.2(out$counts, error.bars = c(0.05, 0.95))
 
 #plot fawn.adult and buck:doe
 library(cowplot)

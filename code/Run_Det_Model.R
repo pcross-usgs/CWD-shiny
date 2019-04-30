@@ -19,14 +19,12 @@ out.long$disease[str_sub(out.long$category, 1,1) == "I"] = "yes"
 out.long$disease <- as.factor(out.long$disease)
 
 #PLOT the results
-plot.tots(out.long, type = "l", ylab = "Total population", xlab = "Year",
-          ylim = c(0,10000), lwd = 3,
-          cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+plot.tots(out.long)
 
 plot.all(out.long)
 
 # prevalence plot over time.
-plot.prev(out.long, type = "l", col = "red", xlab = "year", ylab = "prevalence")
+plot.prev(out.long)
 
 # prevalence plot by age
 plot.prev.age(out.long, by.sex = F)

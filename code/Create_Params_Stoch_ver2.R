@@ -47,8 +47,10 @@ hunt.mort.ad.m <- 0.2
 ###########
 #Transmission
 env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
-beta <- 0.07 # direct transmission
-theta <- 1  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
+beta <- 0.007 # direct transmission
+beta.m <- 1.1 # transmission rate to males increased by 10%
+
+theta <- .5  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
 
 #dis.mort is addressed by using 10 infectious box cars with a defined probability of transitioning, p.
 p <- 0.43 #probability of transitioning between infectious box cars; determines disease-induced mortality rate
@@ -94,6 +96,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
 
                env.foi = env.foi,
                beta = beta,
+               beta.m = beta.m,
                theta = theta,
                n0 = n0,
                n.years = n.years,

@@ -47,7 +47,7 @@ hunt.mort.ad.m <- 0.2
 ###########
 #not currently drawn from a distribution
 foi <- 1 - (0.98^(1/12)) # monthly probability of becoming infected
-
+foi.m <- 1.1 # increased transmission to males by 10%
 #dis.mort is addressed by using 10 infectious box cars with a defined probability of transitioning, p.
 p <- 0.43 #probability of transitioning between infectious box cars; determines disease-induced mortality rate
 
@@ -91,6 +91,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
                ini.ad.m.prev = ini.ad.m.prev,
 
                foi = foi,
+               foi.m = foi.m,
                n0 = n0,
                n.years = n.years,
                n.age.cats = n.age.cats,
