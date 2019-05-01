@@ -36,8 +36,6 @@ output: stores some of the created parameter files. Only used for testing purpos
 2. No density dependence on vital rates  
 3. No change in the environmental reservoir  
 4. Not sure how to implement hot spot targeted hunting. Currently allowing for positive individuals to be more likely to be hunted compared to the background prevalence via the "relative risk" parameter.
-5. all sex and age groups are currently equally susceptible, infections, and likely to due to CWD. So prevalence differences among males and females are minor.  
-
 
 ### Who do I talk to? ###
 
