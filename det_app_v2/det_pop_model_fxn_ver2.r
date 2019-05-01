@@ -173,8 +173,8 @@ det.pop.model.v2 <- function(params){
     Iall <- sum(It.f[ ,t, ] + It.m[ ,t,])
     Nall <- sum(St.f[,t] + St.m[,t]) + Iall
 
-    cases.f <- St.f[ ,t] * (1 - exp(-beta * Iall/Nall^theta))
-    cases.m <- St.m[ ,t] * (1 - exp(-beta * beta.m * Iall/Nall^theta))
+    cases.f <- St.f[ ,t] * (1 - exp( - (beta * (Iall / Nall^theta))))
+    cases.m <- St.m[ ,t] * (1 - exp( - (beta * beta.m * (Iall / Nall^theta))))
 
     St.f[ ,t] <- St.f[ ,t] - cases.f
     St.m[ ,t] <- St.m[ ,t] - cases.m

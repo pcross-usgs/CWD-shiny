@@ -106,6 +106,11 @@ shinyServer(function(input, output) {
      plot_grid(p1, p2, nrow = 2)
    }, height = 600)
 
+   output$AgePlot <- renderPlot({
+     out <- simout()
+     plot.stoch.age.dist(out$counts)
+   }, height = 600)
+
   output$ClassPlot <- renderPlot({
     out <- simout()
     #plot fawn.adult and buck:doe

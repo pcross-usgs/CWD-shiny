@@ -342,6 +342,35 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
     p
 }
 
+# plot the age distribution at the end point
+plot.stoch.age.dist <- function(dat, ...){
+  # INPUT
+  # dat = list of the output matrices
+  # OUTPUT
+  # plot of the prevalence
+  require(reshape2)
+  require(tidyverse)
+
+  # summarize disease status on the last year, calculate the prevalence
+  dat.sum <- dat %>%
+    filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+    group_by(age, sex, sim) %>%
+    summarize(n = sum(population)) %>%
+    select(age, sex, n, sim) %>%
+    group_by(age, sex) %>%
+    summarize(avg = mean(n, na.rm = T)) %>%
+    arrange(sex, age)
+
+  #create the plot
+  p <-   ggplot(data = dat.sum, aes(x = age, y = avg, color = sex)) +
+    geom_line(size = 1.5) +
+    xlab("Age") + ylab("Population") + theme_light(base_size = 18) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())
+  p
+}
+
+
 # plot the fawn:adult
 plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
   # INPUT

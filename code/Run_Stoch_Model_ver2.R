@@ -57,3 +57,5 @@ plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
 plot.vitals(params)
 # plot time to death
 plot.ttd(params$p)
+# plot the age distribution
+plot.stoch.age.dist(out$counts)

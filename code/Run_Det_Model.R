@@ -32,3 +32,6 @@ plot.prev.age(out.long, by.sex = F)
 #plot the fawn to adult ratio
 plot.fawn.adult(out.long, type = "l", xlab = "year", ylab = "fawn:adult")
 plot.buck.doe(out.long, type = "l", xlab = "year", ylab = "buck:doe")
+
+plot.age.dist(out.long)
+

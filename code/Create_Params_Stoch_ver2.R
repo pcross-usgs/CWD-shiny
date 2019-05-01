@@ -45,15 +45,21 @@ hunt.mort.ad.f <- 0.1
 hunt.mort.ad.m <- 0.2
 
 ###########
-#Transmission
-env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
-beta <- 0.007 # direct transmission
-beta.m <- 1.1 # transmission rate to males increased by 10%
-
-theta <- .5  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
-
 #dis.mort is addressed by using 10 infectious box cars with a defined probability of transitioning, p.
 p <- 0.43 #probability of transitioning between infectious box cars; determines disease-induced mortality rate
+
+
+#Transmission
+env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
+r0 <- 1.5
+theta <- 1  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
+
+beta = r0 * (n0^(theta-1)) / (mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.f.sur^(1/12))),
+                                               rnbinom(1000, 1, (1 - (1 - hunt.mort.ad.f)^(1/12))),
+                                               rgamma(1000, 10, p)), 1, FUN = min)))
+beta.m <- 1.1 # transmission rate to males increased by 10%
+
+
 
 #relative risk of hunting a positive case
 rel.risk <- 1

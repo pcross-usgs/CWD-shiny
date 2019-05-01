@@ -45,11 +45,11 @@ hunt.mort.ad.m <- 0.15
 #Transmission
 env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
 r0 <- 1.5
-theta <- .5  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
+theta <- 1  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
 
-beta = r0 / (mean(apply(cbind(rexp(1000, (1 - ad.an.f.sur^(1/12))),
-                                    rexp(1000, (1-(1-hunt.mort.ad.f)^(1/12))),
-                                    rgamma(1000, 10, p)), 1, FUN = min)) * (n0^theta))
+beta = r0 * (n0^(theta-1)) / (mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.f.sur^(1/12))),
+                                    rnbinom(1000, 1, (1 - (1 - hunt.Smort.ad.f)^(1/12))),
+                                    rgamma(1000, 10, p)), 1, FUN = min)))
 
 #beta <- 0.035 # direct transmission
 beta.m <- 1.1 # transmission rate to males increased 10%

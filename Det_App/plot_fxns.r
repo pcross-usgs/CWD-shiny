@@ -177,6 +177,34 @@ plot.prev.2 <- function(dat, ...){
         col = c("red", "blue"), cex = 1.5, lwd = 2, box.lty = 0)
 }
 
+# plot the age distribution at the end point
+plot.age.dist <- function(dat, ...){
+  # INPUT
+  # dat = list of the output matrices
+  # OUTPUT
+  # plot of the prevalence
+  require(reshape2)
+  require(tidyverse)
+
+  # summarize disease status on the last year, calculate the prevalence
+  dat.sum <- dat %>%
+    filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+    group_by(age, sex, age) %>%
+    summarize(n = sum(population)) %>%
+    select(age, sex, n) %>%
+    arrange(sex, age)
+
+  #create the plot
+  p <- ggplot(dat.sum, aes(x = age, y = n, color = sex)) +
+    geom_line(size = 1.5) +
+    ylab("Population") + xlab("Age") +
+    theme_light()  + theme(text = element_text(size = 18),
+          panel.grid.minor = element_blank(),
+          panel.grid.major = element_blank())
+  p
+}
+
+
 
 # plot the fawn:adult
 plot.fawn.adult <- function(dat, ...){

@@ -57,6 +57,7 @@ shinyUI(fluidPage(
                tabPanel("Prevalence", plotOutput('PrevPlot')),
                tabPanel("Deaths", plotOutput('DeathsPlot')),
                tabPanel("Classification", plotOutput('ClassPlot')),
+               tabPanel("Age Distribution", plotOutput('AgePlot')),
                tabPanel("Parameters", plotOutput('ParamsPlot'))
               )
              )
