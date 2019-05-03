@@ -165,7 +165,7 @@ plot.prev.2 <- function(dat, ...){
 
 
   #create the plot
- par(mfrow = c(2,1))
+ par(mfrow = c(1,2))
  plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
        bty = "l", type = "l", lwd = 2,
       cex = 1.5, cex.lab = 1.5, cex.axis = 1.5,  ...)
@@ -189,7 +189,7 @@ plot.age.dist <- function(dat, ...){
   # summarize disease status on the last year, calculate the prevalence
   dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
-    group_by(age, sex) %>%
+    group_by(age, sex, age) %>%
     summarize(n = sum(population)) %>%
     select(age, sex, n) %>%
     arrange(sex, age)
@@ -285,26 +285,15 @@ plot.fawn.buck <- function(dat, ...){
     spread(key = age.cat, value = n) %>%
     mutate(fawn.adult = fawn / adult)
 
-  par(mfrow = c(2, 1))
-  par(mar = c(2, 4, 1, 2))
+  par(mfrow = c(1,2))
+  par(mar = c(6, 6, 1, 2),
+      cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
   plot(dat.sum$year, dat.sum$buck.doe, type = "l",
-       col = "blue", bty = "o",
-       axes = F, ylab = "", ...)
-  axis(2, col = "blue", col.axis = "blue",
-       cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
-  mtext("buck:doe", side=2, col="blue",line=2.5,
-        cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
-
-  par(mar = c(6, 4,0,2))
+       col = "blue", bty = "l",
+       ylab = "buck:doe", xlab = "Year", ...)
   plot(dat.sum.2$year, dat.sum.2$fawn.adult, type = "l",
-       axes = "F", col = "red", bty = "l", ylab = "", xlab = "", ...)
-  axis(2, col = "red", col.axis = "red",
-       cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
-  axis(1, cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
-  mtext("Year", side=1, col="black",line=2.5,
-        cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
-  mtext("fawn:doe", side=2, col="red",line=2.5,
-        cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
+       col = "red", bty = "l", ylab = "fawn:doe",
+       xlab = "Year", ...)
 }
 
 
