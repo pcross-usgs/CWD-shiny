@@ -71,24 +71,24 @@ shinyServer(function(input, output) {
     out <- simout()
     par(mar = c(6,6,1,1))
     plot.prev.2(out$counts,ylim = c(0, .7))
-    }, height = 600)
+    })
 
   output$agePlot <- renderPlot({
     out <- simout()
     plot.age.dist(out$counts)
-  }, height = 600)
+  })
 
   output$deathPlot <- renderPlot({
     out <- simout()
     p1 <- plot.deaths(out$deaths)
     p2 <- plot.perc.deaths(out$deaths)
     plot_grid(p1, p2, nrow = 2)
-    }, height = 600)
+    })
 
   output$ParamsPlot <- renderPlot({
     params <- react.params()
     plot.ttd(params$p)
-  }, height = 600)
+  })
 
 
   output$classPlot <- renderPlot({
