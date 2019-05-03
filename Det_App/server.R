@@ -67,8 +67,10 @@ shinyServer(function(input, output) {
 
   output$classPlot <- renderPlot({
     out <- simout()
-    par(mfrow = c(1,2))
-    plot.fawn.adult(out, type = "l", xlab = "year", ylab = "fawn:adult")
-    plot.buck.doe(out, type = "l", xlab = "year", ylab = "buck:doe")
+    par(mfrow = c(1,2), mar = c(10,6,1,1))
+    plot.fawn.adult(out, type = "l", bty = "l", xlab = "year", ylab = "fawn:adult",
+                    cex = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+    plot.buck.doe(out, type = "l",  bty = "l", xlab = "year", ylab = "buck:doe",
+                  cex = 1.5, cex.axis = 1.5, cex.lab = 1.5)
   })
 })

@@ -69,6 +69,7 @@ shinyServer(function(input, output) {
 
   output$prevPlot <- renderPlot({
     out <- simout()
+    par(mar = c(6,6,1,1))
     plot.prev.2(out$counts,ylim = c(0, .7))
     }, height = 600)
 
