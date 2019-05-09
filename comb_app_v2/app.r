@@ -7,6 +7,7 @@ library(tidyverse)
 library(cowplot)
 library(ggridges)
 library(knitr)
+library(shinydashboard)
 
 source("stoch_model_fxn_ver2.r", local = T) 
 source("det_pop_model_fxn_ver2.r", local = T) 
@@ -21,18 +22,17 @@ source("plot_fxns.r", local = T)
 knit("description_combo.Rmd", quiet = T)
 
 ui <- fluidPage(theme = "common.css",
-  
-  # header
   div(class = "header", includeHTML("www/header.html")),
-  titlePanel(h3("Prepared in cooperation with Montana Fish, Wildlife and Parks")),
-  navbarPage("Chronic Wasting Disease",
-                           tabPanel("Deterministic Model", 
-                                    det_modUI(id = "det")), 
-                           tabPanel("Stochastic Model",  
-                                    stoch_modUI(id = "stoch")), 
-                           tabPanel("Description", 
-                                    withMathJax(includeMarkdown("description_combo.md")))
-                ),
+  titlePanel(h4("Prepared in cooperation with Montana Fish, Wildlife and Parks"), 
+             windowTitle = "CWD model"),
+  navbarPage("",
+               tabPanel("Deterministic Model", 
+                        det_modUI(id = "det")), 
+               tabPanel("Stochastic Model",  
+                        stoch_modUI(id = "stoch")), 
+               tabPanel("Description", 
+                        withMathJax(includeMarkdown("description_combo.md")))
+              ),
   #footer
   div(class = "footer", includeHTML("www/footer.html"))
 )
