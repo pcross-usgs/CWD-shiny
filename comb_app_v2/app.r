@@ -25,13 +25,14 @@ ui <- fluidPage(theme = "common.css",
   div(class = "header", includeHTML("www/header.html")),
   titlePanel(h4("Prepared in cooperation with Montana Fish, Wildlife and Parks"), 
              windowTitle = "CWD model"),
-  navbarPage("",
-               tabPanel("Deterministic Model", 
+  navbarPage("Chronic Wasting Disease Model",
+                tabPanel("Description", 
+                      withMathJax(includeMarkdown("description_combo.md"))),
+                tabPanel("Deterministic Model", 
                         det_modUI(id = "det")), 
-               tabPanel("Stochastic Model",  
-                        stoch_modUI(id = "stoch")), 
-               tabPanel("Description", 
-                        withMathJax(includeMarkdown("description_combo.md")))
+                tabPanel("Stochastic Model",  
+                        stoch_modUI(id = "stoch")) 
+               
               ),
   #footer
   div(class = "footer", includeHTML("www/footer.html"))
