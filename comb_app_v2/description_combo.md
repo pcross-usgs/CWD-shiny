@@ -1,4 +1,5 @@
-#About the chronic wasting disease model
+  
+## About the chronic wasting disease model  
 
 This application is a decision-support tool for natural resource managers interested in running different scenarios associated with chronic wasting disease in deer and elk of North America. The model is sex and age structured in order to allow for management strategies that may target different sex and age groups. This discrete time model runs on a monthly timestep. We assume the model starts in May and individuals move to the next age category at the start of May. All births occur in June and all hunting mortality is assumed to be in November. 
 
