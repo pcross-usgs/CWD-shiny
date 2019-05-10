@@ -1,0 +1,1 @@
+Time until disease mortality assumes that the individual does not die of other causes.   

@@ -16,7 +16,8 @@ stoch_modUI <- function(id) {
                     sliderInput(ns("juv.repro"), "Fawns per Juv",
                                 value = 0.9, min = 0.2, max = 1.5, step = 0.1),
                     sliderInput(ns("ad.repro"), "Fawns per adult",
-                                value = 1.6, min = 0.5, max = 2, step = 0.1)),
+                                value = 1.6, min = 0.5, max = 2, step = 0.1),
+                    includeText("vital_text.txt")),
            tabPanel("Disease",
                     sliderInput(ns("an.env.foi"), "Envi FOI",
                                 value = 0, min = 0, max = 0.1, step = 0.01),
@@ -29,7 +30,8 @@ stoch_modUI <- function(id) {
                     sliderInput(ns("p"), "index of disease mortality",
                                 value = 0.43, min = 0, max = .9, step = 0.01),
                     sliderInput(ns("rel.risk"), "Relative Risk hunting infecteds",
-                                value = 1, min = .1, max = 4, step = 0.1)),
+                                value = 1, min = .1, max = 4, step = 0.1),
+                    includeText("disease_text.txt")),
 
            tabPanel("Hunting",
                     sliderInput(ns("hunt.mort.fawn"),"% fawns hunted",
@@ -63,15 +65,18 @@ stoch_modUI <- function(id) {
                tabsetPanel(
                  tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(), 
                           h4(textOutput(ns('R0text1')))),
-                 tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(), hr(), 
+                 tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(), 
+                          includeText("prev_text.txt"), hr(), 
                           h4(textOutput(ns('R0text2')))),
                  tabPanel("Deaths", plotOutput(ns('DeathPlot')), hr(),hr(), 
                           h4(textOutput(ns('R0text3')))),
                  tabPanel("Classification", plotOutput(ns('ClassPlot')), hr(),hr(), 
                           h4(textOutput(ns('R0text4')))),
-                 tabPanel("Age Distribution", plotOutput(ns('AgePlot')), hr(),hr(),  
+                 tabPanel("Age Distribution", plotOutput(ns('AgePlot')), hr(),
+                          includeText("age_text.txt"), hr(),  
                           h4(textOutput(ns('R0text5')))),
-                 tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(), hr(), 
+                 tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(), 
+                          includeText("param2_text.txt"), hr(), 
                           h4(textOutput(ns('R0text6'))))
                )
         )

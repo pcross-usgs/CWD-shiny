@@ -1,0 +1,1 @@
+The distribution of potential vital rates (top) and time until disease induced mortality (bottom). Survival probabilities appear to exceed one only due to smoothing the distribution. Time until disease mortality assumes that the individual does not die of other causes.   

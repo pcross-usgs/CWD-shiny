@@ -18,7 +18,8 @@ det_modUI <- function(id) {
                        sliderInput(ns("juv.repro"), "Fawns per Juv",
                                    value = 0.7, min = 0.2, max = 1.5, step = 0.1),
                        sliderInput(ns("ad.repro"), "Fawns per adult",
-                                   value = 1.6, min = 0.7, max = 2, step = 0.1)),
+                                   value = 1.6, min = 0.7, max = 2, step = 0.1),
+                       includeText("vital_text.txt")),
               tabPanel("Disease",
                        sliderInput(ns("an.env.foi"), "Envi FOI",
                                    value = 0, min = 0, max = 0.1, step = 0.01),
@@ -31,7 +32,8 @@ det_modUI <- function(id) {
                        sliderInput(ns("p"), "index of disease mortality",
                                    value = 0.43, min = 0, max = .9, step = 0.01),
                        sliderInput(ns("rel.risk"),"Relative hunting risk",
-                                   value = 1, min = 0.1, max = 2, step = 0.1)),
+                                   value = 1, min = 0.1, max = 2, step = 0.1),
+                       includeText("disease_text.txt")),
               tabPanel("Hunting",
                        sliderInput(ns("hunt.mort.fawn"),"% fawns hunted",
                                    value = 0.03,min = 0.01, max = 0.1,step = 0.01),
@@ -50,11 +52,11 @@ det_modUI <- function(id) {
                                    value = 10, min = 5, max = 50, step = 1),
                        sliderInput(ns("ini.fawn.prev"), "Fawn prevalence",
                                    value = 0.01, min = 0, max = 0.4, step = 0.01),
-                       sliderInput(ns("ini.juv.prev"), "Juv prevalence",
+                       sliderInput(ns("ini.juv.prev"), "Juvenile prevalence",
                                    value = 0.02, min = 0, max = 0.4, step = 0.01),
-                       sliderInput(ns("ini.ad.f.prev"), "Doe prevalence",
+                       sliderInput(ns("ini.ad.f.prev"), "Male prevalence",
                                    value = 0.03, min = 0, max = 0.4, step = 0.01),
-                       sliderInput(ns("ini.ad.m.prev"), "Buck prevalence",
+                       sliderInput(ns("ini.ad.m.prev"), "Female prevalence",
                                    value = 0.03, min = 0, max = 0.4, step = 0.01))
             )),
      column(width = 8, h4("Plots"),
@@ -62,7 +64,8 @@ det_modUI <- function(id) {
               tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(), 
                        h4(textOutput(ns('R0text1')))),
               
-              tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(), hr(), 
+              tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(), 
+                       includeText("prev_text.txt"), hr(), 
                        h4(textOutput(ns('R0text2')))),
               
               tabPanel("Deaths", plotOutput(ns('DeathPlot')), hr(), hr(), 
@@ -71,10 +74,12 @@ det_modUI <- function(id) {
               tabPanel("Ratios", plotOutput(ns('ClassPlot')), hr(), hr(), 
                        h4(textOutput(ns('R0text4')))),
               
-              tabPanel("Age Distribution", plotOutput(ns('AgePlot')),hr(), hr(), 
+              tabPanel("Age Distribution", plotOutput(ns('AgePlot')),hr(), 
+                       includeText("age_text.txt"), hr(), 
                        h4(textOutput(ns('R0text5')))),
               
-              tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(), hr(), 
+              tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(), 
+                       includeText("param1_text.txt"), hr(), 
                        h4(textOutput(ns('R0text6'))))
             )
           )
