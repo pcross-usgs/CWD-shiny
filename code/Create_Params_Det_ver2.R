@@ -66,7 +66,8 @@ params <- list(fawn.an.sur = fawn.an.sur,
                ad.repro = ad.repro,
 
                hunt.mort.fawn = hunt.mort.fawn,
-               hunt.mort.juv = hunt.mort.juv,
+               hunt.mort.juv.f = hunt.mort.juv.f,
+               hunt.mort.juv.m = hunt.mort.juv.m,
                hunt.mort.ad.f = hunt.mort.ad.f,
                hunt.mort.ad.m = hunt.mort.ad.m,
 

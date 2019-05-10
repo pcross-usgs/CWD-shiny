@@ -12,7 +12,8 @@ det_mod <- function(input, output, session){
          ad.repro = input$ad.repro,
 
          hunt.mort.fawn = input$hunt.mort.fawn,
-         hunt.mort.juv = input$hunt.mort.juv,
+         hunt.mort.juv.f = input$hunt.mort.juv.f,
+         hunt.mort.juv.m = input$hunt.mort.juv.m,
          hunt.mort.ad.f = input$hunt.mort.ad.f,
          hunt.mort.ad.m = input$hunt.mort.ad.m,
 
@@ -104,6 +105,6 @@ det_mod <- function(input, output, session){
 
   output$ClassPlot <- renderPlot({
     out <- simout()
-    plot.fawn.buck(out$counts, ylim = c(0.2, 1), lwd = 3)
+    plot.fawn.buck(out$counts, ylim = c(0.1, 1), lwd = 3)
   })
 }

@@ -40,7 +40,9 @@ ad.an.m.sur <- 0.85
 
 #Mean additive hunt mortality; user input
 hunt.mort.fawn <- 0.02
-hunt.mort.juv <- 0.07
+hunt.mort.juv.f <- 0.07
+hunt.mort.juv.m <- 0.07
+
 hunt.mort.ad.f <- 0.1
 hunt.mort.ad.m <- 0.2
 
@@ -80,7 +82,8 @@ params <- list(fawn.an.sur = fawn.an.sur,
                an.sur.var = an.sur.var,
 
                hunt.mort.fawn = hunt.mort.fawn,
-               hunt.mort.juv = hunt.mort.juv,
+               hunt.mort.juv.f = hunt.mort.juv.f,
+               hunt.mort.juv.m = hunt.mort.juv.m,
                hunt.mort.ad.f =  hunt.mort.ad.f,
                hunt.mort.ad.m = hunt.mort.ad.m,
                hunt.mort.var = hunt.mort.var,

@@ -26,10 +26,10 @@ det.pop.model.v2 <- function(params){
   # Create the Leslie Matrix to start the population at stable age dist
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv),
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv.f),
                                  rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
                                  0, #spacer
-                                 c(juv.an.sur*(1- hunt.mort.juv),
+                                 c(juv.an.sur*(1- hunt.mort.juv.m),
                                    rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
   # if you want the top age category to continue to survive
   M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
@@ -129,9 +129,9 @@ det.pop.model.v2 <- function(params){
      Nt.m <- St.m[, t] + Iall.m
 
      # total hunted
-     hunted.f <- Nt.f * c(hunt.mort.fawn, hunt.mort.juv,
+     hunted.f <- Nt.f * c(hunt.mort.fawn, hunt.mort.juv.f,
                           rep(hunt.mort.ad.f, n.age.cats - 2))
-     hunted.m <- Nt.m * c(hunt.mort.fawn, hunt.mort.juv,
+     hunted.m <- Nt.m * c(hunt.mort.fawn, hunt.mort.juv.m,
                           rep(hunt.mort.ad.m, n.age.cats - 2))
 
      # tracking the # hunted

@@ -440,7 +440,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
   }
 
   p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light(base_size = 18) +
-    ylim(0.2, 1) +
+    ylim(0.1, 1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
   

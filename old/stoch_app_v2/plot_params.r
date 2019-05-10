@@ -24,8 +24,11 @@ plot.vitals <- function(params){
   hunt.fawn <- params %$%
     estBetaParams(hunt.mort.fawn, hunt.mort.var) %$%
     rbeta(1000, alpha, beta)
-  hunt.juv <- params %$%
-    estBetaParams(hunt.mort.juv, hunt.mort.var) %$%
+  hunt.juv.m <- params %$%
+    estBetaParams(hunt.mort.juv.f, hunt.mort.var) %$%
+    rbeta(1000, alpha, beta)
+  hunt.juv.f <- params %$%
+    estBetaParams(hunt.mort.juv.m, hunt.mort.var) %$%
     rbeta(1000, alpha, beta)
   hunt.ad.f <- params %$%
     estBetaParams(hunt.mort.ad.f, hunt.mort.var) %$%
@@ -35,7 +38,8 @@ plot.vitals <- function(params){
     rbeta(1000, alpha, beta)
   
   sur.tot.fawn <- sur.fawn*(1 - hunt.fawn)
-  sur.tot.juv <- sur.juv*(1 - hunt.juv)
+  sur.tot.juv.f <- sur.juv*(1 - hunt.juv.f)
+  sur.tot.juv.m <- sur.juv*(1 - hunt.juv.m)
   sur.tot.ad.f <- sur.ad.f*(1 - hunt.ad.f)
   sur.tot.ad.m <- sur.ad.m*(1 - hunt.ad.m)
   
@@ -47,17 +51,21 @@ plot.vitals <- function(params){
     rbeta(1000, alpha, beta) * 2
   
   #create a wide data.frame
-  params.stoch <- data.frame(sur.tot.fawn = sur.tot.fawn, sur.tot.juv = sur.tot.juv,
-    sur.tot.ad.f = sur.tot.ad.f, sur.tot.ad.m = sur.tot.ad.m,
-    repro.juv = repro.juv, repro.ad = repro.ad)
+  params.stoch <- data.frame(sur.tot.fawn = sur.tot.fawn, 
+                             sur.tot.juv.f = sur.tot.juv.f, 
+                             sur.tot.juv.m = sur.tot.juv.m,
+                             sur.tot.ad.f = sur.tot.ad.f, 
+                             sur.tot.ad.m = sur.tot.ad.m,
+                             repro.juv = repro.juv, 
+                             repro.ad = repro.ad)
   
   params.stoch.2 <-  params.stoch %>%
-    gather('sur.tot.fawn', 'sur.tot.juv', 'sur.tot.ad.f',
+    gather('sur.tot.fawn', 'sur.tot.juv.f', 'sur.tot.juv.m','sur.tot.ad.f',
       'sur.tot.ad.m', 'repro.juv', 'repro.ad',
       key = "parameter", value = "value")
   
   # plot the params
-  theme_set(theme_bw())
+  theme_set(theme_bw(base_size = 18))
   # plot
   ggplot(params.stoch.2, aes(x = value, y = parameter)) +
     geom_density_ridges() + theme_ridges() + ylab("") +
@@ -66,7 +74,8 @@ plot.vitals <- function(params){
                                 "survival female",
                                 "survival male",
                                 "survival fawn",
-                                "survival juvenile"))
+                                "survival juvenile male",
+                                "survival juvenile female"))
   }
 
 
@@ -77,8 +86,9 @@ plot.ttd <- function(p){
   
   theme_set(theme_bw())
   ggplot(tmp, aes(x = years.to.death)) +
-    geom_density(fill = "grey") + theme_ridges() +
-    labs(x = "years", y = "density",
+    geom_density(fill = "grey") + 
+    theme_ridges() +
+    labs(x = "Years", y = "Density",
          title = "Time until disease induced mortality")
 }
 

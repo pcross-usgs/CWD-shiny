@@ -25,7 +25,8 @@ stoch.pop.model.2 <- function(params){
 
   #Estimate alpha and beta of beta distribution
   hunt.fawn.b <- estBetaParams(hunt.mort.fawn, hunt.mort.var)
-  hunt.juv.b <- estBetaParams(hunt.mort.juv, hunt.mort.var)
+  hunt.juv.f.b <- estBetaParams(hunt.mort.juv.f, hunt.mort.var)
+  hunt.juv.m.b <- estBetaParams(hunt.mort.juv.m, hunt.mort.var)
   hunt.f.b <- estBetaParams(hunt.mort.ad.f, hunt.mort.var)
   hunt.m.b <- estBetaParams(hunt.mort.ad.m, hunt.mort.var)
 
@@ -37,10 +38,10 @@ stoch.pop.model.2 <- function(params){
   M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
 
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv),
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv.f),
                                  rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
                                  0, #spacer
-                                 c(juv.an.sur*(1- hunt.mort.juv),
+                                 c(juv.an.sur*(1- hunt.mort.juv.m),
                                    rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
   # if you want the top age category to continue to survive
   M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
@@ -100,7 +101,8 @@ stoch.pop.model.2 <- function(params){
 
     #stochastic hunting survival rates
     hunt.fawn.draw <- rbeta(1, hunt.fawn.b$alpha, hunt.fawn.b$beta, ncp = 0)
-    hunt.juv.draw <- rbeta(1, hunt.juv.b$alpha, hunt.juv.b$beta, ncp = 0)
+    hunt.juv.f.draw <- rbeta(1, hunt.juv.f.b$alpha, hunt.juv.f.b$beta, ncp = 0)
+    hunt.juv.m.draw <- rbeta(1, hunt.juv.m.b$alpha, hunt.juv.m.b$beta, ncp = 0)
     hunt.f.draw <- rbeta(n.age.cats-2, hunt.f.b$alpha, hunt.f.b$beta, ncp = 0)
     hunt.m.draw <- rbeta(n.age.cats-2, hunt.m.b$alpha, hunt.m.b$beta, ncp = 0)
 
@@ -177,10 +179,10 @@ stoch.pop.model.2 <- function(params){
       Nt.m <- St.m[, t] + Iall.m
 
       # binomial draw on the total hunted
-      hunted.f <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.draw,
+      hunted.f <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.f.draw,
                                              hunt.f.draw))
 
-      hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.draw,
+      hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.m.draw,
                                              hunt.m.draw))
 
       # tracking the # hunted

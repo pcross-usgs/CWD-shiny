@@ -38,7 +38,8 @@ stoch_mod <- function(input, output, session){
          ad.repro = input$ad.repro,
 
          hunt.mort.fawn = input$hunt.mort.fawn,
-         hunt.mort.juv = input$hunt.mort.juv,
+         hunt.mort.juv.f = input$hunt.mort.juv.f,
+         hunt.mort.juv.m = input$hunt.mort.juv.m,
          hunt.mort.ad.f =  input$hunt.mort.ad.f,
          hunt.mort.ad.m = input$hunt.mort.ad.m)
   })

@@ -32,11 +32,8 @@ shinyServer(function(input, output) {
          env.foi =  1 - ((1-input$an.env.foi)^(1/12)),
 
          #convert from r0 to beta
-         beta = input$r0  * input$n0 ^ (input$theta-1) /
-           mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
-                            rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
-                            rgamma(1000, 10, input$p)), 1, FUN = min)),
-
+         beta = (input$r0_peryear  * input$n0 ^ (input$theta-1)) / 12,
+         
          beta.m = input$beta.m,
          theta = input$theta,
 
@@ -56,7 +53,8 @@ shinyServer(function(input, output) {
          ad.repro = input$ad.repro,
 
          hunt.mort.fawn = input$hunt.mort.fawn,
-         hunt.mort.juv = input$hunt.mort.juv,
+         hunt.mort.juv.f = input$hunt.mort.juv.f,
+         hunt.mort.juv.m = input$hunt.mort.juv.m,
          hunt.mort.ad.f =  input$hunt.mort.ad.f,
          hunt.mort.ad.m = input$hunt.mort.ad.m)
   })
@@ -82,7 +80,12 @@ shinyServer(function(input, output) {
                              id = c("age", "month", "population", "category",
                                     "year", "sex")) %>% rename(sim = L1)
 
-    out <- list(counts = counts.long, deaths = deaths.long)
+    R0 <-   (params$beta / params$n0 ^ (params$theta-1)) *
+      mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
+                       rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
+                       rgamma(1000, 10, input$p)), 1, FUN = min))
+    
+    out <- list(counts = counts.long, deaths = deaths.long, R0 = R0)
     out
   })
 
