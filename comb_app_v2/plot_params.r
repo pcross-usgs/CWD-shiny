@@ -57,7 +57,7 @@ plot.vitals <- function(params){
       key = "parameter", value = "value")
   
   # plot the params
-  theme_set(theme_bw())
+  theme_set(theme_bw(base_size = 18))
   # plot
   ggplot(params.stoch.2, aes(x = value, y = parameter)) +
     geom_density_ridges() + theme_ridges() + ylab("") +
@@ -77,8 +77,9 @@ plot.ttd <- function(p){
   
   theme_set(theme_bw())
   ggplot(tmp, aes(x = years.to.death)) +
-    geom_density(fill = "grey") + theme_ridges() +
-    labs(x = "years", y = "density",
+    geom_density(fill = "grey") + 
+    theme_ridges() +
+    labs(x = "Years", y = "Density",
          title = "Time until disease induced mortality")
 }
 

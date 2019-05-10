@@ -84,7 +84,8 @@ plot.prev <- function(dat, ...){
     summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes))
-
+  par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+  
   plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
        bty = "l", type = "l", lwd = 2, ylim = ylims, ...)
 }
@@ -124,15 +125,18 @@ plot.prev.age <- function(dat, by.sex, ...){
   #create the plot
   if(by.sex == T){
     p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
-    geom_line() + facet_wrap(~sex)
+    geom_line() + facet_wrap(~sex) 
   }
+    
   if(by.sex == F){
     p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
       geom_line()
   }
+  
   p <- p + theme_light() +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
+
   p
 }
 
@@ -165,16 +169,14 @@ plot.prev.2 <- function(dat, ...){
 
 
   #create the plot
- par(mfrow = c(1,2))
+ par(mfrow = c(1,2), cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
  plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
-       bty = "l", type = "l", lwd = 2,
-      cex = 1.5, cex.lab = 1.5, cex.axis = 1.5,  ...)
+       bty = "l", type = "l", lwd = 2,  ...)
  plot(dat.sum2$age, dat.sum2$f, type = "l", col = "red", xlab = "Age",
-      ylab = "Prevalence", bty = "l", lwd = 2,
-      cex = 1.5, cex.lab = 1.5, cex.axis = 1.5, ...)
+      ylab = "Prevalence", bty = "l", lwd = 2, ...)
  lines(dat.sum2$age + 0.1, dat.sum2$m, col = "blue", lwd = 2)
- legend("bottomright", c("females", "males"),
-        col = c("red", "blue"), cex = 1.5, lwd = 2, box.lty = 0)
+ legend("topleft", c("females", "males"),
+        col = c("red", "blue"), lwd = 2, box.lty = 0)
 }
 
 # plot the age distribution at the end point
@@ -250,7 +252,7 @@ plot.buck.doe <- function(dat, ...){
     unite(sex.age, sex, age.cat) %>%
     spread(key = sex.age, value = n) %>%
     mutate(buck.doe = m_adult / f_adult)
-
+  par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
   plot(dat.sum$year, dat.sum$buck.doe, ...)
 
 }
@@ -286,11 +288,12 @@ plot.fawn.buck <- function(dat, ...){
     mutate(fawn.adult = fawn / adult)
 
   par(mfrow = c(1,2))
-  par(mar = c(6, 6, 1, 2),
-      cex = 1.5, cex.lab = 1.5, cex.axis = 1.5)
+  par(mar = c(6, 6, 1, 1),
+      cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
   plot(dat.sum$year, dat.sum$buck.doe, type = "l",
        col = "blue", bty = "l",
        ylab = "buck:doe", xlab = "Year", ...)
+  par(mar = c(6, 5, 1, 2))
   plot(dat.sum.2$year, dat.sum.2$fawn.adult, type = "l",
        col = "red", bty = "l", ylab = "fawn:doe",
        xlab = "Year", ...)
@@ -363,6 +366,7 @@ plot.perc.deaths <- function(dat){
           xlab("Year") + ylab("% of Adult Deaths") + theme_light(base_size = 18) +
           theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
+  
 p
 }
 
