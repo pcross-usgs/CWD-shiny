@@ -1,4 +1,5 @@
 # CWD shiny app stochastic model user interface
+rm(list = ls())
 library(shiny)
 library(reshape2)
 library(popbio)
@@ -20,6 +21,7 @@ source("stoch_mod.r", local = T)
 source("det_mod.r", local = T)
 source("plot_fxns.r", local = T)
 knit("description_combo.Rmd", quiet = T)
+
 
 ui <- fluidPage(theme = "common.css",
   div(class = "header", includeHTML("www/header.html")),
