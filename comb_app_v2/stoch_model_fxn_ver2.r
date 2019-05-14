@@ -4,6 +4,7 @@ stoch.pop.model.2 <- function(params){
   require(popbio)
   source("estBetaParams.r", local = T)
   source("allocateDeaths.r", local = T)
+  
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
