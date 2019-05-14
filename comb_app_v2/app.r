@@ -20,10 +20,8 @@ source("stoch_modUI.r", local = T)
 source("stoch_mod.r", local = T)
 source("compare_modUI.r", local = T)
 source("compare_mod.r", local = T)
-source("stoch_paramsUI.r", local = T)
 source("det_mod.r", local = T)
 source("plot_fxns.r", local = T)
-source("simulate_scenario.r", local = T)
 knit("description_combo.Rmd", quiet = T)
 
 ui <- fluidPage(theme = "common.css",
