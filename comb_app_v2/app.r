@@ -18,10 +18,13 @@ source("estBetaParams.r", local = T)
 source("det_modUI.r", local = T)
 source("stoch_modUI.r", local = T)
 source("stoch_mod.r", local = T)
+source("compare_modUI.r", local = T)
+source("compare_mod.r", local = T)
+source("stoch_paramsUI.r", local = T)
 source("det_mod.r", local = T)
 source("plot_fxns.r", local = T)
+source("simulate_scenario.r", local = T)
 knit("description_combo.Rmd", quiet = T)
-
 
 ui <- fluidPage(theme = "common.css",
   div(class = "header", includeHTML("www/header.html")),
@@ -33,17 +36,23 @@ ui <- fluidPage(theme = "common.css",
                 tabPanel("Deterministic Model", 
                         det_modUI(id = "det")), 
                 tabPanel("Stochastic Model",  
-                        stoch_modUI(id = "stoch")) 
+                        stoch_modUI(id = "stoch")), 
+                tabPanel("Scenario comparison",  
+                         column(5, h3("Scenario A"), 
+                                compare_modUI(id = "scenario_a")),
+                         column(5, h3("Scenario B"),
+                                compare_modUI(id = "scenario_b"))) 
                
               ),
   #footer
   div(class = "footer", includeHTML("www/footer.html"))
 )
 
-
 server <- function(input, output, session) {
   callModule(stoch_mod, id = "stoch")
   callModule(det_mod, id = "det")
+  callModule(compare_mod, id = "scenario_a")
+  callModule(compare_mod, id = "scenario_b")
 }
 
 shinyApp(ui, server)
