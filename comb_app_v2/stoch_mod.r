@@ -1,6 +1,6 @@
 stoch_mod <- function(input, output, session){
 
-  react.params <- reactive({
+  react.params <- eventReactive(input$go,{
     list(sims = input$sims,
          n.age.cats = 12,
          n0 = input$n0, # initial population size
@@ -99,7 +99,6 @@ stoch_mod <- function(input, output, session){
     out <- simout()
     paste("Direct transmission R_0 = ", round(out$R0, 2))
   })
-  
   output$TotalPlot <- renderPlot({
     out <- simout()
     p1 <- plot.stoch.tots.2(out$counts, error.bars = c(0.05, 0.95))
