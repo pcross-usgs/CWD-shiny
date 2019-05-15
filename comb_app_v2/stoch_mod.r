@@ -65,40 +65,57 @@ stoch_mod <- function(input, output, session){
                         id = c("age", "month", "population", "category",
                                "year", "sex")) %>% rename(sim = L1)
 
-    R0 <-   (params$beta / params$n0 ^ (params$theta-1)) *
+    fem.R0 <-   (params$beta / params$n0 ^ (params$theta-1)) *
             mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                             rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
                             rgamma(1000, 10, input$p)), 1, FUN = min))
+    male.R0 <-   (params$beta * params$beta.m / params$n0 ^ (params$theta-1)) *
+      mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
+                       rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),
+                       rgamma(1000, 10, input$p)), 1, FUN = min))
 
-    out <- list(counts = counts.long, deaths = deaths.long, R0 = R0)
+    out <- list(counts = counts.long, deaths = deaths.long, fem.R0 = fem.R0,
+                male.R0 = male.R0)
     out
   })
 
-  
-  output$R0text1 <- renderText({
+  output$R0text1 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text2 <- renderText({
+  output$R0text2 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text3 <- renderText({
+  output$R0text3 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text4 <- renderText({
+  output$R0text4 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text5 <- renderText({
+  output$R0text5 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text6 <- renderText({
+  output$R0text6 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
+
   output$TotalPlot <- renderPlot({
     out <- simout()
     p1 <- plot.stoch.tots.2(out$counts, error.bars = c(0.05, 0.95))
@@ -122,9 +139,9 @@ stoch_mod <- function(input, output, session){
 
   output$DeathPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.stoch.deaths(out$deaths, error.bars = c(0.05, 0.95))
-    p2 <- plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
-    plot_grid(p1, p2, nrow = 2)
+    #p1 <- plot.stoch.deaths(out$deaths, error.bars = c(0.05, 0.95))
+    plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
+    #plot_grid(p1, p2, nrow = 2)
   })
 
   output$AgePlot <- renderPlot({

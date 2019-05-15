@@ -29,8 +29,9 @@ fluidRow(
                sliderInput(ns("p"), "index of disease mortality",
                            value = 0.43, min = 0, max = .9, step = 0.01),
                sliderInput(ns("rel.risk"), "Relative risk hunting infecteds",
-                           value = 1, min = .1, max = 4, step = 0.1)),
-      
+                           value = 1, min = .1, max = 4, step = 0.1),
+               includeMarkdown("disease_text.md")),
+
       tabPanel("Hunting",
                sliderInput(ns("hunt.mort.fawn"),"% fawns hunted",
                            value = 0.01, min = 0.01, max = 0.1,step = 0.01),
@@ -42,7 +43,7 @@ fluidRow(
                            value = 0.05, min = 0.01, max = 0.2,step = 0.01),
                sliderInput(ns("hunt.mort.ad.m"),"% males hunted",
                            value = 0.4, min = 0.01, max = 0.6,step = 0.01)),
-      
+
       tabPanel("Simulation",
                sliderInput(ns("n.years"), "# of years",
                            value = 10, min = 5, max = 30, step = 5),
@@ -61,22 +62,23 @@ fluidRow(
       )
      ),
     column(8, h4("Plots"),
+           h6("Press the run simulations button for plots to display"),
            tabsetPanel(
-             tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(), 
-                      h4(textOutput(ns('R0text1')))),
-             tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(), 
-                      includeText("prev_text.txt"), hr(), 
-                      h4(textOutput(ns('R0text2')))),
-             tabPanel("Deaths", plotOutput(ns('DeathPlot')), hr(),hr(), 
-                      h4(textOutput(ns('R0text3')))),
-             tabPanel("Classification", plotOutput(ns('ClassPlot')), hr(),hr(), 
-                      h4(textOutput(ns('R0text4')))),
+             tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(),
+                      h4(htmlOutput(ns('R0text1')))),
+             tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(),
+                      includeText("prev_text.txt"), hr(),
+                      h4(htmlOutput(ns('R0text2')))),
+             tabPanel("Deaths", plotOutput(ns('DeathPlot')), hr(),hr(),
+                      h4(htmlOutput(ns('R0text3')))),
+             tabPanel("Classification", plotOutput(ns('ClassPlot')), hr(),hr(),
+                      h4(htmlOutput(ns('R0text4')))),
              tabPanel("Age Distribution", plotOutput(ns('AgePlot')), hr(),
-                      includeText("age_text.txt"), hr(),  
-                      h4(textOutput(ns('R0text5')))),
-             tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(), 
-                      includeText("param2_text.txt"), hr(), 
-                      h4(textOutput(ns('R0text6'))))
+                      includeText("age_text.txt"), hr(),
+                      h4(htmlOutput(ns('R0text5')))),
+             tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(),
+                      includeText("param2_text.txt"), hr(),
+                      h4(htmlOutput(ns('R0text6'))))
            )
         )
       )

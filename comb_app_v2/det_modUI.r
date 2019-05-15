@@ -33,7 +33,7 @@ det_modUI <- function(id) {
                                    value = 0.43, min = 0, max = .9, step = 0.01),
                        sliderInput(ns("rel.risk"),"Relative hunting risk",
                                    value = 1, min = 0.1, max = 2, step = 0.1),
-                       includeText("disease_text.txt")),
+                       includeMarkdown("disease_text.md")),
               tabPanel("Hunting",
                        sliderInput(ns("hunt.mort.fawn"),"% fawns hunted",
                                    value = 0.03,min = 0.01, max = 0.1,step = 0.01),
@@ -61,26 +61,26 @@ det_modUI <- function(id) {
             )),
      column(width = 8, h4("Plots"),
             tabsetPanel(
-              tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(), 
-                       h4(textOutput(ns('R0text1')))),
-              
-              tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(), 
-                       includeText("prev_text.txt"), hr(), 
-                       h4(textOutput(ns('R0text2')))),
-              
-              tabPanel("Deaths", plotOutput(ns('DeathPlot')), hr(), hr(), 
-                       h4(textOutput(ns('R0text3')))),
-              
-              tabPanel("Ratios", plotOutput(ns('ClassPlot')), hr(), hr(), 
-                       h4(textOutput(ns('R0text4')))),
-              
-              tabPanel("Age Distribution", plotOutput(ns('AgePlot')),hr(), 
-                       includeText("age_text.txt"), hr(), 
-                       h4(textOutput(ns('R0text5')))),
-              
-              tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(), 
-                       includeText("param1_text.txt"), hr(), 
-                       h4(textOutput(ns('R0text6'))))
+              tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(),
+                       h4(htmlOutput(ns('R0text1')))),
+
+              tabPanel("Prevalence", plotOutput(ns('PrevPlot')), hr(),
+                       includeText("prev_text.txt"), hr(),
+                       h4(htmlOutput(ns('R0text2')))),
+
+              tabPanel("Deaths", plotOutput(ns('DeathPlot')), hr(), hr(),
+                       h4(htmlOutput(ns('R0text3')))),
+
+              tabPanel("Ratios", plotOutput(ns('ClassPlot')), hr(), hr(),
+                       h4(htmlOutput(ns('R0text4')))),
+
+              tabPanel("Age Distribution", plotOutput(ns('AgePlot')),hr(),
+                       includeText("age_text.txt"), hr(),
+                       h4(htmlOutput(ns('R0text5')))),
+
+              tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(),
+                       includeText("param1_text.txt"), hr(),
+                       h4(htmlOutput(ns('R0text6'))))
             )
           )
       )

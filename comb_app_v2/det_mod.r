@@ -38,42 +38,59 @@ det_mod <- function(input, output, session){
   })
 
   simout <- reactive({
-    params <- react.params()  
+    params <- react.params()
     out <- det.pop.model.v2(params)
-    R0 <-  ( params$beta / params$n0 ^ (params$theta-1) ) *
+    fem.R0 <-  ( params$beta / params$n0 ^ (params$theta-1) ) *
              mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
                        rgamma(1000, 10, input$p)), 1, FUN = min))
+    male.R0 <-  ( params$beta * params$beta.m / params$n0 ^ (params$theta-1) ) *
+      mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
+                       rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),
+                       rgamma(1000, 10, input$p)), 1, FUN = min))
 
-    out <- list(counts = out$counts, deaths = out$deaths, R0 = R0)
+    out <- list(counts = out$counts, deaths = out$deaths, fem.R0 = fem.R0,
+                male.R0 = male.R0)
     out
   })
 
-  output$R0text1 <- renderText({
+  output$R0text1 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 =", round(out$R0, 2))
-    })
-  output$R0text2 <- renderText({
-    out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text3 <- renderText({
+  output$R0text2 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text4 <- renderText({
+  output$R0text3 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text5 <- renderText({
+  output$R0text4 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  output$R0text6 <- renderText({
+  output$R0text5 <- renderUI({
     out <- simout()
-    paste("Direct transmission R_0 = ", round(out$R0, 2))
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
   })
-  
+  output$R0text6 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female Direct transmission R0 = ", round(out$fem.R0, 2))
+    str2 <- paste("Male Direct transmission R0 = ", round(out$male.R0, 2))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+
   output$TotalPlot <- renderPlot({
     out <- simout()
     par(cex = 1.5)
@@ -93,9 +110,9 @@ det_mod <- function(input, output, session){
 
   output$DeathPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.deaths(out$deaths)
-    p2 <- plot.perc.deaths(out$deaths)
-    plot_grid(p1, p2, nrow = 2)
+    #p1 <- plot.deaths(out$deaths)
+    plot.perc.deaths(out$deaths)
+    #plot_grid(p1, p2, nrow = 2)
   })
 
   output$ParamPlot <- renderPlot({
