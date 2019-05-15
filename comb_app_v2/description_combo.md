@@ -58,7 +58,11 @@ In every monthly timestep, binomial draws are done to determine reproduction, su
 ### Plots  
 
 For plotting purposes we subsample the entire monthly timeseries to include only one month per year to avoid displaying the within-year variation.  Total population size is plotted for February. The buck:doe ratio is sampled in December, and the fawn:doe ratio taken at the end of the biological year in April. Prevalence information is sampled in November. 
-  
+
+*Disclaimer*: Although these data have been processed successfully on a computer system at the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of the data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty. The USGS or the U.S. Government shall not be held liable for improper or incorrect use of the data described and/or contained herein.
+
+More information: Climate Distance Mapper has an online tutorial available here
+
 ### Citation
 This CWD model was developed by the U.S. Geological Survey, Northern Rocky Mountain Science Center, in collaboration with Montana Fish, Wildlife, and Parks. 
 
@@ -69,4 +73,6 @@ Cross, PC and EA Almberg. 2019. Interactive chronic wasting disease model for sc
 Source code is available here: 
 
 https://github.com/pcross-usgs/CWD-shiny
+
+*Contact:* For technical assistance or to report outages, please contact pcross@usgs.gov
 

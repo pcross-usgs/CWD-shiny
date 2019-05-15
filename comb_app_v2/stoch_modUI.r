@@ -79,7 +79,8 @@ fluidRow(
              tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(),
                       includeText("param2_text.txt"), hr(),
                       h4(htmlOutput(ns('R0text6'))))
-           )
+           ),
+           includeMarkdown("disclaimer.md")
         )
       )
 )

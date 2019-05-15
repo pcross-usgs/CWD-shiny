@@ -81,7 +81,8 @@ det_modUI <- function(id) {
               tabPanel("Parameters", plotOutput(ns('ParamPlot')), hr(),
                        includeText("param1_text.txt"), hr(),
                        h4(htmlOutput(ns('R0text6'))))
-            )
+            ),
+            includeMarkdown("disclaimer.md")
           )
       )
 )}

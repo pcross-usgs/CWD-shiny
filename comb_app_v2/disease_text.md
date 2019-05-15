@@ -4,3 +4,4 @@
 * Theta = 1 for frequency dependent transmission, 0 for density dependent transmission.  
 * An index of mortality of 0.43 equates to about a 2 year lifetime post-infection.  
 * Relative hunting risk is greater than 1 if infected individuals are more likely to be hunted than susceptible individuals.  
+
