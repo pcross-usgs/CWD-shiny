@@ -64,9 +64,9 @@ This CWD model was developed by the U.S. Geological Survey, Northern Rocky Mount
 
 The tool may be cited as:
 
-XXXX
+Cross, PC and EA Almberg. 2019. Interactive chronic wasting disease model for scenario planning. URL
 
-Source code is currently available here: 
+Source code is available here: 
 
 https://github.com/pcross-usgs/CWD-shiny
 
