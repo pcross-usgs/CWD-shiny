@@ -227,7 +227,7 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
   p <- p + xlab("Year") + ylab("Prevalence") +
     theme_light(base_size = 18) + theme(panel.grid.minor = element_blank(),
                         panel.grid.major.x = element_blank())
-  
+
   p
 }
 
@@ -303,7 +303,7 @@ plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
     ylim(0, 1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
-  
+
   p
 }
 
@@ -342,8 +342,9 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
       geom_line(data = dat.mean, aes(x = age, y = hi, color = sex),
                 linetype = "dashed") +  theme_light(base_size = 18) +
       theme(panel.grid.minor = element_blank(),
-          panel.grid.major.x = element_blank())
-    
+          panel.grid.major.x = element_blank(),
+          legend.position = "bottom")
+
     p
 }
 
@@ -372,7 +373,7 @@ plot.stoch.age.dist <- function(dat, ...){
     xlab("Age") + ylab("Population") + theme_light(base_size = 18) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
-  
+
   p
 }
 
@@ -443,7 +444,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
     ylim(0.1, 1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
-  
+
 
   p
 
@@ -515,7 +516,7 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
     ylim(0.1,1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
-  
+
 
   p
 
@@ -572,7 +573,7 @@ plot.stoch.deaths <- function(dat, error.bars){
   p <- p + theme_light(base_size = 18) + facet_wrap(~sex) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
-  
+
   p
 
 }
@@ -634,6 +635,6 @@ plot.stoch.perc.deaths <- function(dat, error.bars){
  p <- p + facet_wrap(~sex) + theme_light(base_size = 18) +
           theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
- 
+
   p
 }
