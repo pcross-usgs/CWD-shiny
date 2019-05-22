@@ -69,8 +69,8 @@ deaths.sims <- vector("list", sims)
 
 for(i in 1:sims){
   outb <- stoch.pop.model.2(params)
-  counts.sims[[i]] <- out$counts
-  deaths.sims[[i]] <- out$deaths
+  counts.sims[[i]] <- outb$counts
+  deaths.sims[[i]] <- outb$deaths
 }
 
 counts <- melt(counts.sims,
@@ -82,8 +82,22 @@ deaths <- melt(deaths.sims,
                id = c("age", "month", "population", "category",
                       "year", "sex")) %>% rename(sim = L1)
 
-outb <- list(counts = counts,deaths = deaths)
+outb <- list(counts = counts, deaths = deaths)
 ##############
+
+
+dat <- list(outa$counts, outb$counts)
+
+dat <- melt(dat, id = c("age", "month", "population", "category",
+                        "year", "sex", "disease", "sim")) %>%
+  filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+  rename(scenario = L1) %>%
+  mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2")) %>%
+  group_by(sim, scenario) %>%
+  summarize(n = sum(population)) %>%
+  spread(key = scenario, value = n)
+dat$comp <- dat$A - dat$B
+length(which(dat$comp > 0 ))
 
 # plot the comparisons
 plot.compare.tots(outa$counts, outb$counts)
