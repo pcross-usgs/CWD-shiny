@@ -1,7 +1,7 @@
 compare_mod_server <- function(input, output, session){
 
  react.params <- eventReactive(input$go,{
-   list(sims = 100,
+   list(sims = input$sims,
         n.age.cats = 12,
         n0 = input$n0, # initial population size
         p = input$p, #probability of transitioning between infectious box cars;
@@ -45,13 +45,13 @@ compare_mod_server <- function(input, output, session){
  })
 
      #Run the model
- simout <- reactive({
+ simout <- eventReactive(input$go,{
    params <- react.params()
    #browser()
-   counts.sims <- vector("list", params$sims)
-   deaths.sims <- vector("list", params$sims)
+   counts.sims <- vector("list", input$sims)
+   deaths.sims <- vector("list", input$sims)
 
-   for(i in 1:params$sims){
+   for(i in 1:input$sims){
      out <- stoch.pop.model.2(params)
      counts.sims[[i]] <- out$counts
      deaths.sims[[i]] <- out$deaths
@@ -75,7 +75,7 @@ compare_mod_server <- function(input, output, session){
                       rgamma(1000, 10, input$p)), 1, FUN = min))
 
    out <- list(counts = counts.long, deaths = deaths.long, fem.R0 = fem.R0,
-               male.R0 = male.R0)
+               male.R0 = male.R0, outputparams = params)
    return(out)
    })
 

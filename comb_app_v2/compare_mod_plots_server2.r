@@ -15,6 +15,7 @@ compare_mod_plots_server2 <- function(input, output, session, simout_a, simout_b
   output$CompareText <- renderUI({
     outa <- simout_a()
     outb <- simout_b()
+    params <- outa$outputparams
 
     count <- list(outa$counts, outb$counts)
     count <- melt(count, id = c("age", "month", "population", "category",
@@ -80,27 +81,27 @@ compare_mod_plots_server2 <- function(input, output, session, simout_a, simout_b
 
     str1 <- paste("Scenario A had a larger total population than B in",
                   length(which(totals$comp > 0 )),
-                  "out of 100 simulations.", sep = " ")
+                  "out of", params$sims, "simulations.", sep = " ")
 
     str2 <- paste("In the last year, Scenario A had a higher prevalence than B in ",
                   length(which(prev$comp > 0 )),
-                  "out of 100 simulations.", sep = " ")
+                  "out of", params$sims, "simulations.", sep = " ")
 
     str3 <- paste("Scenario A had more individuals over 2 years old hunted than B in",
                   length(which(tot.hunted$comp > 0 )),
-                  "out of 100 simulations.", sep = " ")
+                  "out of", params$sims, "simulations.", sep = " ")
 
     str4 <- paste("In the last year, Scenario A had more individuals over 2 years old hunted than B in",
                   length(which(last.hunted$comp > 0 )),
-                  "out of 100 simulations.", sep = " ")
+                  "out of", params$sims, "simulations.", sep = " ")
 
     str5 <- paste("Scenario A had more males over 2 years old hunted than B in",
                   length(which(males.hunted$comp > 0 )),
-                  "out of 100 simulations.", sep = " ")
+                  "out of", params$sims, "simulations.", sep = " ")
 
     str6 <- paste("In the last year, Scenario A had more males over 2 years old hunted than B in",
                   length(which(males.last.hunted$comp > 0 )),
-                  "out of 100 simulations.", sep = " ")
+                  "out of", params$sims, "simulations.", sep = " ")
 
     str7 <- paste("In the last year, the average prevalence in A was",
                   round(mean(prev$A),2), "while the average prevalence in B was",
