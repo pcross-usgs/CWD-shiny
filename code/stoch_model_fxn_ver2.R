@@ -196,7 +196,7 @@ stoch.pop.model.2 <- function(params){
 
       hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
       hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
-      
+      #browser()
       # subtracting out those hunted in the S class
       St.f[,t] <- St.f[,t] - (Ht.f[,t] - hunted.i.f)
       St.m[,t] <- St.m[,t] - (Ht.m[,t] - hunted.i.m)

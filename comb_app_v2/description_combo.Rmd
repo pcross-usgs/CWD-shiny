@@ -2,8 +2,8 @@
 ## About the chronic wasting disease model  
 
 This application is a decision-support tool for natural resource managers interested in investigating different scenarios associated with chronic wasting disease (CWD). This tool allows the user to enter parameters for deer and elk vital rates, hunting mortality, and disease transmission and the model will plot the total number of individuals, prevalence, age and sex distribution, and how many deaths were natural, hunting or CWD-related. In addition to this description page there are three other pages that can be accessed via the tabs above. The determinisitic model, as the name implies, includes no stochasticity. Parameters can entered and changed using the sliders on the left hand side of the screen and any time a parameter is changed the model will automatically re-run and plot the new results. The stochastic model has the same structure as the deterministic model, but includes both environmental and demographic stochasticity. Vital rates and hunting mortality varies annually while disease transmission rates are fixed. The distribution of these parameters is shown in the plots section under the Parameters tab. In order to run or re-run the stochastic model the user must first press the "Run Simulation" button. The last page, "Scenario comparison", allows the user to enter two different scenarios and view the distribution of modeled outcomes. This uses the stochastic model and the "Run Simulation" button must be clicked to view the output for each scenario.  
-
-###User inputs
+  
+###User inputs  
 
 A few of the user inputs require some additional explanation. All survival rates are entered as annual probabilities, while reproductive rates are entered as the number of total offspring per female. Indirect transmission is the annual probability of being infected from the environment, which we assumed to be constant for the duration of the simulation. The direct transmission rate is proportional to $\frac{\beta SI}{N^{\theta}}$, where $I$ and $N$ are the number of infectious individuals and the total number of individuals. $\theta$ determines whether disease transmission depends on the number of infecteds $\theta = 0$ or the prevalence $\theta = 1$ (i.e. density or frequency dependent transmission). Due to the strong effect of $\theta$ on the transmission rate, $\beta$ is calculated from the direct $R_0$ per year, which we define as the expected number of individuals to be infected by an infected individual in a completely susceptible population in one year. By defining this on an annual basis, it does not depend on natural and hunting mortality rates, which are other user inputs. We assume males may be more likely to become infected than females and this is regulated by $\gamma$, which equals one if females and males are equally likely to become infected. The direct $R_0$ entered by the user is assumed to be for females. The direct $R_0$, which accounts for how long infected individuals are likely to live is provided as an output for adult males and females below the plots. 
   
@@ -62,7 +62,7 @@ $\beta=\alpha\left(\frac{1}{\mu}-1\right)$. In every monthly timestep, binomial 
 ### Plots  
 
 For plotting purposes we subsample the entire monthly timeseries to include only one month per year to avoid displaying the within-year variation.  Total population size is plotted for February. The male:female ratio is sampled in December, and the fawn:doe ratio taken at the end of the biological year in April. Prevalence information is sampled in November. Note that the error bars shown in the stochastic plots are the 5% and 95% quantiles, which may not be estimated well if only a few simulations are run. 
-
+  
 ### Code and Implementation
   
 Code was written using R version 3.4.4 (R Foundation for Statistical Computing, Vienna, AT; www.R-project.org) and the Shiny package version 1.0.5 (Chang et al. 2017). The other packages used were:  

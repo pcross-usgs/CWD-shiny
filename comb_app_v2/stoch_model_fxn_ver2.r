@@ -200,9 +200,11 @@ stoch.pop.model.2 <- function(params){
       # subtracting out those hunted in the S class
       St.f[,t] <- St.f[,t] - (Ht.f[,t] - hunted.i.f)
       St.m[,t] <- St.m[,t] - (Ht.m[,t] - hunted.i.m)
-      # allocate those deaths across the Icategories
+     #browser()
+       # allocate those deaths across the Icategories
       It.f[ , t, ] <- allocate.deaths(hunted.i.f, It.f[ , t, ])
       It.m[ , t, ] <- allocate.deaths(hunted.i.m, It.m[ , t, ])
+    
     }
 
     #Disease mortality
