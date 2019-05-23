@@ -1,5 +1,8 @@
 # Script to run the stochastic model
-rm(list = ls())
+#Rprof(tmp <- tempfile(), line.profiling = T)
+library(profvis)
+#profvis({
+
 library(popbio)
 library(reshape2)
 library(magrittr)
@@ -85,9 +88,7 @@ deaths <- melt(deaths.sims,
 outb <- list(counts = counts, deaths = deaths)
 ##############
 
-
 dat <- list(outa$counts, outb$counts)
-
 dat <- melt(dat, id = c("age", "month", "population", "category",
                         "year", "sex", "disease", "sim")) %>%
   filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
@@ -96,10 +97,9 @@ dat <- melt(dat, id = c("age", "month", "population", "category",
   group_by(sim, scenario) %>%
   summarize(n = sum(population)) %>%
   spread(key = scenario, value = n)
-dat$comp <- dat$A - dat$B
-length(which(dat$comp > 0 ))
 
 # plot the comparisons
+plot.compare.all(outa, outb)
 plot.compare.tots(outa$counts, outb$counts)
 plot.compare.prev(outa$counts, outb$counts)
 
@@ -111,3 +111,14 @@ plot.compare.buckshunted.end(outa$deaths, outb$deaths)
 
 plot.compare.oldbuckshunted(outa$deaths, outb$deaths)
 plot.compare.oldbuckshunted.end(outa$deaths, outb$deaths)
+
+#Rprof()
+#summaryRprof(tmp)
+#library(proftools)
+
+#pd <- readProfileData(tmp)
+#sd <- srcSummary(pd)
+#sd[order(sd$total.pct, decreasing = T),]
+#hotPaths(pd, total.pct =5)
+#plotProfileCallGraph(pd, score = "total", lines = "show")
+})

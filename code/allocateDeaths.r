@@ -1,4 +1,5 @@
 allocate.deaths <- function(deaths, pop) {
+  #browser()
   # Population is a matrix of n.age.categories = rows
   # and number of I categories = columns
   # deaths is a vector of how many die in each age category
@@ -17,9 +18,10 @@ allocate.deaths <- function(deaths, pop) {
         # randomly sample that vector and sort it
         c3 <- sort(sample(c2, deaths[i], replace = F))
         # aggregate it by cell location
-        c4 <- as.data.frame(table(c3))
+        c4 <- as.data.frame(table(c3)) %>%
+          mutate(c3 = as.numeric(levels(c3)))
         # remove those that died
-        pop[i, as.numeric(levels(c4$c3))] <- pop[i, as.numeric(levels(c4$c3))] - c4$Freq
+        pop[i, c4$c3] <- pop[i, c4$c3] - c4$Freq
       }
     }
   }

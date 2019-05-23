@@ -3,13 +3,7 @@ compare_mod_plots_server2 <- function(input, output, session, simout_a, simout_b
   output$ComparePlot <- renderPlot({
         outa <- simout_a()
         outb <- simout_b()
-        p1 <- plot.compare.tots(outa$counts, outb$counts)
-        p2 <- plot.compare.prev(outa$counts, outb$counts)
-        p3 <- plot.compare.hunted(outa$deaths, outb$deaths)
-        p4 <- plot.compare.hunted.end(outa$deaths, outb$deaths)
-        p5 <- plot.compare.buckshunted(outa$deaths, outb$deaths)
-        p6 <- plot.compare.buckshunted.end(outa$deaths, outb$deaths)
-        plot_grid(p1,p2,p3,p4,p5,p6, nrow = 3)
+        plot.compare.all(outa, outb)
   })
 
   output$CompareText <- renderUI({
