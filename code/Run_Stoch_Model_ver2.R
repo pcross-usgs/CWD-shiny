@@ -1,12 +1,12 @@
 # Script to run the stochastic model
-#Rprof(tmp <- tempfile(), line.profiling = T)
 library(profvis)
-#profvis({
+profvis({
 
 library(popbio)
 library(reshape2)
 library(magrittr)
 library(tidyverse)
+library(cowplot)
 source("./code/stoch_model_fxn_ver2.r")
 source("./code/plot_stoch_fxns.r")
 source("./code/plot_params.r")
@@ -18,12 +18,13 @@ load("./output/params_stoch_ver2.RData")
 sims <- 20
 counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
-
+s <- Sys.time()
 for(i in 1:sims){
   outa <- stoch.pop.model.2(params)
   counts.sims[[i]] <- outa$counts
   deaths.sims[[i]] <- outa$deaths
 }
+Sys.time()-s
 
 counts <- melt(counts.sims,
                          id = c("age", "month", "population", "category",
@@ -48,7 +49,6 @@ plot.stoch.prev.age(outa$counts, by.sex = T)
 plot.stoch.prev.age.2(outa$counts, error.bars = c(0.05, 0.95))
 
 #plot fawn.adult and buck:doe
-library(cowplot)
 p1 <- plot.stoch.fawn.adult(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
 p2 <- plot.stoch.buck.doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
 plot_grid(p1, p2, labels = c("A", "B"))
@@ -88,37 +88,17 @@ deaths <- melt(deaths.sims,
 outb <- list(counts = counts, deaths = deaths)
 ##############
 
-dat <- list(outa$counts, outb$counts)
-dat <- melt(dat, id = c("age", "month", "population", "category",
-                        "year", "sex", "disease", "sim")) %>%
-  filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
-  rename(scenario = L1) %>%
-  mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2")) %>%
-  group_by(sim, scenario) %>%
-  summarize(n = sum(population)) %>%
-  spread(key = scenario, value = n)
-
 # plot the comparisons
 plot.compare.all(outa, outb)
-plot.compare.tots(outa$counts, outb$counts)
-plot.compare.prev(outa$counts, outb$counts)
+#plot.compare.tots(outa$counts, outb$counts)
+#plot.compare.prev(outa$counts, outb$counts)
 
-plot.compare.hunted(outa$deaths, outb$deaths)
-plot.compare.hunted.end(outa$deaths, outb$deaths)
+#plot.compare.hunted(outa$deaths, outb$deaths)
+#plot.compare.hunted.end(outa$deaths, outb$deaths)
 
-plot.compare.buckshunted(outa$deaths, outb$deaths)
-plot.compare.buckshunted.end(outa$deaths, outb$deaths)
+#plot.compare.buckshunted(outa$deaths, outb$deaths)
+#plot.compare.buckshunted.end(outa$deaths, outb$deaths)
 
-plot.compare.oldbuckshunted(outa$deaths, outb$deaths)
-plot.compare.oldbuckshunted.end(outa$deaths, outb$deaths)
-
-#Rprof()
-#summaryRprof(tmp)
-#library(proftools)
-
-#pd <- readProfileData(tmp)
-#sd <- srcSummary(pd)
-#sd[order(sd$total.pct, decreasing = T),]
-#hotPaths(pd, total.pct =5)
-#plotProfileCallGraph(pd, score = "total", lines = "show")
+#plot.compare.oldbuckshunted(outa$deaths, outb$deaths)
+#plot.compare.oldbuckshunted.end(outa$deaths, outb$deaths)
 })
