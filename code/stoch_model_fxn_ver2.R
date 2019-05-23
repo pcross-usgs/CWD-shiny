@@ -4,6 +4,7 @@ stoch.pop.model.2 <- function(params){
   require(popbio)
   source("./code/estBetaParams.r", local = T)
   source("./code/allocateDeaths.r", local = T)
+   
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -78,7 +79,7 @@ stoch.pop.model.2 <- function(params){
   # randomly allocating infecteds across ages and categories.
   It.m[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.m.prev)
   It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, round(stable.stage(M)[1:n.age.cats] * n0/10),  ini.f.prev)
-
+  rm(M)
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
 
@@ -90,8 +91,6 @@ stoch.pop.model.2 <- function(params){
     ad.m.sur.draw <- rbeta(1, ad.m.s.b$alpha, ad.m.s.b$beta, ncp = 0)^(1/12)
 
     #monthly stochastic reproductive rates
-    #fawn.preg.draw <- ifelse(fawn.repro == 0, 0,
-    #                         (rbeta(1, fawn.r.b$alpha, fawn.r.b$beta, ncp = 0))) #when the mean is 0, the beta distribution doesn't work...
     juv.preg.draw <- rbeta(1, juv.r.b$alpha, juv.r.b$beta, ncp = 0)
     ad.preg.draw <- rbeta(1, ad.r.b$alpha, ad.r.b$beta, ncp = 0)
 
@@ -154,61 +153,53 @@ stoch.pop.model.2 <- function(params){
     St.f[ ,t] <- St.f[,t] - nat.s.f
     St.m[ ,t] <- St.m[,t] - nat.s.m
 
-    nat.i.f <- matrix(0, nrow = n.age.cats, ncol = 10)
-    nat.i.m <- matrix(0, nrow = n.age.cats, ncol = 10)
-
-    for(i in 1:10){
-      nat.i.f[ ,i] <- rbinom(n.age.cats, It.f[ ,t, i], (1-Sur.f))
-      nat.i.m[ ,i] <- rbinom(n.age.cats, It.m[ ,t, i], (1-Sur.m))
-    }
-
+    #nat.i.f <- matrix(0, nrow = n.age.cats, ncol = 10)
+    #nat.i.m <- matrix(0, nrow = n.age.cats, ncol = 10)
+   # for(i in 1:10){
+   #   nat.i.f[ ,i] <- rbinom(n.age.cats, It.f[ ,t, i], prob =  (1-Sur.f))
+   #   nat.i.m[ ,i] <- rbinom(n.age.cats, It.m[ ,t, i], prob =  (1-Sur.m))
+   # }
+    nat.i.f <- matrix(rbinom(length(It.f[ ,t, ]), size = It.f[ ,t, ], 
+                                prob = (1-Sur.f)), nrow = 12)
+    nat.i.m <- matrix(rbinom(length(It.m[ ,t, ]), size = It.m[ ,t, ], 
+                                prob = (1-Sur.m)), nrow = 12)
+    
     It.f[ , t, ] <- It.f[ ,t, ] - nat.i.f
     It.m[ , t, ] <- It.m[ ,t, ] - nat.i.m
 
-    #browser()
     Dt.f[, t] <- nat.s.f + rowSums(nat.i.f)
     Dt.m[, t] <- nat.s.m + rowSums(nat.i.m)
 
     # Hunt mortality
     if(hunt.mo[t]==1){
-#browser()
-      # hunting mortality
       Iall.f <- rowSums(It.f[ ,t,])
       Iall.m <- rowSums(It.m[ ,t,])
       Nt.f <- St.f[, t] + Iall.f
       Nt.m <- St.m[, t] + Iall.m
 
       # binomial draw on the total hunted
-      hunted.f <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.f.draw,
+      Ht.f[,t] <- rbinom(n.age.cats, Nt.f, c(hunt.fawn.draw, hunt.juv.f.draw,
                                              hunt.f.draw))
 
-      hunted.m <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.m.draw,
+      Ht.m[,t] <- rbinom(n.age.cats, Nt.m, c(hunt.fawn.draw, hunt.juv.m.draw,
                                              hunt.m.draw))
-
-      # tracking the # hunted
-      Ht.f[,t] <- hunted.f
-      Ht.m[,t] <- hunted.m
 
       # those hunted in the I class overall
       # can result in a divide by 0 and NA.
       # this can also result in more hunting of a category than are available.
-      hunted.i.f <- round((rel.risk * Iall.f * hunted.f) /
+      hunted.i.f <- round((rel.risk * Iall.f * Ht.f[,t]) /
                             (St.f[,t] + rel.risk * Iall.f))
-      hunted.i.m <- round((rel.risk * Iall.m * hunted.m) /
+      hunted.i.m <- round((rel.risk * Iall.m * Ht.m[,t]) /
                             (St.m[,t] + rel.risk * Iall.m))
       hunted.i.f[which(is.na(hunted.i.f))] <- 0
       hunted.i.m[which(is.na(hunted.i.m))] <- 0
 
-      # those hunted in the S class
-      hunted.s.f <- hunted.f - hunted.i.f
-      hunted.s.m <- hunted.m - hunted.i.m
-
       hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
       hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
-
-      St.f[,t] <- St.f[,t] - hunted.s.f
-      St.m[,t] <- St.m[,t] - hunted.s.m
-
+      
+      # subtracting out those hunted in the S class
+      St.f[,t] <- St.f[,t] - (Ht.f[,t] - hunted.i.f)
+      St.m[,t] <- St.m[,t] - (Ht.m[,t] - hunted.i.m)
       # allocate those deaths across the Icategories
       It.f[ , t, ] <- allocate.deaths(hunted.i.f, It.f[ , t, ])
       It.m[ , t, ] <- allocate.deaths(hunted.i.m, It.m[ , t, ])
@@ -218,27 +209,29 @@ stoch.pop.model.2 <- function(params){
     #stochastic movement of individuals from I1 to I2
     # disease induced mortality here by advancing all I's
     # and only a proportion of the 10th category remains
-    I.f.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
-    I.m.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
+    # I.f.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
+    #I.m.move <- matrix(rep(0, n.age.cats*10), nrow = 12, ncol = 10)
 
-    for(i in 1:9){
-      I.f.move[ ,i] <- rbinom(n.age.cats, It.f[ , t, i], p)
-      I.m.move[ ,i] <- rbinom(n.age.cats, It.m[ , t, i], p)
-    }
+    #for(i in 1:9){
+    #  I.f.move[ ,i] <- rbinom(n.age.cats, It.f[ , t, i], p)
+    #  I.m.move[ ,i] <- rbinom(n.age.cats, It.m[ , t, i], p)
+    #}
 
+    I.f.move <- matrix(rbinom(n.age.cats*10, size = It.f[ , t, ], 
+                             prob = p), nrow = 12)
+    I.m.move <- matrix(rbinom(n.age.cats*10, size = It.m[ , t, ], 
+                                     prob = p), nrow = 12)
+    
     #store info on those that die directly from disease
-    CWDt.f[ ,t] <- rbinom(n.age.cats, It.f[ , t, 10], p)
-    CWDt.m[ ,t] <- rbinom(n.age.cats, It.m[ , t, 10], p)
-    I.f.move[ ,10] <- CWDt.f[ ,t]
-    I.m.move[ ,10] <- CWDt.m[ ,t]
-
+    CWDt.f[ ,t] <- I.f.move[ ,10]
+    CWDt.m[ ,t] <- I.m.move[ ,10]
+    
     It.f[ , t, 1]    <- It.f[ ,t, 1] - I.f.move[ ,1]
     It.f[ , t, 2:10] <- It.f[ , t, 2:10] - I.f.move[ , 2:10] + I.f.move[, 1:9]
 
     It.m[ , t, 1]   <- It.m[ ,t, 1] - I.m.move[ ,1]
     It.m[ , t, 2:10] <- It.m[ , t, 2:10] - I.m.move[ , 2:10] + I.m.move[, 1:9]
 
-    #if(t == 4){browser()}
     # Direct transmission considering all I's are equal
     Iall <- sum(It.f[ ,t, ] + It.m[ ,t,])
     Nall <- sum(St.f[,t] + St.m[,t]) + Iall
