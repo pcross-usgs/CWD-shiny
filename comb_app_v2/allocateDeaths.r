@@ -1,27 +1,23 @@
 allocate.deaths <- function(deaths, pop) {
+ #browser()
   # Population is a matrix of n.age.categories = rows
   # and number of I categories = columns
   # deaths is a vector of how many die in each age category
-  for(i in 1:length(deaths)){
-    if(deaths[i] > 0){
-      # locations where individuals exist
-      cells <- which(pop[i,] > 0)
-      # vector of cell locations of length equal to all individuals possible
-      c2 <- rep(cells, pop[i, cells])
-
+  
+  # only loop over deaths that occurred
+  condition1 <- which(deaths > 0)
+  cats <- seq(1,10,1)
+  
+  for(i in condition1){
+      # vector of column locations of length equal to all individuals possible
+      c2 <- rep(cats, pop[i,])
       if(length(c2) == 1){
         pop[i, c2] <- pop[i, c2] - deaths[i]
-      }
-
-      if(length(c2) > 1){
-        # randomly sample that vector and sort it
-        c3 <- sort(sample(c2, deaths[i], replace = F))
-        # aggregate it by cell location
-        c4 <- as.data.frame(table(c3))
+      }else{ # sample these 
+        c3 <- plyr::count(sample(c2, deaths[i], replace = F))
         # remove those that died
-        pop[i, as.numeric(levels(c4$c3))] <- pop[i, as.numeric(levels(c4$c3))] - c4$Freq
+        pop[i, c3$x] <- pop[i, c3$x] - c3$freq
       }
     }
-  }
   return(pop)
 }
