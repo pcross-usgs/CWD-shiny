@@ -49,7 +49,7 @@ compare_mod_plots_server2 <- function(input, output, session, simout_a, simout_b
       mutate(comp = A - B)
 
     last.hunted <- hunted %>%
-      filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+      filter(round(year, 0) == max(round(year, 0))) %>%
       group_by(sim, scenario) %>%
       summarize(n = sum(population)) %>%
       spread(key = scenario, value = n) %>%
@@ -63,7 +63,7 @@ compare_mod_plots_server2 <- function(input, output, session, simout_a, simout_b
       mutate(comp = A - B)
 
     males.last.hunted <- hunted %>%
-      filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+      filter(round(year, 0) == max(round(year, 0))) %>%
       filter(sex == "m") %>%
       group_by(sim, scenario) %>%
       summarize(n = sum(population)) %>%
