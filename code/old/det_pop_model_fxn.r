@@ -2,7 +2,7 @@ det.pop.model <- function(params){
   require(popbio)
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
-  #browser()
+ #browser()
 
   #monthly index
   months <- seq(1, n.years*12)
@@ -25,6 +25,7 @@ det.pop.model <- function(params){
   Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 
   # Create the Leslie Matrix to start the population at stable age dist
+  M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
   # replace the -1 off-diagonal with the survival rates
   M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv),
                                  rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
@@ -40,9 +41,9 @@ det.pop.model <- function(params){
   M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
     0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
-  #  lambda(M)
+#browser()
 
-  # pre-allocate the output matrices (and put I into a list)
+  # pre-allocate the output matrices
   tmp <- matrix(0, nrow = n.age.cats, ncol = n.years*12)
   St.f <- tmp
   St.m <- tmp
@@ -50,18 +51,18 @@ det.pop.model <- function(params){
   It.f <- array(rep(tmp), dim = c(n.age.cats, n.years*12, 10))
 
   # Intializing with the stable age distribution.
-  St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
-  St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
-                      (1-ini.m.prev))
+  St.f[,1] <- stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev)
+  St.m[,1] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
+                      (1-ini.m.prev)
 
-  # equally allocating prevalence across ages.
-  It.m[[1]][,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * ini.m.prev)
-  It.f[[1]][,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
-                           ini.f.prev)
+  # equally allocating prevalence across ages in first I cat.
+  It.m[ , 1, 1] <- stable.stage(M)[1:n.age.cats] * n0 * ini.m.prev
+  It.f[ , 1, 1] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
+                           ini.f.prev
 
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
-
+    #if(t == 25) {browser()}
     # on birthdays add in recruits and age everyone by one year
     if(t %% 12 == 2){  # births happen in June, model starts in May
 
@@ -70,26 +71,25 @@ det.pop.model <- function(params){
       St.f[2:(n.age.cats-1), t] <- St.f[1:(n.age.cats-2), t-1]
       St.f[n.age.cats, t] <- St.f[n.age.cats, t-1] + St.f[(n.age.cats-1), t-1]
 
-
       St.m[2:(n.age.cats-1), t] <- St.m[1:(n.age.cats-2), t-1]
       St.m[n.age.cats, t] <- St.m[n.age.cats, t-1] + St.m[(n.age.cats-1), t-1]
 
-      It.f[2:(n.age.cats-1), t, ] = It.f[1:(n.age.cats-2), t-1, ]
+      It.f[2:(n.age.cats-1), t, ] <- It.f[1:(n.age.cats-2), t-1, ]
       It.f[n.age.cats, t, ] <- It.f[n.age.cats, t-1, ] + It.f[(n.age.cats-1), t-1, ]
 
-      It.m[2:(n.age.cats-1), t, ] = It.m[1:(n.age.cats-2), t-1, ]
+      It.m[2:(n.age.cats-1), t, ] <- It.m[1:(n.age.cats-2), t-1, ]
       It.m[n.age.cats, t, ] <- It.m[n.age.cats, t-1, ] + It.m[(n.age.cats-1), t-1, ]
 
       # reproduction
-      I_juv    <- sum(It.f[2, t, ])
-      I_adults <-  sum(It.f[3:n.age.cats, t, ])
+      I_juv    <- sum(It.f[2, t-1, ])
+      I_adults <-  sum(It.f[3:n.age.cats, t-1, ])
 
       St.f[1, t] <- ((St.f[2, t-1] + I_juv) * juv.repro +
-                       sum(St.f[3:n.age.cats, t-1] + I_adults) * ad.repro) * 0.5
+                       (sum(St.f[3:n.age.cats, t-1]) + I_adults) * ad.repro) * 0.5
 
 
       St.m[1, t] <- ((St.f[2, t-1] + I_juv) * juv.repro +
-                       sum(St.f[3:n.age.cats, t-1] + I_adults) * ad.repro) * 0.5
+                       (sum(St.f[3:n.age.cats, t-1]) + I_adults) * ad.repro) * 0.5
     }
 
     if(t %% 12 != 2){
@@ -101,102 +101,79 @@ det.pop.model <- function(params){
       It.m[, t, ] <- It.m[, t-1, ]
     }
 
-    I.f.move <- list()
-    I.m.move <- list()
+   # Natural mortality
+   St.f[, t] <- St.f[, t] * Sur.f
+   St.m[, t] <- St.m[, t] * Sur.m
 
-    # disease induced mortality here
-    for(i in 1:10){
-      I.f.move[ ,i] <- It.f[ , t, i]* p
-      I.m.move[ ,i] <- It.m[ , t, i]* p
+   It.f[ , t, ] <- It.f[ , t, ] * Sur.f
+   It.m[ , t, ] <- It.m[ , t, ] * Sur.m
+
+   # Hunt mortality
+   if(hunt.mo[t]==1){
+    # browser()
+
+     Iall.f <- rowSums(It.f[ ,t,])
+     Iall.m <- rowSums(It.m[ ,t,])
+     Nt.f <- St.f[, t] + Iall.f
+     Nt.m <- St.m[, t] + Iall.m
+
+     # total hunted
+     hunted.f <- Nt.f * c(hunt.mort.fawn, hunt.mort.juv,
+                          rep(hunt.mort.ad.f, n.age.cats - 2))
+     hunted.m <- Nt.m * c(hunt.mort.fawn, hunt.mort.juv,
+                          rep(hunt.mort.ad.m, n.age.cats - 2))
+
+     # those hunted in the I class overall
+     # can result in a divide by 0 and NA.
+     hunted.i.f <- (rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f)
+     hunted.i.m <- (rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m)
+
+     hunted.i.f[which(is.na(hunted.i.f))] <- 0
+     hunted.i.m[which(is.na(hunted.i.m))] <- 0
+
+     hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
+     hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
+
+     # those hunted in the S class
+     St.f[ ,t] <- St.f[,t] - (hunted.f - hunted.i.f)
+     St.m[ ,t] <- St.m[,t] - (hunted.m - hunted.i.m)
+
+     It.f[ , t, ] <- It.f[ , t, ] * (1 - hunted.i.f / Iall.f)
+     It.m[ , t, ] <- It.m[ , t, ] * (1 - hunted.i.m / Iall.m)
     }
 
-    It.f[ , t, 1]    <- It.f[ ,t, 1] - I.f.move[ ,1]
-    It.f[ , t, 2:10] <- It.f[ , t, 2:10] - I.f.move[ , 2:10] + I.f.move[, 1:9]
+   # disease induced mortality here
+   f.move <- It.f[ , t, ] * p
+   m.move <- It.m[ , t, ] * p
 
-    It.m[ , t, 1]   <- It.m[ ,t, 1] - I.m.move[ ,1]
-    It.m[ , t, 2:10] <- It.m[ , t, 2:10] - I.m.move[ , 2:10] + I.m.move[, 1:9]
+   It.f[ , t, 1]    <- It.f[ ,t, 1]  - f.move[ ,1]
+   It.f[ , t, 2:10] <- It.f[ , t, 2:10] - f.move[ ,2:10] + f.move[ ,1:9]
+   It.m[ , t, 1]    <- It.m[ ,t, 1]  - m.move[ ,1]
+   It.m[ , t, 2:10] <- It.m[ , t, 2:10] - m.move[ ,2:10] + m.move[ ,1:9]
 
-    # hunting mortality
-    Iall.f <- rowSums(It.f[ ,t,])
-    Iall.m <- rowSums(It.m[ ,t,])
-    Nt.f <- St.f[, t] + Iall.f
-    Nt.m <- St.m[, t] + Iall.m
-    # binomial draw on the total hunted
-    hunted.f <- Nt.f * c(hunt.mort.fawn, hunt.mort.juv,
-                         rep(hunt.mort.ad.f, n.age.cats - 2)) * hunt.mo[t]
-    hunted.m <- Nt.m * c(hunt.mort.fawn, hunt.mort.juv,
-                     rep(hunt.mort.ad.m, n.age.cats - 2)) * hunt.mo[t]
 
-    # those hunted in the I class overall
-    # can result in a divide by 0 and NA.
-    # this can also result in more hunting of a category than are available.
-    hunted.i.f <- round((rel.risk * Iall.f * hunted.f) / (St.f[,t] + rel.risk * Iall.f))
-    hunted.i.m <- round((rel.risk * Iall.m * hunted.m) / (St.m[,t] + rel.risk * Iall.m))
-    hunted.i.f[which(is.na(hunted.i.f))] <- 0
-    hunted.i.m[which(is.na(hunted.i.m))] <- 0
 
-    # those hunted in the S class
-    hunted.s.f <- hunted.f - hunted.i.f
-    hunted.s.m <- hunted.m - hunted.i.m
+    #Disease transmission here
+   cases.f <- St.f[ ,t] * foi
+   cases.m <- St.m[ ,t] * foi * foi.m
 
-    # natural mort
-    survive.s.f <- (St.f[,t] - hunted.s.f) * Sur.f
-    survive.s.m <- (St.m[,t] - hunted.s.m) * Sur.m
+   St.f[ ,t] <- St.f[ ,t] - cases.f
+   St.m[ ,t] <- St.m[ ,t] - cases.m
 
-    hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
-    hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
+   It.f[ ,t, 1] <-  It.f[ ,t, 1] + cases.f
+   It.m[ ,t, 1] <-  It.m[ ,t, 1] + cases.m
 
-    survive.i.f <- (Iall.f - hunted.i.f) * Sur.f
-    survive.i.m <- (Iall.m - hunted.i.m) * Sur.m
-
-    deaths.i.f <- Iall.f - survive.i.f
-    deaths.i.m <- Iall.m - survive.i.m
-
-    browser()
-    # converting I from list to array. Also need to figure out how to allocate
-    # deaths across the I array in the deterministic model.
-
-    transmission.f = survive.s.f * foi #number of individuals becoming infected
-    transmission.m = survive.s.m * foi #number of individuals becoming infected
-
-    St.f[, t] <- survive.s.f - transmission.f
-    St.m[, t] <- survive.s.m - transmission.m
-
-    #suceptibles that survive hunt and natural mortality and then become infected,
-    #plus I1 individuals that stay and survive hunt and natural mortality
-    It.f[[1]][,t] <- (transmission.f + It.f[[1]][,t] - I.f.move[[1]]) *
-                    (1 - c(hunt.mort.fawn, hunt.mort.juv,
-                           rep(hunt.mort.ad.f, n.age.cats - 2)) * hunt.mo[t]) * Sur.f
-    It.m[[1]][,t] <- (transmission.m + It.m[[1]][,t] - I.m.move[[1]]) *
-      (1 - c(hunt.mort.fawn, hunt.mort.juv,
-             rep(hunt.mort.ad.m, n.age.cats - 2)) * hunt.mo[t]) * Sur.m
-
-    for(k in 2:10){
-      It.f[[k]][,t] <- (It.f[[k]][,t] - I.f.move[[k]] + I.f.move[[k-1]]) *
-                        (1 - c(hunt.mort.fawn, hunt.mort.juv,
-                               rep(hunt.mort.ad.f, n.age.cats - 2)) * hunt.mo[t]) * Sur.f
-
-      It.m[[k]][,t] <- (It.m[[k]][,t] - I.m.move[[k]] + I.m.move[[k-1]]) *
-        (1 - c(hunt.mort.fawn, hunt.mort.juv,
-                rep(hunt.mort.ad.m, n.age.cats - 2)) * hunt.mo[t]) * Sur.m
-    }
   }
 
-    # Reorganize the output so that it is not lists of lists, but a list of arrays
-    for(i in 1:10){
-      assign(paste0("I", i, "t.f"), It.f[[i]])
-      assign(paste0("I", i, "t.m"), It.m[[i]])
-    }
-
-    output <- list(St.f = St.f, St.m = St.m,
-                   I1t.f = I1t.f, I1t.m = I1t.m,
-                   I2t.f = I1t.f, I2t.m = I1t.m,
-                   I3t.f = I1t.f, I3t.m = I1t.m,
-                   I4t.f = I1t.f, I4t.m = I1t.m,
-                   I5t.f = I1t.f, I5t.m = I1t.m,
-                   I6t.f = I1t.f, I6t.m = I1t.m,
-                   I7t.f = I1t.f, I7t.m = I1t.m,
-                   I8t.f = I1t.f, I8.m = I1t.m,
-                   I9t.f = I1t.f, I9t.m = I1t.m,
-                   I10t.f = I1t.f, I10t.m = I1t.m)
-  }
+  output <- list(St.f = St.f, St.m = St.m,
+                 I1t.f = It.f[,,1], I1t.m = It.m[,,1],
+                 I2t.f = It.f[,,2], I2t.m = It.m[,,2],
+                 I3t.f = It.f[,,3], I3t.m = It.m[,,3],
+                 I4t.f = It.f[,,4], I4t.m = It.m[,,4],
+                 I5t.f = It.f[,,5], I5t.m = It.m[,,5],
+                 I6t.f = It.f[,,6], I6t.m = It.m[,,6],
+                 I7t.f = It.f[,,7], I7t.m = It.m[,,7],
+                 I8t.f = It.f[,,8], I8t.m = It.m[,,8],
+                 I9t.f = It.f[,,9], I9t.m = It.m[,,9],
+                 I10t.f = It.f[,,10], I10t.m = It.m[,,10])
+}
