@@ -9,15 +9,15 @@ rel.risk <- 1
 p <- .43 #0.43 #probability of transitioning between infectious box cars
 
 #Natural Annual survival rates
-fawn.an.sur <- 0.5
-juv.an.sur <- 0.7
-ad.an.f.sur <- 0.85
-ad.an.m.sur <- 0.75
+fawn.an.sur <- 0.6
+juv.an.sur <- 0.8
+ad.an.f.sur <- 0.9
+ad.an.m.sur <- 0.85
 
 # annual reproductive rates
 fawn.repro <- 0
-juv.repro <- 0.8
-ad.repro  <- 1.7
+juv.repro <- 0.6
+ad.repro  <- 1.1
 
 fawns.fawn <- ifelse(fawn.repro < 1, 1, 2)
 fawns.juv <- ifelse(juv.repro < 1, 1, 2)
@@ -37,22 +37,24 @@ ini.ad.f.prev <- 0.05
 ini.ad.m.prev <- 0.05
 
 #Mean additive hunt mortality; user input
-hunt.mort.fawn <- 0.0
-hunt.mort.juv <- 0.03
-hunt.mort.ad.f <- 0.01
-hunt.mort.ad.m <- 0.15
+hunt.mort.fawn <- 0.02
+hunt.mort.juv.f <- 0.1
+hunt.mort.juv.m <- 0.2
+
+hunt.mort.ad.f <- 0.1
+hunt.mort.ad.m <- 0.2
 
 #Transmission
 env.foi <- 1 - (0.99^(1/12)) # monthly probability of becoming infected
-r0 <- 1.5
+r0 <- 1.1
 theta <- 1  # 0 = Density dependent transmission, 1 = Freq. dep. trans.
 
-beta = r0 * (n0^(theta-1)) / (mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.f.sur^(1/12))),
-                                    rnbinom(1000, 1, (1 - (1 - hunt.Smort.ad.f)^(1/12))),
+beta.f = r0 * (n0^(theta-1)) / (mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.f.sur^(1/12))),
+                                    rnbinom(1000, 1, (1 - (1 - hunt.mort.ad.f)^(1/12))),
                                     rgamma(1000, 10, p)), 1, FUN = min)))
 
 #beta <- 0.035 # direct transmission
-beta.m <- 1.1 # transmission rate to males increased 10%
+beta.m <- 1.5 # transmission rate to males increased 10%
 
 
 #bundle them into a list
@@ -79,7 +81,7 @@ params <- list(fawn.an.sur = fawn.an.sur,
                n.age.cats = n.age.cats,
                p = p,
                env.foi = env.foi,
-               beta = beta,
+               beta.f = beta.f,
                beta.m = beta.m,
                theta = theta,
                n0 = n0,

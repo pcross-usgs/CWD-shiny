@@ -1,6 +1,7 @@
 # Script to run the stochastic model
+rm(list = ls())
 library(profvis)
-profvis({
+#profvis({
 
 library(popbio)
 library(reshape2)
@@ -15,16 +16,16 @@ source("./code/plot_compare_scenarios.r")
 load("./output/params_stoch_ver2.RData")
 
 #Run the model
-sims <- 20
+sims <- 40
 counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
-s <- Sys.time()
+
 for(i in 1:sims){
   outa <- stoch.pop.model.2(params)
   counts.sims[[i]] <- outa$counts
   deaths.sims[[i]] <- outa$deaths
 }
-Sys.time()-s
+
 
 counts <- melt(counts.sims,
                          id = c("age", "month", "population", "category",
@@ -66,7 +67,8 @@ plot.stoch.age.dist(outa$counts)
 
 #####################
 # run it again for comparison plot testing
-sims <- 20
+load("./output/params_stoch_ver2b.RData")
+sims <- 40
 counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
 
@@ -86,19 +88,20 @@ deaths <- melt(deaths.sims,
                       "year", "sex")) %>% rename(sim = L1)
 
 outb <- list(counts = counts, deaths = deaths)
-##############
+
+plot.stoch.tots.2(outb$counts, error.bars = c(0.05, 0.95))
+#plot the prevalence
+plot.stoch.prev(outb$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.95))
 
 # plot the comparisons
 plot.compare.all(outa, outb)
+
 #plot.compare.tots(outa$counts, outb$counts)
 #plot.compare.prev(outa$counts, outb$counts)
-
 #plot.compare.hunted(outa$deaths, outb$deaths)
 #plot.compare.hunted.end(outa$deaths, outb$deaths)
-
 #plot.compare.buckshunted(outa$deaths, outb$deaths)
 #plot.compare.buckshunted.end(outa$deaths, outb$deaths)
-
 #plot.compare.oldbuckshunted(outa$deaths, outb$deaths)
 #plot.compare.oldbuckshunted.end(outa$deaths, outb$deaths)
-})
+#})
