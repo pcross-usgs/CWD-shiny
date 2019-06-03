@@ -1,5 +1,6 @@
 det.pop.model.v2 <- function(params){
   require(popbio)
+  
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -108,7 +109,7 @@ det.pop.model.v2 <- function(params){
       It.f[, t, ] <- It.f[, t-1, ]
       It.m[, t, ] <- It.m[, t-1, ]
     }
-
+#browser()
    # Natural mortality
    St.f[, t] <- St.f[, t] * Sur.f
    St.m[, t] <- St.m[, t] * Sur.m
@@ -173,8 +174,8 @@ det.pop.model.v2 <- function(params){
     Iall <- sum(It.f[ ,t, ] + It.m[ ,t,])
     Nall <- sum(St.f[,t] + St.m[,t]) + Iall
 
-    cases.f <- St.f[ ,t] * (1 - exp( - (beta * (Iall / Nall^theta))))
-    cases.m <- St.m[ ,t] * (1 - exp( - (beta * beta.m * (Iall / Nall^theta))))
+    cases.f <- St.f[ ,t] * (1 - exp( - (beta.f * (Iall / Nall^theta))))
+    cases.m <- St.m[ ,t] * (1 - exp( - (beta.f * beta.m * (Iall / Nall^theta))))
 
     St.f[ ,t] <- St.f[ ,t] - cases.f
     St.m[ ,t] <- St.m[ ,t] - cases.m

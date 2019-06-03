@@ -29,7 +29,7 @@ det_mod <- function(input, output, session){
 
          #calculate beta from r0_female
          #R0_per year * n^theta-1 / 12 months
-         beta = (input$r0_peryear  * input$n0^(input$theta-1))/ 12,
+         beta.f = (input$r0_peryear  * input$n0^(input$theta-1))/ 12,
          beta.m = input$beta.m,
          theta = input$theta,
          n0 = input$n0,
@@ -40,11 +40,11 @@ det_mod <- function(input, output, session){
   simout <- reactive({
     params <- react.params()
     out <- det.pop.model.v2(params)
-    fem.R0 <-  ( params$beta / params$n0 ^ (params$theta-1) ) *
+    fem.R0 <-  ( params$beta.f / params$n0 ^ (params$theta-1) ) *
              mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
                        rgamma(1000, 10, input$p)), 1, FUN = min))
-    male.R0 <-  ( params$beta * params$beta.m / params$n0 ^ (params$theta-1) ) *
+    male.R0 <-  ( params$beta.f * params$beta.m / params$n0 ^ (params$theta-1) ) *
       mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),
                        rgamma(1000, 10, input$p)), 1, FUN = min))

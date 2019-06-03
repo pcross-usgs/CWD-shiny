@@ -146,7 +146,7 @@ stoch.pop.model.2 <- function(params){
 
     ##Natural Mort then hunt then disease mort THEN TRANSMISSION
     #Natural Mortality
-
+#browser()
     nat.s.f <- rbinom(n.age.cats, St.f[ ,t], (1-Sur.f))
     nat.s.m <- rbinom(n.age.cats, St.m[ ,t], (1-Sur.m))
 
@@ -196,15 +196,13 @@ stoch.pop.model.2 <- function(params){
 
       hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
       hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
-      
+      #browser()
       # subtracting out those hunted in the S class
       St.f[,t] <- St.f[,t] - (Ht.f[,t] - hunted.i.f)
       St.m[,t] <- St.m[,t] - (Ht.m[,t] - hunted.i.m)
-     #browser()
-       # allocate those deaths across the Icategories
+      # allocate those deaths across the Icategories
       It.f[ , t, ] <- allocate.deaths(hunted.i.f, It.f[ , t, ])
       It.m[ , t, ] <- allocate.deaths(hunted.i.m, It.m[ , t, ])
-    
     }
 
     #Disease mortality
@@ -238,8 +236,8 @@ stoch.pop.model.2 <- function(params){
     Iall <- sum(It.f[ ,t, ] + It.m[ ,t,])
     Nall <- sum(St.f[,t] + St.m[,t]) + Iall
 
-    foi <- 1 - exp(-beta * Iall/Nall^theta)
-    foi.m <- 1 - exp(-beta * beta.m * Iall/Nall^theta)
+    foi <- 1 - exp(-beta.f * Iall/Nall^theta)
+    foi.m <- 1 - exp(-beta.f * beta.m * Iall/Nall^theta)
 
     transmission.f <- rbinom(n.age.cats, St.f[,t], foi)
     transmission.m <- rbinom(n.age.cats, St.m[,t], foi.m)

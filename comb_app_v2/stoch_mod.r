@@ -18,7 +18,7 @@ stoch_mod <- function(input, output, session){
          env.foi =  1 - ((1-input$an.env.foi)^(1/12)),
 
          #convert from r0_peryear to beta
-         beta = (input$r0_peryear  * input$n0 ^ (input$theta-1)) / 12,
+         beta.f = (input$r0_peryear  * input$n0 ^ (input$theta-1)) / 12,
          beta.m = input$beta.m,
          theta = input$theta,
 
@@ -65,11 +65,11 @@ stoch_mod <- function(input, output, session){
                         id = c("age", "month", "population", "category",
                                "year", "sex")) %>% rename(sim = L1)
 
-    fem.R0 <-   (params$beta / params$n0 ^ (params$theta-1)) *
+    fem.R0 <-   (params$beta.f / params$n0 ^ (params$theta-1)) *
             mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                             rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
                             rgamma(1000, 10, input$p)), 1, FUN = min))
-    male.R0 <-   (params$beta * params$beta.m / params$n0 ^ (params$theta-1)) *
+    male.R0 <-   (params$beta.f * params$beta.m / params$n0 ^ (params$theta-1)) *
       mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),
                        rgamma(1000, 10, input$p)), 1, FUN = min))
