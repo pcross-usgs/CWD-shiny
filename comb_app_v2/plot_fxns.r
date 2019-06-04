@@ -175,7 +175,7 @@ plot.prev.2 <- function(dat, ...){
  plot(dat.sum2$age, dat.sum2$f, type = "l", col = "red", xlab = "Age",
       ylab = "Prevalence", bty = "l", lwd = 2, ...)
  lines(dat.sum2$age + 0.1, dat.sum2$m, col = "blue", lwd = 2)
- legend("topleft", c("females", "males"),
+ legend("topright", c("females", "males"),
         col = c("red", "blue"), lwd = 2, box.lty = 0)
 }
 

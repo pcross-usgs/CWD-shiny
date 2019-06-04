@@ -110,9 +110,9 @@ det_mod <- function(input, output, session){
 
   output$DeathPlot <- renderPlot({
     out <- simout()
-    #p1 <- plot.deaths(out$deaths)
-    plot.perc.deaths(out$deaths)
-    #plot_grid(p1, p2, nrow = 2)
+    p1 <- plot.deaths(out$deaths)
+    p2 <- plot.perc.deaths(out$deaths)
+    plot_grid(p1, p2, nrow = 2)
   })
 
   output$ParamPlot <- renderPlot({

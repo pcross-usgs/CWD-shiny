@@ -1,4 +1,4 @@
-compare_stochUI <- function(id) {
+compare_detUI <- function(id) {
   ns <- NS(id)
   wellPanel(
     tagList(
@@ -42,8 +42,6 @@ compare_stochUI <- function(id) {
       column(3,
              numericInput(ns("n.years"), "# of years",
                           value = 10, min = 5, max = 30, step = 5),
-             numericInput(ns("sims"), "# of sims",
-                          value = 30, min = 5, max = 100, step = 10),
              numericInput(ns("n0"), "Initial population",
                           value = 1000, min = 100, max = 5000, step = 100),
              numericInput(ns("ini.fawn.prev"), "Fawn prevalence",
@@ -54,8 +52,7 @@ compare_stochUI <- function(id) {
                           value = 0.03, min = 0, max = 0.4, step = 0.01),
              numericInput(ns("ini.ad.m.prev"), "Male prevalence",
                           value = 0.03, min = 0, max = 0.4, step = 0.01)),
-      hr(),
-      actionButton(ns("go"), "Run simulation")
+      hr()
+      )
     )
-  )
 }

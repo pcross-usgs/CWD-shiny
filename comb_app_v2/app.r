@@ -11,11 +11,14 @@ library(knitr)
 library(shinydashboard)
 library(shinycssloaders)
 
+#source("estBetaParams.r", local = T)
 source("stoch_model_fxn_ver2.r", local = T)
 source("det_pop_model_fxn_ver2.r", local = T)
+source("plot_compare_scenarios.r", local = T)
+source("plot_fxns.r", local = T)
 source("plot_stoch_fxns.r", local = T)
 source("plot_params.r", local = T)
-source("estBetaParams.r", local = T)
+source("det_mod.r", local = T)
 source("det_modUI.r", local = T)
 source("stoch_modUI.r", local = T)
 source("stoch_mod.r", local = T)
@@ -25,9 +28,10 @@ source("compare_stoch_plotsUI2.r", local = T)
 source("compare_stoch_server.r", local = T)
 source("compare_stoch_plots_server.r", local = T)
 source("compare_stoch_plots_server2.r", local = T)
-source("plot_compare_scenarios.r", local = T)
-source("det_mod.r", local = T)
-source("plot_fxns.r", local = T)
+source("compare_detUI.r", local = T)
+source("compare_det_plotsUI.r", local = T)
+source("compare_det_server.r", local = T)
+source("compare_det_plots_server.r", local = T)
 
 knit("description_combo.Rmd", quiet = T)
 
@@ -44,6 +48,16 @@ ui <- fluidPage(theme = "common.css",
                         det_modUI(id = "det")),
                 tabPanel("Stochastic Model",
                         stoch_modUI(id = "stoch")),
+             tabPanel("Deterministic comparison",
+                      column(6, h3("Scenario A"),
+                             compare_detUI("scenario_det_a"),
+                             compare_det_plotsUI("plots_det_a")
+                      ),
+                      column(6, h3("Scenario B"),
+                             compare_detUI("scenario_det_b"),
+                             compare_det_plotsUI("plots_det_b"))
+                      ),
+             
                 tabPanel("Stochastic comparison",
                           column(6, h3("Scenario A"),
                                   compare_stochUI("scenario_a"),
@@ -60,16 +74,25 @@ ui <- fluidPage(theme = "common.css",
   div(class = "footer", includeHTML("www/footer.html"))
 )
 
-
 server <- function(input, output, session) {
   callModule(stoch_mod, id = "stoch")
   callModule(det_mod, id = "det")
 
+  out_det_a <- callModule(compare_det_server, "scenario_det_a")
+  out_det_b <- callModule(compare_det_server, "scenario_det_b")
+  
+  plots_det_a <- callModule(compare_det_plots_server, "plots_det_a", 
+                            simout = out_det_a)
+  plots_det_b <- callModule(compare_det_plots_server, "plots_det_b", 
+                            simout = out_det_b)
+
   out_stoch_a <- callModule(compare_stoch_server, "scenario_a")
   out_stoch_b <- callModule(compare_stoch_server, "scenario_b")
 
-  plots_a <- callModule(compare_stoch_plots_server, "plots_a", simout = out_stoch_a)
-  plots_b <- callModule(compare_stoch_plots_server, "plots_b", simout = out_stoch_b)
+  plots_a <- callModule(compare_stoch_plots_server, "plots_a", 
+                        simout = out_stoch_a)
+  plots_b <- callModule(compare_stoch_plots_server, "plots_b", 
+                        simout = out_stoch_b)
   compare_plots <- callModule(compare_stoch_plots_server2, "compare_plots",
                               simout_a = out_stoch_a,
                               simout_b = out_stoch_b)
