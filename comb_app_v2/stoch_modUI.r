@@ -43,7 +43,6 @@ fluidRow(
                            value = 0.1, min = 0.01, max = 0.6,step = 0.05),
                sliderInput(ns("hunt.mort.ad.m"),"% males hunted",
                            value = 0.3, min = 0.01, max = 0.6,step = 0.05)),
-
       tabPanel("Simulation",
                sliderInput(ns("n.years"), "# of years",
                            value = 10, min = 5, max = 30, step = 5),
@@ -62,7 +61,7 @@ fluidRow(
       )
      ),
     column(8, h4("Plots"),
-           h6("Press the run simulations button for plots to display"),
+           includeMarkdown("stoch_text.md"),
            tabsetPanel(
              tabPanel("Totals", plotOutput(ns('TotalPlot')), hr(), hr(),
                       h4(htmlOutput(ns('R0text1')))),

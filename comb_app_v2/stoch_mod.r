@@ -5,10 +5,8 @@ stoch_mod <- function(input, output, session){
          n.age.cats = 12,
          n0 = input$n0, # initial population size
          p = input$p, #probability of transitioning between infectious box cars;
-
          fawn.an.sur.var = 0.005,
          an.sur.var = 0.005,
-
          hunt.mort.var = 0.005,
          fawn.repro.var = (1/2)^2 * 0,
          juv.repro.var = (1/2)^2 * 0.005,

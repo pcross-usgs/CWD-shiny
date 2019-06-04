@@ -11,7 +11,7 @@ library(knitr)
 library(shinydashboard)
 library(shinycssloaders)
 
-#source("estBetaParams.r", local = T)
+source("estBetaParams.r", local = T)
 source("stoch_model_fxn_ver2.r", local = T)
 source("det_pop_model_fxn_ver2.r", local = T)
 source("plot_compare_scenarios.r", local = T)
@@ -55,10 +55,12 @@ ui <- fluidPage(theme = "common.css",
                       ),
                       column(6, h3("Scenario B"),
                              compare_detUI("scenario_det_b"),
-                             compare_det_plotsUI("plots_det_b"))
+                             compare_det_plotsUI("plots_det_b")),
+                      includeMarkdown("disclaimer.md")
                       ),
              
                 tabPanel("Stochastic comparison",
+                         includeMarkdown("stoch_text.md"),
                           column(6, h3("Scenario A"),
                                   compare_stochUI("scenario_a"),
                                   compare_stoch_plotsUI("plots_a")
