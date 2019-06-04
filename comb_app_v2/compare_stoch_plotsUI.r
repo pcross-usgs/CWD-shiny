@@ -1,4 +1,4 @@
-compare_mod_plotsUI <- function(id){
+compare_stoch_plotsUI <- function(id){
   ns <- NS(id)
   wellPanel(
     tagList(

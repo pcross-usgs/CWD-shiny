@@ -1,4 +1,4 @@
-compare_mod_plotsUI2 <- function(id){
+compare_stoch_plotsUI2 <- function(id){
   ns <- NS(id)
   tagList(
     h3("Comparison Plots"),

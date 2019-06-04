@@ -1,4 +1,4 @@
-compare_mod_plots_server <- function(input, output, session, simout){
+compare_stoch_plots_server <- function(input, output, session, simout){
 
 
       output$R0text1 <- renderUI({

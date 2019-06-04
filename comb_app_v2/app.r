@@ -20,11 +20,11 @@ source("det_modUI.r", local = T)
 source("stoch_modUI.r", local = T)
 source("stoch_mod.r", local = T)
 source("compare_modUI.r", local = T)
-source("compare_mod_plotsUI.r", local = T)
-source("compare_mod_plotsUI2.r", local = T)
-source("compare_mod_server.r", local = T)
-source("compare_mod_plots_server.r", local = T)
-source("compare_mod_plots_server2.r", local = T)
+source("compare_stoch_plotsUI.r", local = T)
+source("compare_stoch_plotsUI2.r", local = T)
+source("compare_stoch_server.r", local = T)
+source("compare_stoch_plots_server.r", local = T)
+source("compare_stoch_plots_server2.r", local = T)
 source("plot_compare_scenarios.r", local = T)
 source("det_mod.r", local = T)
 source("plot_fxns.r", local = T)
@@ -46,13 +46,13 @@ ui <- fluidPage(theme = "common.css",
                 tabPanel("Scenario comparison",
                           column(6, h3("Scenario A"),
                                   compare_modUI("scenario_a"),
-                                  compare_mod_plotsUI("plots_a")
+                                  compare_stoch_plotsUI("plots_a")
                                  ),
                           column(6, h3("Scenario B"),
                                 compare_modUI("scenario_b"),
-                                compare_mod_plotsUI("plots_b")
+                                compare_stoch_plotsUI("plots_b")
                                 ), hr(),
-                         fluidRow(compare_mod_plotsUI2("compare_plots"))
+                         fluidRow(compare_stoch_plotsUI2("compare_plots"))
                            )
              ),
   #footer
@@ -64,12 +64,12 @@ server <- function(input, output, session) {
   callModule(stoch_mod, id = "stoch")
   callModule(det_mod, id = "det")
 
-  output_a <- callModule(compare_mod_server, "scenario_a")
-  output_b <- callModule(compare_mod_server, "scenario_b")
+  output_a <- callModule(compare_stoch_server, "scenario_a")
+  output_b <- callModule(compare_stoch_server, "scenario_b")
 
-  plots_a <- callModule(compare_mod_plots_server, "plots_a", simout = output_a)
-  plots_b <- callModule(compare_mod_plots_server, "plots_b", simout = output_b)
-  compare_plots <- callModule(compare_mod_plots_server2, "compare_plots",
+  plots_a <- callModule(compare_stoch_plots_server, "plots_a", simout = output_a)
+  plots_b <- callModule(compare_stoch_plots_server, "plots_b", simout = output_b)
+  compare_plots <- callModule(compare_stoch_plots_server2, "compare_plots",
                               simout_a = output_a,
                               simout_b = output_b)
 

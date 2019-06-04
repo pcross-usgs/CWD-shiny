@@ -1,4 +1,4 @@
-compare_mod_plots_server2 <- function(input, output, session, simout_a, simout_b){
+compare_stoch_plots_server2 <- function(input, output, session, simout_a, simout_b){
 
   output$ComparePlot <- renderPlot({
         outa <- simout_a()

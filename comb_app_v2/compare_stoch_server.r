@@ -1,4 +1,4 @@
-compare_mod_server <- function(input, output, session){
+compare_stoch_server <- function(input, output, session){
 
  react.params <- eventReactive(input$go,{
    list(sims = input$sims,
