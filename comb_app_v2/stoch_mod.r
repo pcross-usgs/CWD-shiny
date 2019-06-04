@@ -66,11 +66,11 @@ stoch_mod <- function(input, output, session){
     fem.R0 <-   (params$beta.f / params$n0 ^ (params$theta-1)) *
             mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                             rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
-                            rgamma(1000, 10, input$p)), 1, FUN = min))
+                            rgamma(1000, 10, input$p)), 1, FUN = min, na.rm = T))
     male.R0 <-   (params$beta.f * params$beta.m / params$n0 ^ (params$theta-1)) *
       mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),
-                       rgamma(1000, 10, input$p)), 1, FUN = min))
+                       rgamma(1000, 10, input$p)), 1, FUN = min, na.rm = T))
 
     out <- list(counts = counts.long, deaths = deaths.long, fem.R0 = fem.R0,
                 male.R0 = male.R0)
