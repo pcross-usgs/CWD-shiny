@@ -8,6 +8,7 @@ library(tidyverse)
 library(cowplot)
 library(ggridges)
 library(knitr)
+library(markdown)
 library(shinydashboard)
 library(shinycssloaders)
 
@@ -33,7 +34,7 @@ source("compare_det_plotsUI.r", local = T)
 source("compare_det_server.r", local = T)
 source("compare_det_plots_server.r", local = T)
 
-knit("description_combo.Rmd", quiet = T)
+#knit("description_combo.Rmd", quiet = T)
 
 ui <- fluidPage(theme = "common.css",
   div(class = "header", includeHTML("www/header.html")),
@@ -43,7 +44,8 @@ ui <- fluidPage(theme = "common.css",
 
   navbarPage("Chronic Wasting Disease Model",
                 tabPanel("Description",
-                      withMathJax(includeMarkdown("description_combo.md"))),
+                         withMathJax(includeHTML("description_combo.html"))),
+                      #withMathJax(includeMarkdown("description_combo.md"))),
                 tabPanel("Deterministic Model",
                         det_modUI(id = "det")),
                 tabPanel("Stochastic Model",
