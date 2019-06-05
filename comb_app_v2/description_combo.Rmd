@@ -3,13 +3,13 @@
 
 This application is a decision-support tool for natural resource managers interested in investigating different scenarios associated with chronic wasting disease (CWD). This tool allows the user to enter parameters for deer and elk vital rates, hunting mortality, and disease transmission and the model will plot the total number of individuals, prevalence, age and sex distribution, and how many deaths were natural, hunting or CWD-related. In addition to this description page there are three other pages that can be accessed via the tabs above. The determinisitic model, as the name implies, includes no stochasticity. Parameters can entered and changed using the sliders on the left hand side of the screen and any time a parameter is changed the model will automatically re-run and plot the new results. The stochastic model has the same structure as the deterministic model, but includes both environmental and demographic stochasticity. Vital rates and hunting mortality varies annually while disease transmission rates are fixed. The distribution of these parameters is shown in the plots section under the Parameters tab. In order to run or re-run the stochastic model the user must first press the "Run Simulation" button. The last page, "Scenario comparison", allows the user to enter two different scenarios and view the distribution of modeled outcomes. This uses the stochastic model and the "Run Simulation" button must be clicked to view the output for each scenario.  
   
-###User inputs  
+### User inputs  
 
 A few of the user inputs require some additional explanation. All survival rates are entered as annual probabilities, while reproductive rates are entered as the number of total offspring per female. Indirect transmission is the annual probability of being infected from the environment, which we assumed to be constant for the duration of the simulation. The direct transmission rate is proportional to $\frac{\beta SI}{N^{\theta}}$, where $I$ and $N$ are the number of infectious individuals and the total number of individuals. $\theta$ determines whether disease transmission depends on the number of infecteds $\theta = 0$ or the prevalence $\theta = 1$ (i.e. density or frequency dependent transmission). Due to the strong effect of $\theta$ on the transmission rate, $\beta$ is calculated from the direct $R_0$ per year, which we define as the expected number of individuals to be infected by an infected individual in a completely susceptible population in one year. By defining this on an annual basis, it does not depend on natural and hunting mortality rates, which are other user inputs. We assume males may be more likely to become infected than females and this is regulated by $\gamma$, which equals one if females and males are equally likely to become infected. The direct $R_0$ entered by the user is assumed to be for females. The direct $R_0$, which accounts for how long infected individuals are likely to live is provided as an output for adult males and females below the plots. 
   
 Disease induced mortality is controlled by the rate that infected individuals move through 10 sub-categories. This makes the time to disease-induced deaths bell-shaped and when the index 0.43 the time to disease-induced death is about two years. Finally, the relative hunting risk is the ratio of the probability of an infected vs. uninfected individuals being hunted. When the relative risk is greater than one, infected individuals are morelikely likely to be hunted relative to the background prevalence, which may be due to the behavior of infected individuals or management strategies that target hot-spots of infection. The parameters in the stochastic model are the same with the exception of the number of simulations to be run. The variance in vital rates is currently fixed at 0.005. 
 
-###Model Structure
+### Model Structure
 
 The underlying model is a discrete time model with a monthly timestep. Each simulation begins in May with all births occuring in June and all hunting occuring in November. The model tracks sex and ages of individuals in susceptible ($S$) and infectious ($I$) categories to allow for hunting strategies that may target different sex and age groups, and may be preferential to infectious individuals. 
 
@@ -49,7 +49,7 @@ Table 2    | hunted     | not hunted  |totals    |
 -----------| --------- |------------ |--------- | 
 positive   |A        |B          |G       |
 negative   |C        |D          |H       | 
-total      |E        |F 
+total      |E        |F | |
 
 
 In Table 1 the marginal frequencies (*i.e.* the total number of positives, negatives, hunted and not hunted) are known via user inputs. The relative risk of hunting a positive is $RR = \frac{A / (A+B)}{C/(C+D)}$. In this case $RR$, the prevalence $G/(G+H)$, and the % hunted $E/(E+F)$ are known such that we can solve for A, B, C, and D. We assume that infected individuals are hunted equally across all sub-categories. 
@@ -70,10 +70,10 @@ Code was written using R version 3.4.4 (R Foundation for Statistical Computing, 
 * popbio: version 2.4.4  
 * magrittr: version 1.5  
 * tidyverse: version 1.2.1  
-* cowplot: version 0.9.2  
+* cowplot: version 0.9.4 
 * ggridges: version 0.5.1  
-* knitr: version 1.20  
-* shinydashboard: version 0.7.0  
+* knitr: version 1.2.3  
+* shinydashboard: version 0.7.1  
 * shinycssloaders: version 0.2.0
 
 
@@ -94,13 +94,13 @@ Any use of trade, firm, or product names is for descriptive purposes only and do
 
 
 ### References
-Chang, W, J Cheng, JJ Allaire, Y Xie, and J McPherson (2017). shiny: Web
+Chang, W, J Cheng, JJ Allaire, Y Xie, and J McPherson 2017. shiny: Web
   Application Framework for R. R package version 1.0.5. https://CRAN.R-project.org/package=shiny
   
-Chang, W, and BB Ribeiro (2018). shinydashboard: Create Dashboards with 'Shiny'.
+Chang, W, and BB Ribeiro 2018. shinydashboard: Create Dashboards with 'Shiny'.
   R package version 0.7.0. https://CRAN.R-project.org/package=shinydashboard
   
-R Core Team (2018). R: A language and environment for statistical computing. R Foundation for
+R Core Team 2018. R: A language and environment for statistical computing. R Foundation for
   Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
 Sali, A. 2017. shinycssloaders: Add CSS Loading Animations to 'shiny'
@@ -109,17 +109,17 @@ Sali, A. 2017. shinycssloaders: Add CSS Loading Animations to 'shiny'
 
 Stubben, C.J. and Milligan, B.G. 2007. Estimating and Analyzing Demographic Models Using the popbio Package in R. Journal of Statistical Software 22:11.  
 
-Wickham, H (2017). tidyverse: Easily Install and Load the 'Tidyverse'. R package version
+Wickham, H 2017. tidyverse: Easily Install and Load the 'Tidyverse'. R package version
   1.2.1. https://CRAN.R-project.org/package=tidyverse
 
-Wickham, H (2007). Reshaping Data with the reshape Package. Journal of Statistical Software, 21(12), 1-20.
+Wickham, H 2007. Reshaping Data with the reshape Package. Journal of Statistical Software, 21(12), 1-20.
 URL http://www.jstatsoft.org/v21/i12/.
 
-Wilke, CO (2017). cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'. R
+Wilke, CO 2017. cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'. R
   package version 0.9.2. https://CRAN.R-project.org/package=cowplot
 
-Wilke, CO (2018). ggridges: Ridgeline Plots in 'ggplot2'. R package version 0.5.1.
+Wilke, CO 2018. ggridges: Ridgeline Plots in 'ggplot2'. R package version 0.5.1.
   https://CRAN.R-project.org/package=ggridges
   
-Xie, Y (2018). knitr: A General-Purpose Package for Dynamic Report Generation in R. R package
+Xie, Y 2018. knitr: A General-Purpose Package for Dynamic Report Generation in R. R package
   version 1.20.
