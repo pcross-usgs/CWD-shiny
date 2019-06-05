@@ -334,7 +334,7 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
     arrange(sex, age)
 
   p <-   ggplot(data = dat.mean, aes(x = age, y = avg, color = sex)) +
-    geom_line(size = 1.5) +
+    geom_line(size = 1.5) + ylim(0,1) + 
     xlab("Age") + ylab("Prevalence")
 
     p <- p + geom_line(data = dat.mean, aes(x = age, y = lo, color = sex),
@@ -343,7 +343,7 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
                 linetype = "dashed") +  theme_light(base_size = 18) +
       theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank(),
-          legend.position = "bottom")
+          legend.position = c(.15,.85))
 
     p
 }

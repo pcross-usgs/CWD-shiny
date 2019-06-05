@@ -379,11 +379,11 @@ $(document).ready(function () {
 
 <div id="about-the-chronic-wasting-disease-model" class="section level2">
 <h2>About the chronic wasting disease model</h2>
-<p>This application is a decision-support tool for natural resource managers interested in investigating different scenarios associated with chronic wasting disease (CWD). This tool allows the user to enter parameters for deer and elk vital rates, hunting mortality, and disease transmission and the model will plot the total number of individuals, prevalence, age and sex distribution, and how many deaths were natural, hunting or CWD-related. In addition to this description page there are three other pages that can be accessed via the tabs above. The determinisitic model, as the name implies, includes no stochasticity. Parameters can entered and changed using the sliders on the left hand side of the screen and any time a parameter is changed the model will automatically re-run and plot the new results. The stochastic model has the same structure as the deterministic model, but includes both environmental and demographic stochasticity. Vital rates and hunting mortality varies annually while disease transmission rates are fixed. The distribution of these parameters is shown in the plots section under the Parameters tab. In order to run or re-run the stochastic model the user must first press the “Run Simulation” button. The last page, “Scenario comparison”, allows the user to enter two different scenarios and view the distribution of modeled outcomes. This uses the stochastic model and the “Run Simulation” button must be clicked to view the output for each scenario.</p>
+<p>This application is a decision-support tool for natural resource managers interested in investigating different scenarios associated with chronic wasting disease (CWD). This tool allows the user to enter parameters for deer and elk vital rates, hunting mortality, and disease transmission and the model will plot the total number of individuals, prevalence, age and sex distribution, and how many deaths were natural, hunting or CWD-related. In addition to this description page there are three other pages that can be accessed via the tabs above. The determinisitic model, as the name implies, includes no stochasticity. Parameters can entered and changed using the sliders on the left hand side of the screen and any time a parameter is changed the model will automatically re-run and plot the new results. The stochastic model has the same structure as the deterministic model, but includes both environmental and demographic stochasticity. Vital rates and hunting mortality varies annually while disease transmission rates are fixed. The distribution of these parameters is shown in the plots section under the Parameters tab. In order to run or re-run the stochastic model the user must first press the “Run Simulation” button. The Deterministic and Stochastic comparison tabs allow the user to enter two different scenarios and compare the modeled outcomes.</p>
 <div id="user-inputs" class="section level3">
 <h3>User inputs</h3>
-<p>A few of the user inputs require some additional explanation. All survival rates are entered as annual probabilities, while reproductive rates are entered as the number of total offspring per female. Indirect transmission is the annual probability of being infected from the environment, which we assumed to be constant for the duration of the simulation. The direct transmission rate is proportional to <span class="math inline">\(\frac{\beta SI}{N^{\theta}}\)</span>, where <span class="math inline">\(I\)</span> and <span class="math inline">\(N\)</span> are the number of infectious individuals and the total number of individuals. <span class="math inline">\(\theta\)</span> determines whether disease transmission depends on the number of infecteds <span class="math inline">\(\theta = 0\)</span> or the prevalence <span class="math inline">\(\theta = 1\)</span> (i.e. density or frequency dependent transmission). Due to the strong effect of <span class="math inline">\(\theta\)</span> on the transmission rate, <span class="math inline">\(\beta\)</span> is calculated from the direct <span class="math inline">\(R_0\)</span> per year, which we define as the expected number of individuals to be infected by an infected individual in a completely susceptible population in one year. By defining this on an annual basis, it does not depend on natural and hunting mortality rates, which are other user inputs. We assume males may be more likely to become infected than females and this is regulated by <span class="math inline">\(\gamma\)</span>, which equals one if females and males are equally likely to become infected. The direct <span class="math inline">\(R_0\)</span> entered by the user is assumed to be for females. The direct <span class="math inline">\(R_0\)</span>, which accounts for how long infected individuals are likely to live is provided as an output for adult males and females below the plots.</p>
-<p>Disease induced mortality is controlled by the rate that infected individuals move through 10 sub-categories. This makes the time to disease-induced deaths bell-shaped and when the index 0.43 the time to disease-induced death is about two years. Finally, the relative hunting risk is the ratio of the probability of an infected vs. uninfected individuals being hunted. When the relative risk is greater than one, infected individuals are morelikely likely to be hunted relative to the background prevalence, which may be due to the behavior of infected individuals or management strategies that target hot-spots of infection. The parameters in the stochastic model are the same with the exception of the number of simulations to be run. The variance in vital rates is currently fixed at 0.005.</p>
+<p>A few of the user inputs require some additional explanation. All survival rates are entered as annual probabilities, while reproductive rates are entered as the number of total offspring per female. Indirect transmission is the annual probability of being infected from the environment, which we assumed to be constant for the duration of the simulation. The direct transmission rate is proportional to <span class="math inline">\(\frac{\beta SI}{N^{\theta}}\)</span>, where <span class="math inline">\(I\)</span> and <span class="math inline">\(N\)</span> are the number of infectious individuals and the total number of individuals. <span class="math inline">\(\theta\)</span> determines whether disease transmission depends on the number of infecteds <span class="math inline">\(\theta = 0\)</span> or the prevalence <span class="math inline">\(\theta = 1\)</span> (i.e. density or frequency dependent transmission). Due to the strong effect of <span class="math inline">\(\theta\)</span> on the transmission rate, <span class="math inline">\(\beta\)</span> is calculated from the direct <span class="math inline">\(R_0\)</span> per year, which we define as the expected number of individuals to be infected by an infected individual in a completely susceptible population in one year. By defining this on an annual basis, it does not depend on natural and hunting mortality rates, which are other user inputs. We assume males may be more likely to become infected than females, whereby <span class="math inline">\(\beta_m = \beta_f\gamma\)</span>, set <span class="math inline">\(\gamma=1\)</span> if females and males are equally likely to become infected. The annual number of individuals a female infects in a fully susceptible population (i.e. the annual direct <span class="math inline">\(R_0\)</span>) is entered by the user, while the direct <span class="math inline">\(R_0\)</span> for males and females, which accounts for how long infected individuals are likely to live, is provided as an output.</p>
+<p>Disease induced mortality is controlled by the rate that infected individuals move through 10 sub-categories in a so-called boxcar approach. This makes the time to disease-induced deaths bell-shaped and when the index 0.43 the time to disease-induced death is about two years. Finally, the relative hunting risk is the ratio of the probability of an infected vs. uninfected individuals being hunted. When the relative risk is greater than one, infected individuals are morelikely likely to be hunted relative to the background prevalence, which may be due to the behavior of infected individuals or management strategies that target hot-spots of infection. The parameters in the stochastic model are the same with the exception of the number of simulations to be run. The variance in vital rates is currently fixed at 0.005.</p>
 </div>
 <div id="model-structure" class="section level3">
 <h3>Model Structure</h3>
@@ -463,14 +463,14 @@ $(document).ready(function () {
 <tr class="even">
 <td></td>
 <td>transmission parameter</td>
-<td><span class="math inline">\(\beta\)</span></td>
+<td><span class="math inline">\(\beta_f\)</span></td>
 <td>baseline female transmission</td>
 </tr>
 <tr class="odd">
 <td></td>
 <td>male scaling</td>
 <td><span class="math inline">\(\gamma\)</span></td>
-<td>male transmission = <span class="math inline">\(\beta \gamma\)</span></td>
+<td>male transmission = <span class="math inline">\(\beta_m = \beta_f \gamma\)</span></td>
 </tr>
 <tr class="even">
 <td></td>
@@ -543,22 +543,32 @@ $(document).ready(function () {
 </div>
 <div id="code-and-implementation" class="section level3">
 <h3>Code and Implementation</h3>
-<p>Code was written using R version 3.4.4 (R Foundation for Statistical Computing, Vienna, AT; www.R-project.org) and the Shiny package version 1.0.5 (Chang et al. 2017). The other packages used were:<br />
-* reshape2: version 1.4.3<br />
-* popbio: version 2.4.4<br />
-* magrittr: version 1.5<br />
-* tidyverse: version 1.2.1<br />
-* cowplot: version 0.9.4 * ggridges: version 0.5.1<br />
-* knitr: version 1.2.3<br />
-* shinydashboard: version 0.7.1<br />
-* shinycssloaders: version 0.2.0</p>
+<p>Code was written using R version 3.4.4 (R Foundation for Statistical Computing, Vienna, AT; www.R-project.org) and the Shiny package version 1.3.2 (Chang et al. 2017). The other packages used were:</p>
+<ul>
+<li>reshape2: version 1.4.3<br />
+</li>
+<li>popbio: version 2.4.4<br />
+</li>
+<li>magrittr: version 1.5<br />
+</li>
+<li>tidyverse: version 1.2.1<br />
+</li>
+<li>cowplot: version 0.9.4</li>
+<li>ggridges: version 0.5.1<br />
+</li>
+<li>knitr: version 1.2.3<br />
+</li>
+<li>shinydashboard: version 0.7.1<br />
+</li>
+<li>shinycssloaders: version 0.2.0</li>
+</ul>
 <p>All of the source code is available at <a href="https://github.com/pcross-usgs/CWD-shiny" class="uri">https://github.com/pcross-usgs/CWD-shiny</a>.</p>
 </div>
 <div id="citation" class="section level3">
 <h3>Citation</h3>
 <p>This CWD model was developed by the U.S. Geological Survey, Northern Rocky Mountain Science Center, in collaboration with Montana Fish, Wildlife, and Parks.</p>
 <p>The tool may be cited as:</p>
-<p>Cross, PC and EA Almberg. 2019. Interactive chronic wasting disease model for scenario planning. URL</p>
+<p>Cross, PC and ES Almberg. 2019. Interactive chronic wasting disease model for scenario planning. URL TBD. DOI: 10.5066/P948SF4Q.</p>
 <p><em>Contact:</em> For technical assistance or to report outages, please contact <a href="mailto:pcross@usgs.gov" class="email">pcross@usgs.gov</a></p>
 <p><em>Disclaimers</em>: Although these data have been processed successfully on a computer system at the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of the data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty. The USGS or the U.S. Government shall not be held liable for improper or incorrect use of the data described and/or contained herein.</p>
 <p>Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.</p>
