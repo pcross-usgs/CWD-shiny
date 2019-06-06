@@ -50,12 +50,15 @@ compare_stoch_server <- function(input, output, session){
    #browser()
    counts.sims <- vector("list", input$sims)
    deaths.sims <- vector("list", input$sims)
-
-   for(i in 1:input$sims){
-     out <- stoch.pop.model.2(params)
-     counts.sims[[i]] <- out$counts
-     deaths.sims[[i]] <- out$deaths
-   }
+   withProgress(message = "running simulation", value = 0, {
+           
+        for(i in 1:input$sims){
+                   out <- stoch.pop.model.2(params)
+                   counts.sims[[i]] <- out$counts
+                   deaths.sims[[i]] <- out$deaths
+                   incProgress(i/input$sims, detail = paste("Run", i))
+           }
+    })
 
    counts.long <- melt(counts.sims,
                        id = c("age", "month", "population", "category",

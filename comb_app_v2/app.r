@@ -10,7 +10,6 @@ library(ggridges)
 library(knitr)
 library(markdown)
 library(shinydashboard)
-library(shinycssloaders)
 
 source("estBetaParams.r", local = T)
 source("stoch_model_fxn_ver2.r", local = T)
@@ -45,7 +44,6 @@ ui <- fluidPage(theme = "common.css",
   navbarPage("Chronic Wasting Disease Model",
                 tabPanel("Description",
                          withMathJax(includeHTML("description_combo.html"))),
-                      #withMathJax(includeMarkdown("description_combo.Rmd"))),
                 tabPanel("Deterministic Model",
                         det_modUI(id = "det")),
                 tabPanel("Stochastic Model",

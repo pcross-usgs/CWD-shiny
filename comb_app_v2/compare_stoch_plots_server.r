@@ -23,17 +23,7 @@ compare_stoch_plots_server <- function(input, output, session, simout){
 
       output$DeathPlot <- renderPlot({
         out <- simout()
-        #p1 <- plot.stoch.deaths(out$deaths, error.bars = c(0.05, 0.95))
         plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
-        #plot_grid(p1, p2, nrow = 2)
       })
-
-      #plot fawn.adult and buck:doe
-      #output$ClassPlot <- renderPlot({
-       # out <- simout()
-       # p1 <- plot.stoch.fawn.adult(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
-       # p2 <- plot.stoch.buck.doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
-       # plot_grid(p1, p2)
-      #})
 
 }

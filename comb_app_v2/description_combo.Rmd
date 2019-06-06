@@ -75,8 +75,6 @@ Code was written using R version 3.4.4 (R Foundation for Statistical Computing, 
 * ggridges: version 0.5.1  
 * knitr: version 1.2.3  
 * shinydashboard: version 0.7.1  
-* shinycssloaders: version 0.2.0
-
 
 All of the source code is available at https://github.com/pcross-usgs/CWD-shiny.  
   
@@ -102,10 +100,6 @@ Chang, W, and BB Ribeiro 2018. shinydashboard: Create Dashboards with 'Shiny'.
   
 R Core Team 2018. R: A language and environment for statistical computing. R Foundation for
   Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
-
-Sali, A. 2017. shinycssloaders: Add CSS Loading Animations to 'shiny'
-  Outputs. R package version 0.2.0.
-  https://CRAN.R-project.org/package=shinycssloaders
 
 Stubben, C.J. and Milligan, B.G. 2007. Estimating and Analyzing Demographic Models Using the popbio Package in R. Journal of Statistical Software 22:11.  
 
