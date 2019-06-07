@@ -100,7 +100,7 @@ det_mod <- function(input, output, session){
   output$PrevPlot <- renderPlot({
     out <- simout()
     par(mar = c(6,6,1,1))
-    plot.prev.2(out$counts, ylim = c(0, .7))
+    plot.prev.2(out$counts)
   })
 
   output$AgePlot <- renderPlot({
@@ -122,6 +122,6 @@ det_mod <- function(input, output, session){
 
   output$ClassPlot <- renderPlot({
     out <- simout()
-    plot.fawn.buck(out$counts, ylim = c(0.1, 1), lwd = 3)
+    plot.fawn.buck(out$counts)
   })
 }

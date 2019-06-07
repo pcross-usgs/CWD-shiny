@@ -84,10 +84,10 @@ plot.ttd <- function(p){
   #time to death: ttd
   tmp <- data.frame(years.to.death = rgamma(1000, 10, p)/12)
   
-  theme_set(theme_bw())
+  theme_set(theme_bw(base_size = 18))
   ggplot(tmp, aes(x = years.to.death)) +
     geom_density(fill = "grey") + 
-    theme_ridges() +
+    theme_ridges() + 
     labs(x = "Years", y = "Density",
          title = "Time until disease induced mortality")
 }

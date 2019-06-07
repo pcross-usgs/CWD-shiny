@@ -1,5 +1,6 @@
 # Script to run the stochastic model
 rm(list = ls())
+setwd("D:/Current Projects/CWD_shiny")
 library(profvis)
 #profvis({
 
@@ -96,12 +97,4 @@ plot.stoch.prev(outb$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.9
 # plot the comparisons
 plot.compare.all(outa, outb)
 
-#plot.compare.tots(outa$counts, outb$counts)
-#plot.compare.prev(outa$counts, outb$counts)
-#plot.compare.hunted(outa$deaths, outb$deaths)
-#plot.compare.hunted.end(outa$deaths, outb$deaths)
-#plot.compare.buckshunted(outa$deaths, outb$deaths)
-#plot.compare.buckshunted.end(outa$deaths, outb$deaths)
-#plot.compare.oldbuckshunted(outa$deaths, outb$deaths)
-#plot.compare.oldbuckshunted.end(outa$deaths, outb$deaths)
 #})

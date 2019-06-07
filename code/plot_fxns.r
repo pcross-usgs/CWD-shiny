@@ -148,6 +148,7 @@ plot.prev.2 <- function(dat, ...){
   # plot of the prevalence
   require(reshape2)
   require(tidyverse)
+  require(cowplot)
 
   # summarize by year and disease status, calculate the prevalence
   dat.sum <- dat %>%
@@ -164,19 +165,26 @@ plot.prev.2 <- function(dat, ...){
     summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes)) %>%
-    select(age, sex, prev) %>%
-    spread(key = sex, value = prev)
+    select(age, sex, prev) 
 
-
-  #create the plot
- par(mfrow = c(1,2), cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
- plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
-       bty = "l", type = "l", lwd = 2,  ...)
- plot(dat.sum2$age, dat.sum2$f, type = "l", col = "red", xlab = "Age",
-      ylab = "Prevalence", bty = "l", lwd = 2, ...)
- lines(dat.sum2$age + 0.1, dat.sum2$m, col = "blue", lwd = 2)
- legend("topleft", c("females", "males"),
-        col = c("red", "blue"), lwd = 2, box.lty = 0)
+ #prevalence over time
+ p1 <-  ggplot(dat.sum, aes(x = year, y = prev)) +
+   geom_line(size = 1.5) + ylim(0,1) + 
+   ylab("Prevalence") + xlab("Year") +
+   theme_light()  + theme(text = element_text(size = 18),
+                          panel.grid.minor = element_blank(),
+                          panel.grid.major = element_blank())
+ #prevalence by age
+ p2 <-  ggplot(dat.sum2, aes(x = age, y = prev, color = sex)) +
+   geom_line(size = 1.5) + ylim(0,1) + 
+   ylab("") + xlab("Age") +
+   theme_light()  + theme(text = element_text(size = 18),
+                          panel.grid.minor = element_blank(),
+                          panel.grid.major = element_blank(), 
+                          legend.position = c(.25,.85))
+ 
+ p3 <- plot_grid(p1, p2, nrow = 1)
+ p3
 }
 
 # plot the age distribution at the end point
@@ -202,7 +210,8 @@ plot.age.dist <- function(dat, ...){
     ylab("Population") + xlab("Age") +
     theme_light()  + theme(text = element_text(size = 18),
           panel.grid.minor = element_blank(),
-          panel.grid.major = element_blank())
+          panel.grid.major = element_blank(), legend.position = c(.15,.8))
+  
   p
 }
 
@@ -287,16 +296,24 @@ plot.fawn.buck <- function(dat, ...){
     spread(key = age.cat, value = n) %>%
     mutate(fawn.adult = fawn / adult)
 
-  par(mfrow = c(1,2))
-  par(mar = c(6, 6, 1, 1),
-      cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
-  plot(dat.sum$year, dat.sum$buck.doe, type = "l",
-       col = "blue", bty = "l",
-       ylab = "buck:doe", xlab = "Year", ...)
-  par(mar = c(6, 5, 1, 2))
-  plot(dat.sum.2$year, dat.sum.2$fawn.adult, type = "l",
-       col = "red", bty = "l", ylab = "fawn:doe",
-       xlab = "Year", ...)
+  #buck:doe plot
+  p1 <- ggplot(dat.sum, aes(x = year, y = buck.doe)) +
+  geom_line(size = 1.5) + ylim(0.1, 0.9) + 
+  ylab("Male:Female ratio") + xlab("Year") +
+  theme_light()  + theme(text = element_text(size = 18),
+                         panel.grid.minor = element_blank(),
+                         panel.grid.major = element_blank())
+  # fawn:doe create the plot
+  p2 <- ggplot(dat.sum.2, aes(x = year, y = fawn.adult)) +
+  geom_line(size = 1.5) + ylim(0.1, 0.9) + 
+  ylab("Fawn:Doe ratio") + xlab("Year") +
+  theme_light()  + theme(text = element_text(size = 18),
+                         panel.grid.minor = element_blank(),
+                         panel.grid.major = element_blank())
+  
+  p3 <- plot_grid(p1,p2, nrow = 1)
+  p3
+  
 }
 
 
@@ -325,7 +342,7 @@ p <-   ggplot(data = deaths, aes(x = year, y = n, color = category)) +
     geom_line(size = 1.5) + facet_wrap(~sex) +
     xlab("Year") + ylab("# of Adult Deaths") + theme_light(base_size = 18) +
   theme(panel.grid.minor = element_blank(),
-        panel.grid.major.x = element_blank())
+        panel.grid.major = element_blank())
 p
 
 }
@@ -365,7 +382,7 @@ plot.perc.deaths <- function(dat){
           geom_line(size = 1.5) + facet_wrap(~sex) +
           xlab("Year") + ylab("% of Adult Deaths") + theme_light(base_size = 18) +
           theme(panel.grid.minor = element_blank(),
-          panel.grid.major.x = element_blank())
+          panel.grid.major = element_blank())
   
 p
 }

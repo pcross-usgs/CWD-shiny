@@ -19,10 +19,10 @@ par(mfrow = c(1,1))
 plot.tots(out$counts)
 
 # prevalence plots
-plot.prev.2(out$counts, ylim = c(0,1))
+plot.prev.2(out$counts)#, ylim = c(0,1))
 
 # plot the fawn:doe and buck:doe ratios
-plot.fawn.buck(out$counts, ylim = c(0.2, .8))
+plot.fawn.buck(out$counts)#, ylim = c(0.2, .8))
 
 # plot the deaths
 plot.deaths(out$deaths)
