@@ -348,41 +348,41 @@ plot.compare.all <- function(outa, outb, ...){
   # totals
 
   p1 <- ggplot(totals, aes(x = n, y = scenario, fill = scenario)) +
-    geom_density_ridges(alpha= 0.6) +
-    theme_ridges() + theme(legend.position = "none") +
+    geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
+    theme(legend.position = "none") +
     xlab("Total population") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
   # prev
   p2 <- ggplot(prev, aes(x = prevalence, y = scenario, fill = scenario)) +
-    geom_density_ridges(alpha= 0.6) +
+    geom_density_ridges(alpha= 0.6, scale = 4) +
     theme_ridges() +theme(legend.position = "none") +
     xlab("Disease prevalence") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
   # plot
   p3 <- ggplot(tot.hunted, aes(x = n, y = scenario, fill = scenario)) +
-    geom_density_ridges(alpha= 0.6) +
+    geom_density_ridges(alpha= 0.6, scale = 4) +
     theme_ridges() +theme(legend.position = "none") +
     xlab("Total hunted > 1yr old") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
   p4 <- ggplot(last.hunted, aes(x = n, y = scenario, fill = scenario)) +
-    geom_density_ridges(alpha= 0.6) + theme_ridges() +
+    geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Total hunted > 1yr old in last year") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
   # plot
   p5 <- ggplot(males.hunted, aes(x = n, y = scenario, fill = scenario)) +
-    geom_density_ridges(alpha= 0.6) + theme_ridges() +
+    geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Males hunted > 1yr old") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
   # plot
   p6 <- ggplot(males.last.hunted, aes(x = n, y = scenario, fill = scenario)) +
-    geom_density_ridges(alpha= 0.6) + theme_ridges() +
+    geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Males hunted > 1yr old in last year") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)

@@ -97,4 +97,6 @@ plot.stoch.prev(outb$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.9
 # plot the comparisons
 plot.compare.all(outa, outb)
 
+plot.compare.tots(outa, outb)
+
 #})
