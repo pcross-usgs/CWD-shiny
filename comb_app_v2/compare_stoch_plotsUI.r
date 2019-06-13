@@ -7,6 +7,7 @@ compare_stoch_plotsUI <- function(id){
       h4(htmlOutput(ns('R0text1'))),
       plotOutput(ns('PrevPlot')), hr(),
       plotOutput(ns('TotalPlot')), hr(),
+      plotOutput(ns('DeathPlot2')), hr(),
       plotOutput(ns('DeathPlot'))
       )
   )

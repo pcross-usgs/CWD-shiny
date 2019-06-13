@@ -40,7 +40,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year, sex.age) %>%
-      summarize(avg = mean(n))
+      summarize(avg = mean(n, na.rm = T))
 
       if(missing(error.bars) == F){# calculate the error bars
         dat.errors <- dat.sum %>%
@@ -60,7 +60,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year) %>%
-      summarize(avg = mean(n))
+      summarize(avg = mean(n, na.rm = T))
 
     if(missing(error.bars) == F){# calculate the error bars
       dat.errors <- dat.sum %>%
@@ -547,7 +547,7 @@ plot.stoch.deaths <- function(dat, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg = mean(n)) %>%
+    summarize(avg = mean(n, na.rm = T)) %>%
     mutate(category = fct_reorder(category, avg))
 
   if(missing(error.bars) == F){# calculate the error bars
@@ -610,7 +610,7 @@ plot.stoch.perc.deaths <- function(dat, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg.percent = mean(percent))%>%
+    summarize(avg.percent = mean(percent, na.rm = T))%>%
     mutate(category = fct_reorder(category, avg.percent))
 
   if(missing(error.bars) == F){# calculate the error bars

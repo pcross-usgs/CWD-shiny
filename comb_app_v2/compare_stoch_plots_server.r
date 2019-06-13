@@ -25,5 +25,10 @@ compare_stoch_plots_server <- function(input, output, session, simout){
         out <- simout()
         plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
       })
+      
+      output$DeathPlot2 <- renderPlot({
+        out <- simout()
+        plot.stoch.deaths(out$deaths, error.bars = c(0.05, 0.95))
+      })
 
 }
