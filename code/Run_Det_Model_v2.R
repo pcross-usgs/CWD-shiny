@@ -31,3 +31,8 @@ plot.perc.deaths(out$deaths)
 # plot time to death
 plot.ttd(params$p)
 
+##Run a second set of parameters.
+outb <- det.pop.model.v2(params)
+
+# comparison plot all
+plot.compare.all.det(out, outb)

@@ -1,14 +1,14 @@
-#Version 2 of the deterministic monthly age and sex structured model 
+#Version 2 of the deterministic monthly age and sex structured model
 # constant environmental transmission, dynamic direct transmission
 
 det.pop.model.v2 <- function(params){
   require(popbio)
-  
+
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
   #########CREATE INITIAL CONDITIONS##########
-  
+
   #monthly index
   months <- seq(1, n.years*12)# monthly timestep
   hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
@@ -21,15 +21,15 @@ det.pop.model.v2 <- function(params){
   ad.m.sur <- ad.an.m.sur^(1/12)
 
   # group into a vector
-  ini.f.prev <- c(ini.fawn.prev, ini.juv.prev, 
+  ini.f.prev <- c(ini.fawn.prev, ini.juv.prev,
                   rep(ini.ad.f.prev, (n.age.cats-2))) # initial female prevalence
-  ini.m.prev <- c(ini.fawn.prev, ini.juv.prev, 
+  ini.m.prev <- c(ini.fawn.prev, ini.juv.prev,
                   rep(ini.ad.m.prev, (n.age.cats-2))) # initial male prevalence
 
   # Create the survival and birth vectors
-  Sur.f <- c(fawn.sur, juv.sur, 
+  Sur.f <- c(fawn.sur, juv.sur,
              rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
-  Sur.m <- c(fawn.sur, juv.sur, 
+  Sur.m <- c(fawn.sur, juv.sur,
              rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
 
   # Create the Leslie Matrix to start the population at stable age dist
@@ -117,7 +117,7 @@ det.pop.model.v2 <- function(params){
       It.f[, t, ] <- It.f[, t-1, ]
       It.m[, t, ] <- It.m[, t-1, ]
     }
-   
+
     # Natural mortality
    St.f[, t] <- St.f[, t] * Sur.f
    St.m[, t] <- St.m[, t] * Sur.m
@@ -203,7 +203,7 @@ det.pop.model.v2 <- function(params){
     It.m[ ,t, 1] <-  It.m[ ,t, 1] + envcases.m
   }
   # group the output
-  
+
   counts <- list(St.f = St.f, St.m = St.m,
                  I1t.f = It.f[,,1], I1t.m = It.m[,,1],
                  I2t.f = It.f[,,2], I2t.m = It.m[,,2],
