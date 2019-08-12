@@ -288,8 +288,8 @@ plot.compare.all <- function(outa, outb, ...){
   # outb = all  output from scenario b
 
   # OUTPUT
-  # comparison plot of total population size
-  #browser()
+  # comparison plots
+
   require(reshape2)
   require(tidyverse)
   require(ggridges)
@@ -342,11 +342,7 @@ plot.compare.all <- function(outa, outb, ...){
 
   theme_set(theme_bw(base_size = 18))
 
-  # define colors
-  cols <- c('#ffff00','#0000ff')
-
   # totals
-
   p1 <- ggplot(totals, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
@@ -360,34 +356,33 @@ plot.compare.all <- function(outa, outb, ...){
     xlab("Disease prevalence") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  # plot
+  # total hunted
   p3 <- ggplot(tot.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) +
     theme_ridges() +theme(legend.position = "none") +
     xlab("Total hunted > 1yr old") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
-
+  # hunted last year
   p4 <- ggplot(last.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Total hunted > 1yr old in last year") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  # plot
+  # males hunted
   p5 <- ggplot(males.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Males hunted > 1yr old") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  # plot
+  # males hunted last year
   p6 <- ggplot(males.last.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Males hunted > 1yr old in last year") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  #browser()
   p7 <- plot_grid(p1,p2,p3,p4,p5,p6, nrow = 3)
   p7
 }

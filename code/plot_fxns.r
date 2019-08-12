@@ -1,5 +1,4 @@
 # Functions to plot the output from a single simulation
-
 #parameter beta plot
 pl.beta <- function(a,b, asp = if(isLim) 1, ylim = if(isLim) c(0,1.1)) {
   if(isLim <- a == 0 || b == 0 || a == Inf || b == Inf) {
@@ -85,7 +84,7 @@ plot.prev <- function(dat, ...){
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes))
   par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
-  
+
   plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
        bty = "l", type = "l", lwd = 2, ylim = ylims, ...)
 }
@@ -125,14 +124,14 @@ plot.prev.age <- function(dat, by.sex, ...){
   #create the plot
   if(by.sex == T){
     p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
-    geom_line() + facet_wrap(~sex) 
+    geom_line() + facet_wrap(~sex)
   }
-    
+
   if(by.sex == F){
     p <- ggplot(dat.sum, aes(year, prev, group = age, color = age)) +
       geom_line()
   }
-  
+
   p <- p + theme_light() +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
@@ -165,24 +164,24 @@ plot.prev.2 <- function(dat, ...){
     summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes)) %>%
-    select(age, sex, prev) 
+    select(age, sex, prev)
 
  #prevalence over time
  p1 <-  ggplot(dat.sum, aes(x = year, y = prev)) +
-   geom_line(size = 1.5) + ylim(0,1) + 
+   geom_line(size = 1.5) + ylim(0,1) +
    ylab("Prevalence") + xlab("Year") +
    theme_light()  + theme(text = element_text(size = 18),
                           panel.grid.minor = element_blank(),
                           panel.grid.major = element_blank())
  #prevalence by age
  p2 <-  ggplot(dat.sum2, aes(x = age, y = prev, color = sex)) +
-   geom_line(size = 1.5) + ylim(0,1) + 
+   geom_line(size = 1.5) + ylim(0,1) +
    ylab("") + xlab("Age") +
    theme_light()  + theme(text = element_text(size = 18),
                           panel.grid.minor = element_blank(),
-                          panel.grid.major = element_blank(), 
+                          panel.grid.major = element_blank(),
                           legend.position = c(.25,.85))
- 
+
  p3 <- plot_grid(p1, p2, nrow = 1)
  p3
 }
@@ -211,11 +210,9 @@ plot.age.dist <- function(dat, ...){
     theme_light()  + theme(text = element_text(size = 18),
           panel.grid.minor = element_blank(),
           panel.grid.major = element_blank(), legend.position = c(.15,.8))
-  
+
   p
 }
-
-
 
 # plot the fawn:adult
 plot.fawn.adult <- function(dat, ...){
@@ -298,24 +295,23 @@ plot.fawn.buck <- function(dat, ...){
 
   #buck:doe plot
   p1 <- ggplot(dat.sum, aes(x = year, y = buck.doe)) +
-  geom_line(size = 1.5) + ylim(0.1, 0.9) + 
+  geom_line(size = 1.5) + ylim(0.1, 0.9) +
   ylab("Male:Female ratio") + xlab("Year") +
   theme_light()  + theme(text = element_text(size = 18),
                          panel.grid.minor = element_blank(),
                          panel.grid.major = element_blank())
   # fawn:doe create the plot
   p2 <- ggplot(dat.sum.2, aes(x = year, y = fawn.adult)) +
-  geom_line(size = 1.5) + ylim(0.1, 0.9) + 
+  geom_line(size = 1.5) + ylim(0.1, 0.9) +
   ylab("Fawn:Doe ratio") + xlab("Year") +
   theme_light()  + theme(text = element_text(size = 18),
                          panel.grid.minor = element_blank(),
                          panel.grid.major = element_blank())
-  
+
   p3 <- plot_grid(p1,p2, nrow = 1)
   p3
-  
-}
 
+}
 
 # plot total deaths by type each year
 plot.deaths <- function(dat){
@@ -383,7 +379,124 @@ plot.perc.deaths <- function(dat){
           xlab("Year") + ylab("% of Adult Deaths") + theme_light(base_size = 18) +
           theme(panel.grid.minor = element_blank(),
           panel.grid.major = element_blank())
-  
+
 p
+}
+
+#comparison plots for deterministic scenarios
+
+plot.compare.all.det <- function(outa, outb, ...){
+  # INPUT
+  # outa = all output from scenario a
+  # outb = all  output from scenario b
+
+  # OUTPUT
+  # comparison plots
+
+  require(reshape2)
+  require(tidyverse)
+  require(cowplot)
+
+  # organize the data
+  counts <- list(outa$counts, outb$counts)
+
+  counts <- melt(counts, id = c("age", "month", "population", "category",
+                                "year", "sex", "disease")) %>%
+    filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
+    rename(scenario = L1) %>%
+    mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"))
+
+  totals <- counts %>%
+    group_by(scenario) %>%
+    summarize(n = sum(population))
+
+  prev <- counts %>%
+    group_by(disease, scenario) %>%
+    summarize(n = sum(population)) %>%
+    spread(key = disease, value = n) %>%
+    mutate(prevalence = yes/ (no + yes))
+
+  deaths <- list(outa$deaths, outb$deaths)
+
+  hunted <- melt(deaths, id = c("age", "month", "population", "category",
+                                "year", "sex")) %>%
+    filter(age >= 2, str_sub(category, 1, 1) == "H") %>%
+    rename(scenario = L1) %>%
+    mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"))
+
+  tot.hunted <- hunted %>%
+    group_by(scenario) %>%
+    summarize(n = sum(population))
+
+  males.hunted <- hunted %>%
+    filter(sex == "m") %>%
+    group_by(scenario) %>%
+    summarize(n = sum(population))
+
+  last.hunted <- hunted %>%
+    filter(round(year, 0) == max(round(year, 0))) %>%
+    group_by(scenario) %>%
+    summarize(n = sum(population))
+
+  males.last.hunted <- hunted %>%
+    filter(round(year, 0) == max(round(year, 0))) %>%
+    filter(sex == "m") %>%
+    group_by(scenario) %>%
+    summarize(n = sum(population))
+
+  # define theme
+  theme_set(theme_bw(base_size = 18))
+
+  # totals
+  p1 <- ggplot(totals, aes(x = scenario, y = n)) +
+    geom_bar(stat = "identity", fill = "dark grey", color = "black") +
+    ylab("Total population") + xlab("") +
+    coord_flip() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), legend.position = "none")
+
+  # prevalence
+  p2 <- ggplot(prev, aes(x = scenario, y = prevalence)) +
+    geom_bar(stat = "identity", fill = "dark grey", color = "black") +
+    ylab("Prevalence") +xlab("") +
+    coord_flip() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), legend.position = "none")
+
+  # total hunted
+  p3 <- ggplot(tot.hunted, aes(x = scenario, y = n)) +
+    geom_bar(stat = "identity", fill = "dark grey", color = "black") +
+    ylab("Total hunted") + xlab("") +
+    coord_flip() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), legend.position = "none")
+
+  # total last hunted
+  p4 <- ggplot(last.hunted, aes(x = scenario, y = n)) +
+    geom_bar(stat = "identity", fill = "dark grey", color = "black") +
+    ylab("Total hunted last year") + xlab("") +
+    coord_flip() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), legend.position = "none")
+
+  # males hunted
+  p5 <- ggplot(males.hunted, aes(x = scenario, y = n)) +
+    geom_bar(stat = "identity", fill = "dark grey", color = "black") +
+    ylab("Males hunted") + xlab("") +
+    coord_flip() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), legend.position = "none")
+
+  # males hunted
+  p6 <- ggplot(males.last.hunted, aes(x = scenario, y = n)) +
+    geom_bar(stat = "identity", fill = "dark grey", color = "black") +
+    ylab("Males hunted last year") + xlab("") +
+    coord_flip() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), legend.position = "none")
+
+  #browser()
+  p7 <- plot_grid(p1,p2,p3,p4,p5,p6, nrow = 3)
+  p7
 }
 
