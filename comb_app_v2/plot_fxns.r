@@ -200,8 +200,7 @@ plot.age.dist <- function(dat, ...){
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
     group_by(age, sex, age) %>%
     summarize(n = sum(population)) %>%
-    select(age, sex, n) %>%
-    arrange(sex, age)
+    select(age, sex, n)
 
   #create the plot
   p <- ggplot(dat.sum, aes(x = age, y = n, color = sex)) +
@@ -214,8 +213,8 @@ plot.age.dist <- function(dat, ...){
   p
 }
 
-# plot the fawn:adult
-plot.fawn.adult <- function(dat, ...){
+# plot the fawn:doe
+plot.fawn.doe <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -229,12 +228,13 @@ plot.fawn.adult <- function(dat, ...){
   # summarize by year and disease status, calculate the prevalence
   dat.sum <- dat %>%
     filter(month %% 12 == 11) %>%
-    group_by(year, age.cat) %>%
+    group_by(year, sex, age.cat) %>%
     summarize(n = sum(population)) %>%
-    spread(key = age.cat, value = n) %>%
-    mutate(fawn.adult = fawn / adult)
+    unite(sex.age, sex, age.cat) %>%
+    spread(key = sex.age, value = n) %>%
+    mutate(fawn.doe = (m_fawn + f_fawn) / f_adult)
 
-  plot(dat.sum$year, dat.sum$fawn.adult, ...)
+  plot(dat.sum$year, dat.sum$fawn.doe, ...)
 
 }
 
@@ -275,7 +275,7 @@ plot.fawn.buck <- function(dat, ...){
   dat$age.cat <- "adult"
   dat$age.cat[dat$age == 1] <- "fawn"
 
-  # summarize by year and disease status, calculate the prevalence
+  # summarize by year, sex and age. Calculate the male/female ratio
   dat.sum <- dat %>%
     filter(month %% 12 == 8) %>% # december of every year
     group_by(year, sex, age.cat) %>%
@@ -285,24 +285,25 @@ plot.fawn.buck <- function(dat, ...){
     mutate(buck.doe = m_adult / f_adult)
 
 
-  # summarize by year and disease status, calculate the prevalence
+  # summarize by year, sex and age. Calculate the fawn:doe
   dat.sum.2 <- dat %>%
     filter(month %% 12 == 11) %>%
-    group_by(year, age.cat) %>%
+    group_by(year, sex, age.cat) %>%
     summarize(n = sum(population)) %>%
-    spread(key = age.cat, value = n) %>%
-    mutate(fawn.adult = fawn / adult)
+    unite(sex.age, sex, age.cat) %>%
+    spread(key = sex.age, value = n) %>%
+    mutate(fawn.doe = (m_fawn + f_fawn) / f_adult)
 
   #buck:doe plot
   p1 <- ggplot(dat.sum, aes(x = year, y = buck.doe)) +
-  geom_line(size = 1.5) + ylim(0.1, 0.9) +
-  ylab("Male:Female ratio") + xlab("Year") +
+  geom_line(size = 1.5) + ylim(0, 1.2) +
+  ylab("Buck:Doe ratio") + xlab("Year") +
   theme_light()  + theme(text = element_text(size = 18),
                          panel.grid.minor = element_blank(),
                          panel.grid.major = element_blank())
   # fawn:doe create the plot
-  p2 <- ggplot(dat.sum.2, aes(x = year, y = fawn.adult)) +
-  geom_line(size = 1.5) + ylim(0.1, 0.9) +
+  p2 <- ggplot(dat.sum.2, aes(x = year, y = fawn.doe)) +
+  geom_line(size = 1.5) + ylim(0, 1.2) +
   ylab("Fawn:Doe ratio") + xlab("Year") +
   theme_light()  + theme(text = element_text(size = 18),
                          panel.grid.minor = element_blank(),
