@@ -48,7 +48,7 @@ stoch_mod <- function(input, output, session){
     #browser()
     counts.sims <- vector("list", input$sims)
     deaths.sims <- vector("list", input$sims)
-    
+
     withProgress(message = "running simulation", value = 0, {
       for(i in 1:input$sims){
         out <- stoch.pop.model.2(params)
@@ -57,7 +57,7 @@ stoch_mod <- function(input, output, session){
         incProgress(i/input$sims, detail = paste("Run", i))
         }
       })
-    
+
     counts.long <- melt(counts.sims,
                         id = c("age", "month", "population", "category",
                                "year", "sex", "disease")) %>% rename(sim = L1)
@@ -150,10 +150,10 @@ stoch_mod <- function(input, output, session){
     plot.stoch.age.dist(out$counts)
   })
 
-  #plot fawn.adult and buck:doe
+  #plot fawn.doe and buck:doe
   output$ClassPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.stoch.fawn.adult(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
+    p1 <- plot.stoch.fawn.doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
     p2 <- plot.stoch.buck.doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
     plot_grid(p1, p2)
   })
