@@ -51,7 +51,7 @@ plot.stoch.prev.age(outa$counts, by.sex = T)
 plot.stoch.prev.age.2(outa$counts, error.bars = c(0.05, 0.95))
 
 #plot fawn.adult and buck:doe
-p1 <- plot.stoch.fawn.adult(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
+p1 <- plot.stoch.fawn.doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
 p2 <- plot.stoch.buck.doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
 plot_grid(p1, p2, labels = c("A", "B"))
 

@@ -34,13 +34,12 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
       filter(month %% 12 == 10) %>%
       group_by(year, age.cat, sex, sim) %>%
       summarize(n = sum(population)) %>%
-      unite(sex.age, sex, age.cat) %>%
-      arrange(sim, year)
+      unite(sex.age, sex, age.cat)
 
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year, sex.age) %>%
-      summarize(avg = mean(n))
+      summarize(avg = mean(n, na.rm = T))
 
       if(missing(error.bars) == F){# calculate the error bars
         dat.errors <- dat.sum %>%
@@ -60,7 +59,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year) %>%
-      summarize(avg = mean(n))
+      summarize(avg = mean(n, na.rm = T))
 
     if(missing(error.bars) == F){# calculate the error bars
       dat.errors <- dat.sum %>%
@@ -334,7 +333,7 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
     arrange(sex, age)
 
   p <-   ggplot(data = dat.mean, aes(x = age, y = avg, color = sex)) +
-    geom_line(size = 1.5) +
+    geom_line(size = 1.5) + ylim(0,1) +
     xlab("Age") + ylab("Prevalence")
 
     p <- p + geom_line(data = dat.mean, aes(x = age, y = lo, color = sex),
@@ -343,7 +342,7 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
                 linetype = "dashed") +  theme_light(base_size = 18) +
       theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank(),
-          legend.position = "bottom")
+          legend.position = c(.15,.85))
 
     p
 }
@@ -378,8 +377,8 @@ plot.stoch.age.dist <- function(dat, ...){
 }
 
 
-# plot the fawn:adult
-plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
+# plot the fawn:doe
+plot.stoch.fawn.doe <- function(dat, all.lines, error.bars, ...){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -393,7 +392,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
   #
   # by.sex = TRUE....facet by sex
   # OUTPUT
-  # plot of the fawn.adult ratio
+  # plot of the fawn.doe ratio
 
   require(reshape2)
   require(tidyverse)
@@ -404,20 +403,20 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
   # summarize by year and sex
   dat.sum <- dat %>%
     filter(month %% 12 == 11) %>%
-    group_by(year, age.cat, sim) %>%
+    group_by(year, sex, age.cat, sim) %>%
     summarize(n = sum(population)) %>%
-    spread(key = age.cat, value = n) %>%
-    mutate(fawn.adult = fawn / adult)%>%
-    arrange(sim, year)
+    unite(sex.age, sex, age.cat) %>%
+    spread(key = sex.age, value = n) %>%
+    mutate(fawn.doe = (m_fawn + f_fawn) / f_adult)
 
    # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year) %>%
-    summarize(avg = mean(fawn.adult))
+    summarize(avg = mean(fawn.doe))
 
   if(missing(all.lines)){all.lines = TRUE}
   if(all.lines == TRUE){
-    p <- ggplot(data = dat.sum, aes(x = year, y = fawn.adult, group = sim)) +
+    p <- ggplot(data = dat.sum, aes(x = year, y = fawn.doe, group = sim)) +
       geom_line(color = "grey") +
       geom_line(data = dat.mean, aes(x = year, y = avg, group = NULL), size = 1.5)
   }
@@ -431,8 +430,8 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
     # calculate the mean, and the error bars
     dat.mean <- dat.sum %>%
       group_by(year) %>%
-      summarize(avg = mean(fawn.adult), lo = quantile(fawn.adult,error.bars[1]),
-                hi = quantile(fawn.adult,error.bars[2]))
+      summarize(avg = mean(fawn.doe), lo = quantile(fawn.doe,error.bars[1]),
+                hi = quantile(fawn.doe,error.bars[2]))
 
     p <- p + geom_line(data = dat.mean, aes(x = year, y = lo, group = NULL),
                        linetype = "dashed", color = "red") +
@@ -440,7 +439,7 @@ plot.stoch.fawn.adult <- function(dat, all.lines, error.bars, ...){
                 linetype = "dashed", color = "red")
   }
 
-  p <- p + xlab("Year") + ylab("Fawn:Adult") + theme_light(base_size = 18) +
+  p <- p + xlab("Year") + ylab("Fawn:Doe") + theme_light(base_size = 18) +
     ylim(0.1, 1) +
     theme(panel.grid.minor = element_blank(),
           panel.grid.major.x = element_blank())
@@ -547,7 +546,7 @@ plot.stoch.deaths <- function(dat, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg = mean(n)) %>%
+    summarize(avg = mean(n, na.rm = T)) %>%
     mutate(category = fct_reorder(category, avg))
 
   if(missing(error.bars) == F){# calculate the error bars
@@ -610,7 +609,7 @@ plot.stoch.perc.deaths <- function(dat, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg.percent = mean(percent))%>%
+    summarize(avg.percent = mean(percent, na.rm = T))%>%
     mutate(category = fct_reorder(category, avg.percent))
 
   if(missing(error.bars) == F){# calculate the error bars
