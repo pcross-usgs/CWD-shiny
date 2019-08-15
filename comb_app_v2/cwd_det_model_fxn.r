@@ -1,52 +1,53 @@
 #Version 2 of the deterministic monthly age and sex structured model
 # constant environmental transmission, dynamic direct transmission
-
-det.pop.model.v2 <- function(params){
-  require(popbio)
-
+cwd_det_model <- function(params){
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
   #########CREATE INITIAL CONDITIONS##########
 
   #monthly index
-  months <- seq(1, n.years*12)# monthly timestep
-  hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
+  months <- seq(1, n.years * 12)# monthly timestep
+  hunt.mo <- rep(0, n.years * 12) # months in where the hunt occurs
   hunt.mo[months %% 12 == 7] <- 1 # hunt.mo==1 on Nov
 
   #Natural monthly survival rates
-  fawn.sur <- fawn.an.sur^(1/12)
-  juv.sur <- juv.an.sur^(1/12)
-  ad.f.sur <- ad.an.f.sur^(1/12)
-  ad.m.sur <- ad.an.m.sur^(1/12)
+  fawn.sur <- fawn.an.sur ^ (1 / 12)
+  juv.sur <- juv.an.sur ^ (1 / 12)
+  ad.f.sur <- ad.an.f.sur ^ (1 / 12)
+  ad.m.sur <- ad.an.m.sur ^ (1 / 12)
 
   # group into a vector
+  #initial female prevalence
   ini.f.prev <- c(ini.fawn.prev, ini.juv.prev,
-                  rep(ini.ad.f.prev, (n.age.cats-2))) # initial female prevalence
+                  rep(ini.ad.f.prev, (n.age.cats - 2)))
+  # initial male prevalence
   ini.m.prev <- c(ini.fawn.prev, ini.juv.prev,
-                  rep(ini.ad.m.prev, (n.age.cats-2))) # initial male prevalence
+                  rep(ini.ad.m.prev, (n.age.cats - 2)))
 
   # Create the survival and birth vectors
-  Sur.f <- c(fawn.sur, juv.sur,
-             rep(ad.f.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
-  Sur.m <- c(fawn.sur, juv.sur,
-             rep(ad.m.sur, n.age.cats - 2)) # vector of survival rates for 12 age classes
+  # vector of survival rates for 12 age classes
+  Sur.f <- c(fawn.sur, juv.sur, rep(ad.f.sur, n.age.cats - 2))
+  Sur.m <- c(fawn.sur, juv.sur, rep(ad.m.sur, n.age.cats - 2))
 
   # Create the Leslie Matrix to start the population at stable age dist
-  M <- matrix(rep(0, n.age.cats*2 * n.age.cats*2), nrow = n.age.cats*2)
+  M <- matrix(rep(0, n.age.cats * 2 * n.age.cats * 2), nrow = n.age.cats * 2)
   # replace the -1 off-diagonal with the survival rates
-  M[row(M) == (col(M) + 1)] <- c(juv.an.sur*(1- hunt.mort.juv.f),
-                                 rep(ad.an.f.sur*(1-hunt.mort.ad.f), n.age.cats - 2),
+  M[row(M) == (col(M) + 1)] <- c(juv.an.sur * (1 - hunt.mort.juv.f),
+                                 rep(ad.an.f.sur*(1 - hunt.mort.ad.f),
+                                     n.age.cats - 2),
                                  0, #spacer
-                                 c(juv.an.sur*(1- hunt.mort.juv.m),
-                                   rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
+                                 c(juv.an.sur * (1 - hunt.mort.juv.m),
+                                   rep(ad.an.m.sur * (1 - hunt.mort.ad.m),
+                                       n.age.cats - 2)))
   # if you want the top age category to continue to survive
-  M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f) # adult female survival in top age cat
-  M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult male survival in top age cat
+  # adult female survival in top age cat
+  M[n.age.cats, n.age.cats] <- ad.an.f.sur * (1 - hunt.mort.ad.f)
+  # adult male survival in top age cat
+  M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur * (1 - hunt.mort.ad.m)
 
-  # insert the fecundity vector
-  # prebirth census
-  M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats -2)) *
+  # insert the fecundity vector for prebirth census
+  M[1, 1:n.age.cats] <- c(0, juv.repro, rep(ad.repro, n.age.cats - 2)) *
     0.5 * fawn.an.sur * (1 - hunt.mort.fawn)
   M[n.age.cats +1, 1:n.age.cats] <- M[1, 1:n.age.cats]
 
@@ -68,13 +69,13 @@ det.pop.model.v2 <- function(params){
   CWDt.m <- tmp
 
   # Intializing with the stable age distribution.
-  St.f[,1] <- stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev)
-  St.m[,1] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
+  St.f[,1] <- popbio::stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev)
+  St.m[,1] <- popbio::stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                       (1-ini.m.prev)
 
   # equally allocating prevalence across ages.
-  It.m[ , 1, 1:10] <- stable.stage(M)[1:n.age.cats] * n0/10 * ini.m.prev
-  It.f[ , 1, 1:10] <- stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0/10 *
+  It.m[ , 1, 1:10] <- popbio::stable.stage(M)[1:n.age.cats] * n0/10 * ini.m.prev
+  It.f[ , 1, 1:10] <- popbio::stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0/10 *
                            ini.f.prev
 
   #######POPULATION MODEL############

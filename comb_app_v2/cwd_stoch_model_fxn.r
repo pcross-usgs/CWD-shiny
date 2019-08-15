@@ -1,11 +1,11 @@
-#Stochastic monthly age and sex structured model that incorporates random draws 
+#Stochastic monthly age and sex structured model that incorporates random draws
 # from distibutions of natural survival, reproduction, and hunt mortality.
 #Currently does not include a distribution on transmission rate.
-stoch.pop.model.2 <- function(params){
-  require(popbio)
-  source("./estBetaParams.r", local = T)
-  source("./allocateDeaths.r", local = T)
-   
+cwd_stoch_model <- function(params){
+
+  source("./est_beta_params.r", local = T)
+  source("./allocate_deaths.r", local = T)
+
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
@@ -14,29 +14,29 @@ stoch.pop.model.2 <- function(params){
   hunt.mo <- rep(0, n.years*12) # months in where the hunt occurs
   hunt.mo[months %% 12 == 7] <- 1 # hunt.mo==1 on Nov
 
-  #Estimate shape and scale parameters for the Beta distribution given the 
-  # user input of mean and variance. 
+  #Estimate shape and scale parameters for the Beta distribution given the
+  # user input of mean and variance.
   # natural survival
-  fawn.s.b <- estBetaParams(fawn.an.sur, fawn.an.sur.var)
-  juv.s.b <- estBetaParams(juv.an.sur, an.sur.var)
-  ad.f.s.b <- estBetaParams(ad.an.f.sur, an.sur.var)
-  ad.m.s.b <- estBetaParams(ad.an.m.sur, an.sur.var)
+  fawn.s.b <- est_beta_params(fawn.an.sur, fawn.an.sur.var)
+  juv.s.b <- est_beta_params(juv.an.sur, an.sur.var)
+  ad.f.s.b <- est_beta_params(ad.an.f.sur, an.sur.var)
+  ad.m.s.b <- est_beta_params(ad.an.m.sur, an.sur.var)
 
   #reproduction
-  juv.r.b <- estBetaParams(juv.repro/2, juv.repro.var)
-  ad.r.b <- estBetaParams(ad.repro/2, ad.repro.var)
+  juv.r.b <- est_beta_params(juv.repro/2, juv.repro.var)
+  ad.r.b <- est_beta_params(ad.repro/2, ad.repro.var)
 
   #hunting
-  hunt.fawn.b <- estBetaParams(hunt.mort.fawn, hunt.mort.var)
-  hunt.juv.f.b <- estBetaParams(hunt.mort.juv.f, hunt.mort.var)
-  hunt.juv.m.b <- estBetaParams(hunt.mort.juv.m, hunt.mort.var)
-  hunt.f.b <- estBetaParams(hunt.mort.ad.f, hunt.mort.var)
-  hunt.m.b <- estBetaParams(hunt.mort.ad.m, hunt.mort.var)
+  hunt.fawn.b <- est_beta_params(hunt.mort.fawn, hunt.mort.var)
+  hunt.juv.f.b <- est_beta_params(hunt.mort.juv.f, hunt.mort.var)
+  hunt.juv.m.b <- est_beta_params(hunt.mort.juv.m, hunt.mort.var)
+  hunt.f.b <- est_beta_params(hunt.mort.ad.f, hunt.mort.var)
+  hunt.m.b <- est_beta_params(hunt.mort.ad.m, hunt.mort.var)
 
  # group into a vector
-  ini.f.prev <- c(ini.fawn.prev, ini.juv.prev, 
+  ini.f.prev <- c(ini.fawn.prev, ini.juv.prev,
                   rep(ini.ad.f.prev, (n.age.cats-2))) # initial female prevalence
-  ini.m.prev <- c(ini.fawn.prev, ini.juv.prev, 
+  ini.m.prev <- c(ini.fawn.prev, ini.juv.prev,
                   rep(ini.ad.m.prev, (n.age.cats-2))) # initial male prevalence
 
   # Create the Leslie Matrix to start the population at stable age dist
@@ -48,7 +48,7 @@ stoch.pop.model.2 <- function(params){
                                  0, #spacer
                                  c(juv.an.sur*(1- hunt.mort.juv.m),
                                    rep(ad.an.m.sur*(1-hunt.mort.ad.m), n.age.cats - 2)))
-  
+
   # if you want the top age category to continue to survive
   M[n.age.cats, n.age.cats] <- ad.an.f.sur*(1 - hunt.mort.ad.f)# adult female survival in top age cat
   M[n.age.cats*2, n.age.cats*2] <- ad.an.m.sur*(1- hunt.mort.ad.m) # adult male survival in top age cat
@@ -77,19 +77,19 @@ stoch.pop.model.2 <- function(params){
   CWDt.m <- tmp
 
   # Intializing with the stable age distribution.
-  St.f[,1] <- round(stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
-  St.m[,1] <- round(stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
+  St.f[,1] <- round(popbio::stable.stage(M)[1:n.age.cats] * n0 * (1-ini.f.prev))
+  St.m[,1] <- round(popbio::stable.stage(M)[(n.age.cats+1):(n.age.cats*2)] * n0 *
                       (1-ini.m.prev))
 
   # randomly allocating infecteds across ages and categories.
-  It.m[ , 1, 1:10] <- rbinom(n.age.cats*10, 
-                             round(stable.stage(M)[1:n.age.cats] * n0/10),  
+  It.m[ , 1, 1:10] <- rbinom(n.age.cats*10,
+                             round(popbio::stable.stage(M)[1:n.age.cats] * n0/10),
                              ini.m.prev)
-  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10, 
-                             round(stable.stage(M)[1:n.age.cats] * n0/10),  
+  It.f[ , 1, 1:10] <- rbinom(n.age.cats*10,
+                             round(popbio::stable.stage(M)[1:n.age.cats] * n0/10),
                              ini.f.prev)
   rm(M)
-  
+
   #######POPULATION MODEL############
   for(t in 2:(n.years*12)){
 
@@ -143,7 +143,7 @@ stoch.pop.model.2 <- function(params){
       St.f[1, t] <- rbinom(1, fawns_born, 0.5)
       St.m[1, t] <- fawns_born - St.f[1, t]
     }
-    
+
     # if not June populate the current month with last months values
     if(t %% 12 != 2){
       #updating the next month
@@ -162,11 +162,11 @@ stoch.pop.model.2 <- function(params){
     St.f[ ,t] <- St.f[,t] - nat.s.f
     St.m[ ,t] <- St.m[,t] - nat.s.m
     # infecteds
-    nat.i.f <- matrix(rbinom(length(It.f[ ,t, ]), size = It.f[ ,t, ], 
+    nat.i.f <- matrix(rbinom(length(It.f[ ,t, ]), size = It.f[ ,t, ],
                                 prob = (1-Sur.f)), nrow = 12)
-    nat.i.m <- matrix(rbinom(length(It.m[ ,t, ]), size = It.m[ ,t, ], 
+    nat.i.m <- matrix(rbinom(length(It.m[ ,t, ]), size = It.m[ ,t, ],
                                 prob = (1-Sur.m)), nrow = 12)
-    
+
     It.f[ , t, ] <- It.f[ ,t, ] - nat.i.f
     It.m[ , t, ] <- It.m[ ,t, ] - nat.i.m
 
@@ -195,35 +195,35 @@ stoch.pop.model.2 <- function(params){
                             (St.f[,t] + rel.risk * Iall.f))
       hunted.i.m <- round((rel.risk * Iall.m * Ht.m[,t]) /
                             (St.m[,t] + rel.risk * Iall.m))
-      
+
       hunted.i.f[which(is.na(hunted.i.f))] <- 0
       hunted.i.m[which(is.na(hunted.i.m))] <- 0
 
       hunted.i.f[Iall.f < hunted.i.f] <- Iall.f[Iall.f < hunted.i.f]
       hunted.i.m[Iall.m < hunted.i.m] <- Iall.m[Iall.m < hunted.i.m]
-      
+
       # subtracting out those hunted in the S class
       St.f[,t] <- St.f[,t] - (Ht.f[,t] - hunted.i.f)
       St.m[,t] <- St.m[,t] - (Ht.m[,t] - hunted.i.m)
-      
+
       # allocate those deaths across the 10 I categories
-      It.f[ , t, ] <- allocate.deaths(hunted.i.f, It.f[ , t, ])
-      It.m[ , t, ] <- allocate.deaths(hunted.i.m, It.m[ , t, ])
+      It.f[ , t, ] <- allocate_deaths(hunted.i.f, It.f[ , t, ])
+      It.m[ , t, ] <- allocate_deaths(hunted.i.m, It.m[ , t, ])
     }
 
     #Disease mortality
     #stochastic movement of individuals from I1 to I2
     # disease induced mortality here by advancing all I's
     # and only a proportion of the 10th category remains
-    I.f.move <- matrix(rbinom(n.age.cats*10, size = It.f[ , t, ], 
+    I.f.move <- matrix(rbinom(n.age.cats*10, size = It.f[ , t, ],
                              prob = p), nrow = 12)
-    I.m.move <- matrix(rbinom(n.age.cats*10, size = It.m[ , t, ], 
+    I.m.move <- matrix(rbinom(n.age.cats*10, size = It.m[ , t, ],
                                      prob = p), nrow = 12)
-    
+
     #store info on those that die directly from disease
     CWDt.f[ ,t] <- I.f.move[ ,10]
     CWDt.m[ ,t] <- I.m.move[ ,10]
-    
+
     # move the I individuals forward in their categories
     It.f[ , t, 1]    <- It.f[ ,t, 1] - I.f.move[ ,1]
     It.f[ , t, 2:10] <- It.f[ , t, 2:10] - I.f.move[ , 2:10] + I.f.move[, 1:9]
@@ -272,7 +272,7 @@ stoch.pop.model.2 <- function(params){
                  I10t.f = It.f[,,10], I10t.m = It.m[,,10])
   deaths <- list(Ht.f = Ht.f, Ht.m = Ht.m, Dt.f = Dt.f, Dt.m = Dt.m,
                  CWDt.f = CWDt.f, CWDt.m = CWDt.m)
-  
+
   # convert the output to long form
   counts.long <- melt(counts) %>%
     rename(age = Var1, month = Var2, population = value,

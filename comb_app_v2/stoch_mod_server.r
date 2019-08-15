@@ -1,4 +1,4 @@
-stoch_mod <- function(input, output, session){
+stoch_mod_server <- function(input, output, session){
 
   react.params <- eventReactive(input$go,{
     list(sims = input$sims,
@@ -51,7 +51,7 @@ stoch_mod <- function(input, output, session){
 
     withProgress(message = "running simulation", value = 0, {
       for(i in 1:input$sims){
-        out <- stoch.pop.model.2(params)
+        out <- cwd_stoch_model(params)
         counts.sims[[i]] <- out$counts
         deaths.sims[[i]] <- out$deaths
         incProgress(i/input$sims, detail = paste("Run", i))

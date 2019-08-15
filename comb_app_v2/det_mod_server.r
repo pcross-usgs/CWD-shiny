@@ -1,4 +1,4 @@
-det_mod <- function(input, output, session){
+det_mod_server <- function(input, output, session){
 
   #Create the reactive parameter set and run the model:
   react.params <- reactive({
@@ -39,7 +39,7 @@ det_mod <- function(input, output, session){
 
   simout <- reactive({
     params <- react.params()
-    out <- det.pop.model.v2(params)
+    out <- cwd_det_model(params)
     fem.R0 <-  ( params$beta.f / params$n0 ^ (params$theta-1) ) *
              mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
