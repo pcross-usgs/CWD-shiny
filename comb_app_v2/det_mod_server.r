@@ -94,34 +94,34 @@ det_mod_server <- function(input, output, session){
   output$TotalPlot <- renderPlot({
     out <- simout()
     par(cex = 1.5)
-    plot.tots(out$counts)
+    plot_tots(out$counts)
   })
 
   output$PrevPlot <- renderPlot({
     out <- simout()
     par(mar = c(6,6,1,1))
-    plot.prev.2(out$counts)
+    plot_prev_age_end(out$counts)
   })
 
   output$AgePlot <- renderPlot({
     out <- simout()
-    plot.age.dist(out$counts)
+    plot_age_dist(out$counts)
   })
 
   output$DeathPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.deaths(out$deaths)
-    p2 <- plot.perc.deaths(out$deaths)
+    p1 <- plot_deaths(out$deaths)
+    p2 <- plot_perc_deaths(out$deaths)
     plot_grid(p1, p2, nrow = 2)
   })
 
   output$ParamPlot <- renderPlot({
     params <- react.params()
-    plot.ttd(params$p)
+    plot_ttd(params$p)
   })
 
   output$ClassPlot <- renderPlot({
     out <- simout()
-    plot.fawn.buck(out$counts)
+    plot_fawn_buck(out$counts)
   })
 }

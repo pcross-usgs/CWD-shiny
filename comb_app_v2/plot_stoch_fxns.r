@@ -1,6 +1,5 @@
 # Functions to plot the output from a multiple stochastic simulations
-
-plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
+plot_stoch_tots <- function(dat, all.lines, error.bars, by.sexage, ...){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -103,7 +102,7 @@ plot.stoch.tots <- function(dat, all.lines, error.bars, by.sexage, ...){
 }
 
 # plot totals, pos, and negatives by sex
-plot.stoch.tots.2 <- function(dat, error.bars){
+plot_stoch_disease <- function(dat, error.bars){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -165,7 +164,7 @@ plot.stoch.tots.2 <- function(dat, error.bars){
 }
 
 # plot the prevalence by age over time
-plot.stoch.prev.age <- function(dat, by.sex, ...){
+plot_stoch_prev_age <- function(dat, by.sex, ...){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -231,7 +230,7 @@ plot.stoch.prev.age <- function(dat, by.sex, ...){
 }
 
 # plot the prevalence over time
-plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
+plot_stoch_prev <- function(dat, all.lines, error.bars, cis, ...){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -307,7 +306,7 @@ plot.stoch.prev <- function(dat, all.lines, error.bars, cis, ...){
 }
 
 # plot the prevalence by age at the end point
-plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
+plot_stoch_prev_age_end <- function(dat, error.bars, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -348,7 +347,7 @@ plot.stoch.prev.age.2 <- function(dat, error.bars, ...){
 }
 
 # plot the age distribution at the end point
-plot.stoch.age.dist <- function(dat, ...){
+plot_stoch_age_dist <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -376,9 +375,8 @@ plot.stoch.age.dist <- function(dat, ...){
   p
 }
 
-
 # plot the fawn:doe
-plot.stoch.fawn.doe <- function(dat, all.lines, error.bars, ...){
+plot_stoch_fawn_doe <- function(dat, all.lines, error.bars, ...){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -451,7 +449,7 @@ plot.stoch.fawn.doe <- function(dat, all.lines, error.bars, ...){
 }
 
 # plot the buck:doe
-plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
+plot_stoch_buck_doe <- function(dat, all.lines, error.bars, ...){
   # INPUT
   # dat = data.frame with columns of
   # age = numeric
@@ -523,7 +521,7 @@ plot.stoch.buck.doe <- function(dat, all.lines, error.bars, ...){
 }
 
 # plot total deaths by type each year
-plot.stoch.deaths <- function(dat, error.bars){
+plot_stoch_deaths <- function(dat, error.bars){
   # INPUT
   # dat = list of the output matrices of deaths
   # OUTPUT
@@ -578,7 +576,7 @@ plot.stoch.deaths <- function(dat, error.bars){
 }
 
 # plot total deaths by type each year
-plot.stoch.perc.deaths <- function(dat, error.bars){
+plot_stoch_perc_deaths <- function(dat, error.bars){
   # INPUT
   # dat = list of the output matrices of deaths
   # OUTPUT

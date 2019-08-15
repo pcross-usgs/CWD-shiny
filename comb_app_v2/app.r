@@ -35,12 +35,11 @@ source("compare_det_plots_server.r", local = T)
 source("compare_det_plotsUI2.r", local = T)
 source("compare_det_plots_server2.r", local = T)
 
-#knit("description_combo.Rmd", quiet = T)
-
 ui <- fluidPage(theme = "common.css",
   div(class = "header", includeHTML("www/header.html")),
 
-  titlePanel(h4("Prepared in cooperation with Montana Fish, Wildlife and Parks"),
+  titlePanel(h4("Prepared in cooperation with Montana Fish,
+                Wildlife and Parks"),
              windowTitle = "CWD model"),
 
   navbarPage("Chronic Wasting Disease Model",
@@ -111,4 +110,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-

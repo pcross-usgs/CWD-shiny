@@ -1,4 +1,4 @@
-plot.compare.tots <- function(outa, outb, ...){
+plot_compare_tots <- function(outa, outb, ...){
 # INPUT
 # outa = counts output from scenario a
 # outb = counts output from scenario b
@@ -33,7 +33,7 @@ ggplot(dat, aes(x = n, y = scenario, fill = scenario)) +
 
 }
 
-plot.compare.prev <- function(outa, outb, ...){
+plot_compare_prev <- function(outa, outb, ...){
   # INPUT
   # outa = counts output from scenario a
   # outb = counts output from scenario b
@@ -69,7 +69,7 @@ plot.compare.prev <- function(outa, outb, ...){
     scale_y_discrete() + scale_fill_manual(values = cols)
 }
 
-plot.compare.hunted <- function(outa, outb, ...){
+plot_compare_hunted <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -104,7 +104,7 @@ plot.compare.hunted <- function(outa, outb, ...){
 
 }
 
-plot.compare.hunted.end <- function(outa, outb, ...){
+plot_compare_hunted_end <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -140,7 +140,7 @@ plot.compare.hunted.end <- function(outa, outb, ...){
 
 }
 
-plot.compare.buckshunted <- function(outa, outb, ...){
+plot_compare_buckshunted <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -175,7 +175,7 @@ plot.compare.buckshunted <- function(outa, outb, ...){
 
 }
 
-plot.compare.buckshunted.end <- function(outa, outb, ...){
+plot_compare_buckshunted_end <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -211,7 +211,7 @@ plot.compare.buckshunted.end <- function(outa, outb, ...){
 
 }
 
-plot.compare.oldbuckshunted <- function(outa, outb, ...){
+plot_compare_oldbuckshunted <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -246,7 +246,7 @@ plot.compare.oldbuckshunted <- function(outa, outb, ...){
 
 }
 
-plot.compare.oldbuckshunted.end <- function(outa, outb, ...){
+plot_compare_oldbuckshunted_end <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -282,7 +282,7 @@ plot.compare.oldbuckshunted.end <- function(outa, outb, ...){
 
 }
 
-plot.compare.all <- function(outa, outb, ...){
+plot_compare_all <- function(outa, outb, ...){
   # INPUT
   # outa = all output from scenario a
   # outb = all  output from scenario b

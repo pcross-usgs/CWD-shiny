@@ -119,42 +119,40 @@ stoch_mod_server <- function(input, output, session){
 
   output$TotalPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.stoch.tots.2(out$counts, error.bars = c(0.05, 0.95))
+    p1 <- plot_stoch_disease(out$counts, error.bars = c(0.05, 0.95))
     p1
   })
 
   output$PrevPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.stoch.prev(out$counts, all.lines = T, error.bars = T,
+    p1 <- plot_stoch_prev(out$counts, all.lines = T, error.bars = T,
                           cis <- c(0.05, 0.95))
-    p2 <- plot.stoch.prev.age.2(out$counts, error.bars = c(0.05, 0.95))
+    p2 <- plot_stoch_prev_age_end(out$counts, error.bars = c(0.05, 0.95))
     plot_grid(p1, p2, nrow = 1)
   })
 
   output$ParamPlot <- renderPlot({
     params <- react.params()
-    p1 <- plot.vitals(params)
-    p2 <- plot.ttd(params$p)
+    p1 <- plot_vitals(params)
+    p2 <- plot_ttd(params$p)
     plot_grid(p1, p2, nrow = 2)
   })
 
   output$DeathPlot <- renderPlot({
     out <- simout()
-    #p1 <- plot.stoch.deaths(out$deaths, error.bars = c(0.05, 0.95))
-    plot.stoch.perc.deaths(out$deaths, error.bars = c(0.05, 0.95))
-    #plot_grid(p1, p2, nrow = 2)
+    plot_stoch_perc_deaths(out$deaths, error.bars = c(0.05, 0.95))
   })
 
   output$AgePlot <- renderPlot({
     out <- simout()
-    plot.stoch.age.dist(out$counts)
+    plot_stoch_age_dist(out$counts)
   })
 
   #plot fawn.doe and buck:doe
   output$ClassPlot <- renderPlot({
     out <- simout()
-    p1 <- plot.stoch.fawn.doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
-    p2 <- plot.stoch.buck.doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
+    p1 <- plot_stoch_fawn_doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
+    p2 <- plot_stoch_buck_doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
     plot_grid(p1, p2)
   })
 

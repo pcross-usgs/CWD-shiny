@@ -1,4 +1,4 @@
-plot.vitals <- function(params){
+plot_vitals <- function(params){
   require(reshape2)
   require(tidyverse)
   require(ggridges)
@@ -79,7 +79,7 @@ plot.vitals <- function(params){
 
 
 
-plot.ttd <- function(p){
+plot_ttd <- function(p){
   #time to death: ttd
   tmp <- data.frame(years.to.death = rgamma(1000, 10, p)/12)
 

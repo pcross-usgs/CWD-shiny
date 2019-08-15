@@ -9,19 +9,19 @@ compare_det_plots_server <- function(input, output, session, simout){
 
      output$TotalPlot_det <- renderPlot({
         out <- simout()
-        p1 <- plot.tots(out$counts, error.bars = c(0.05, 0.95))
+        p1 <- plot_tots(out$counts, error.bars = c(0.05, 0.95))
         p1
       })
 
       output$PrevPlot_det <- renderPlot({
         out <- simout()
         par(mar = c(6, 6, 1, 1))
-        plot.prev.2(out$counts, ylim = c(0, .7))
+        plot_prev_age_end(out$counts, ylim = c(0, .7))
       })
 
       output$DeathPlot_det <- renderPlot({
         out <- simout()
-        plot.deaths(out$deaths)
+        plot_deaths(out$deaths)
       })
 
 }

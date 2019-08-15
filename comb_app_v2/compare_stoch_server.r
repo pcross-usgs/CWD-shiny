@@ -47,7 +47,6 @@ compare_stoch_server <- function(input, output, session){
      #Run the model
  simout <- eventReactive(input$go,{
    params <- react.params()
-   #browser()
    counts.sims <- vector("list", input$sims)
    deaths.sims <- vector("list", input$sims)
    withProgress(message = "running simulation", value = 0, {
