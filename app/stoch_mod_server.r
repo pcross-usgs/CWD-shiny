@@ -5,12 +5,11 @@ stoch_mod_server <- function(input, output, session){
          n.age.cats = 12,
          n0 = input$n0, # initial population size
          p = input$p, #probability of transitioning between infectious box cars;
-         fawn.an.sur.var = 0.005,
-         an.sur.var = 0.005,
-         hunt.mort.var = 0.005,
-         fawn.repro.var = (1/2)^2 * 0,
-         juv.repro.var = (1/2)^2 * 0.005,
-         ad.repro.var = (1/2)^2 * 0.005,
+
+         fawn.sur.var = input$fawn.sur.var,
+         sur.var = input$sur.var,
+         hunt.var = input$hunt.var,
+         repro.var = (1/2)^2 * input$repro.var, #check this
 
          n.years = input$n.years,
          env.foi =  1 - ((1-input$an.env.foi)^(1/12)),
@@ -45,7 +44,6 @@ stoch_mod_server <- function(input, output, session){
   #Run the model
   simout <- reactive({
     params <- react.params()
-    #browser()
     counts.sims <- vector("list", input$sims)
     deaths.sims <- vector("list", input$sims)
 
@@ -70,6 +68,7 @@ stoch_mod_server <- function(input, output, session){
             mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
                             rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
                             rgamma(1000, 10, input$p)), 1, FUN = min, na.rm = T))
+
     male.R0 <-   (params$beta.f * params$beta.m / params$n0 ^ (params$theta-1)) *
       mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
                        rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),

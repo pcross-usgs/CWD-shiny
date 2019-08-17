@@ -61,7 +61,16 @@ fluidRow(
                sliderInput(ns("ini.ad.f.prev"), "Female prevalence",
                            value = 0.03, min = 0, max = 0.4, step = 0.01),
                sliderInput(ns("ini.ad.m.prev"), "Male prevalence",
-                           value = 0.03, min = 0, max = 0.4, step = 0.01))
+                           value = 0.03, min = 0, max = 0.4, step = 0.01)),
+      tabPanel("Variance",
+               sliderInput(ns("fawn.sur.var"), "Fawns survival variance",
+                           value = .005, min = 0.0001, max = .01, step = 0.0001),
+               sliderInput(ns("sur.var"), "Survival variance",
+                           value = .005, min = 0.0001, max = .01, step = 0.0001),
+               sliderInput(ns("repro.var"), "Reproduction variance",
+                           value = .005, min = 0.0001, max = .01, step = 0.0001),
+               sliderInput(ns("hunt.var"),"Hunting variance",
+                           value = 0.005, min = 0.0001, max = 0.01, step = 0.0001))
       )
      ),
     column(8, h4("Plots"),
