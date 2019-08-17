@@ -1,9 +1,9 @@
 # Functions to plot the output from a single simulation
 #parameter beta plot
-pl.beta <- function(a,b, asp = if(isLim) 1, ylim = if(isLim) c(0,1.1)) {
+pl_beta <- function(a, b, asp = if(isLim) 1, ylim = if(isLim) c(0, 1.1)) {
   if(isLim <- a == 0 || b == 0 || a == Inf || b == Inf) {
     eps <- 1e-10
-    x <- c(0, eps, (1:7)/16, 1/2+c(-eps,0,eps), (9:15)/16, 1-eps, 1)
+    x <- c(0, eps, (1:7)/16, 1/2+c(-eps, 0, eps), (9:15)/16, 1 - eps, 1)
   } else {
     x <- seq(0, 1, length = 1025)
   }
@@ -18,7 +18,7 @@ pl.beta <- function(a,b, asp = if(isLim) 1, ylim = if(isLim) c(0,1.1)) {
   invisible(cbind(x, fx))
 }
 
-plot.tots <- function(dat, ...){
+plot_tots <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -38,9 +38,7 @@ plot.tots <- function(dat, ...){
                                 "negative" = "no",
                                 "positive" = "yes",
                                 "total" = "total")) %>%
-    mutate(disease = fct_reorder(disease,n))
-
-
+    mutate(disease = fct_reorder(disease, n))
 
   #plot
   p <- ggplot(dat.sum, aes(year, n, color = disease)) +
@@ -52,7 +50,7 @@ plot.tots <- function(dat, ...){
 }
 
 # plot all ages all months
-plot.all <- function(dat, ...){
+plot_all <- function(dat, ...){
   # INPUT
   # dat = one matrix in long form
   # OUTPUT
@@ -68,7 +66,7 @@ plot.all <- function(dat, ...){
 }
 
 # plot the prevalence
-plot.prev <- function(dat, ...){
+plot_prev <- function(dat, ...){
   # INPUT
   # dat = longform data matrix
   # OUTPUT
@@ -90,7 +88,7 @@ plot.prev <- function(dat, ...){
 }
 
 # plot the prevalence
-plot.prev.age <- function(dat, by.sex, ...){
+plot_prev_age <- function(dat, by.sex, ...){
   # INPUT
   # dat = list of the output matrices
   # by.sex = if True then facet by sex
@@ -140,7 +138,7 @@ plot.prev.age <- function(dat, by.sex, ...){
 }
 
 # plot the prevalence by age at the end point
-plot.prev.2 <- function(dat, ...){
+plot_prev_age_end <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -187,7 +185,7 @@ plot.prev.2 <- function(dat, ...){
 }
 
 # plot the age distribution at the end point
-plot.age.dist <- function(dat, ...){
+plot_age_dist <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -214,7 +212,7 @@ plot.age.dist <- function(dat, ...){
 }
 
 # plot the fawn:doe
-plot.fawn.doe <- function(dat, ...){
+plot_fawn_doe <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -239,7 +237,7 @@ plot.fawn.doe <- function(dat, ...){
 }
 
 # plot buck:doe
-plot.buck.doe <- function(dat, ...){
+plot_buck_doe <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -264,7 +262,7 @@ plot.buck.doe <- function(dat, ...){
 }
 
 # plot both fawn:doe and buck:doe
-plot.fawn.buck <- function(dat, ...){
+plot_fawn_buck <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
   # OUTPUT
@@ -315,7 +313,7 @@ plot.fawn.buck <- function(dat, ...){
 }
 
 # plot total deaths by type each year
-plot.deaths <- function(dat){
+plot_deaths <- function(dat){
   # INPUT
   # dat = list of the output matrices of deaths
   # OUTPUT
@@ -345,7 +343,7 @@ p
 }
 
 # plot total deaths by type each year
-plot.perc.deaths <- function(dat){
+plot_perc_deaths <- function(dat){
   # INPUT
   # dat = list of the output matrices of deaths
   # OUTPUT
@@ -385,8 +383,7 @@ p
 }
 
 #comparison plots for deterministic scenarios
-
-plot.compare.all.det <- function(outa, outb, ...){
+plot_compare_all_det <- function(outa, outb, ...){
   # INPUT
   # outa = all output from scenario a
   # outb = all  output from scenario b

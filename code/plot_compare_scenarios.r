@@ -1,4 +1,4 @@
-plot.compare.tots <- function(outa, outb, ...){
+plot_compare_tots <- function(outa, outb, ...){
 # INPUT
 # outa = counts output from scenario a
 # outb = counts output from scenario b
@@ -33,7 +33,7 @@ ggplot(dat, aes(x = n, y = scenario, fill = scenario)) +
 
 }
 
-plot.compare.prev <- function(outa, outb, ...){
+plot_compare_prev <- function(outa, outb, ...){
   # INPUT
   # outa = counts output from scenario a
   # outb = counts output from scenario b
@@ -69,7 +69,7 @@ plot.compare.prev <- function(outa, outb, ...){
     scale_y_discrete() + scale_fill_manual(values = cols)
 }
 
-plot.compare.hunted <- function(outa, outb, ...){
+plot_compare_hunted <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -104,7 +104,7 @@ plot.compare.hunted <- function(outa, outb, ...){
 
 }
 
-plot.compare.hunted.end <- function(outa, outb, ...){
+plot_compare_hunted_end <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -140,7 +140,7 @@ plot.compare.hunted.end <- function(outa, outb, ...){
 
 }
 
-plot.compare.buckshunted <- function(outa, outb, ...){
+plot_compare_buckshunted <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -175,7 +175,7 @@ plot.compare.buckshunted <- function(outa, outb, ...){
 
 }
 
-plot.compare.buckshunted.end <- function(outa, outb, ...){
+plot_compare_buckshunted_end <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -211,7 +211,7 @@ plot.compare.buckshunted.end <- function(outa, outb, ...){
 
 }
 
-plot.compare.oldbuckshunted <- function(outa, outb, ...){
+plot_compare_oldbuckshunted <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -246,7 +246,7 @@ plot.compare.oldbuckshunted <- function(outa, outb, ...){
 
 }
 
-plot.compare.oldbuckshunted.end <- function(outa, outb, ...){
+plot_compare_oldbuckshunted_end <- function(outa, outb, ...){
   # INPUT
   # outa = deaths output from scenario a
   # outb = deaths output from scenario b
@@ -282,14 +282,14 @@ plot.compare.oldbuckshunted.end <- function(outa, outb, ...){
 
 }
 
-plot.compare.all <- function(outa, outb, ...){
+plot_compare_all <- function(outa, outb, ...){
   # INPUT
   # outa = all output from scenario a
   # outb = all  output from scenario b
 
   # OUTPUT
-  # comparison plots
-
+  # comparison plot of total population size
+  #browser()
   require(reshape2)
   require(tidyverse)
   require(ggridges)
@@ -342,7 +342,11 @@ plot.compare.all <- function(outa, outb, ...){
 
   theme_set(theme_bw(base_size = 18))
 
+  # define colors
+  cols <- c('#ffff00','#0000ff')
+
   # totals
+
   p1 <- ggplot(totals, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
@@ -356,33 +360,34 @@ plot.compare.all <- function(outa, outb, ...){
     xlab("Disease prevalence") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  # total hunted
+  # plot
   p3 <- ggplot(tot.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) +
     theme_ridges() +theme(legend.position = "none") +
     xlab("Total hunted > 1yr old") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
-  # hunted last year
+
   p4 <- ggplot(last.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Total hunted > 1yr old in last year") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  # males hunted
+  # plot
   p5 <- ggplot(males.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Males hunted > 1yr old") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
-  # males hunted last year
+  # plot
   p6 <- ggplot(males.last.hunted, aes(x = n, y = scenario, fill = scenario)) +
     geom_density_ridges(alpha= 0.6, scale = 4) + theme_ridges() +
     theme(legend.position = "none") +
     xlab("Males hunted > 1yr old in last year") + ylab("") +
     scale_y_discrete() + scale_fill_manual(values = cols)
 
+  #browser()
   p7 <- plot_grid(p1,p2,p3,p4,p5,p6, nrow = 3)
   p7
 }
