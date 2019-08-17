@@ -23,7 +23,7 @@ fluidRow(
                sliderInput(ns("an.env.foi"), "Indirect transmission",
                            value = 0, min = 0, max = 0.1, step = 0.01),
                sliderInput(ns("r0_peryear"), "Direct R0 per year",
-                           value = .7, min = 0.5, max = 1.5, step = 0.05),
+                           value = .7, min = 0.1, max = 1.5, step = 0.05),
                sliderInput(ns("theta"), "Theta",
                            value = 1, min = 0, max = 1, step = 0.1),
                sliderInput(ns("beta.m"), "Relative male infection",

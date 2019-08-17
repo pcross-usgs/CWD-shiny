@@ -24,7 +24,7 @@ det_modUI <- function(id) {
                        sliderInput(ns("an.env.foi"), "Indirect transmission",
                                    value = 0, min = 0, max = 0.1, step = 0.01),
                        sliderInput(ns("r0_peryear"), "Direct R0 per year",
-                                   value = .7, min = .5, max = 1.5, step = .05),
+                                   value = .7, min = .1, max = 1.5, step = .05),
                        sliderInput(ns("beta.m"), "Relative male infection",
                                    value = 2, min = 0.8, max = 5, step = 0.1),
                        sliderInput(ns("theta"), "Theta",
