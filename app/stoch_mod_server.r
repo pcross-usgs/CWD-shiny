@@ -119,8 +119,7 @@ stoch_mod_server <- function(input, output, session){
 
   output$TotalPlot <- renderPlot({
     out <- simout()
-    p1 <- plot_stoch_disease(out$counts, error.bars = c(0.05, 0.95))
-    p1
+    plot_stoch_disease(out$counts, error.bars = c(0.05, 0.95))
   })
 
   output$PrevPlot <- renderPlot({

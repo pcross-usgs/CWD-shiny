@@ -18,6 +18,7 @@ fluidRow(
                sliderInput(ns("ad.repro"), "Fawns per adult",
                            value = 1, min = 0.5, max = 2, step = 0.1),
                includeText("vital_text.txt")),
+
       tabPanel("Disease",
                sliderInput(ns("an.env.foi"), "Indirect transmission",
                            value = 0, min = 0, max = 0.1, step = 0.01),
@@ -45,6 +46,7 @@ fluidRow(
                sliderInput(ns("hunt.mort.ad.m"),"% of males hunted",
                            value = 0.3, min = 0.01, max = 0.8,step = 0.05),
                includeText("hunt_text.txt")),
+
       tabPanel("Simulation",
                sliderInput(ns("n.years"), "# of years",
                            value = 10, min = 5, max = 30, step = 5),

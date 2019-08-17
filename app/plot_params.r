@@ -8,32 +8,32 @@ plot_vitals <- function(params){
   # plot of the prevalence
   # First draw some values from the distribution
   sur.fawn <- params %$%
-    est_beta_params(fawn.an.sur, fawn.an.sur.var) %$%
+    est_beta_params(fawn.an.sur, fawn.sur.var) %$%
     rbeta(1000, alpha, beta)
   sur.juv <- params %$%
-    est_beta_params(juv.an.sur, an.sur.var) %$%
+    est_beta_params(juv.an.sur, sur.var) %$%
     rbeta(1000, alpha, beta)
   sur.ad.f <- params %$%
-    est_beta_params(ad.an.f.sur, an.sur.var) %$%
+    est_beta_params(ad.an.f.sur, sur.var) %$%
     rbeta(1000, alpha, beta)
   sur.ad.m <- params %$%
-    est_beta_params(ad.an.m.sur, an.sur.var) %$%
+    est_beta_params(ad.an.m.sur, sur.var) %$%
     rbeta(1000, alpha, beta)
 
   hunt.fawn <- params %$%
-    est_beta_params(hunt.mort.fawn, hunt.mort.var) %$%
+    est_beta_params(hunt.mort.fawn, hunt.var) %$%
     rbeta(1000, alpha, beta)
   hunt.juv.m <- params %$%
-    est_beta_params(hunt.mort.juv.f, hunt.mort.var) %$%
+    est_beta_params(hunt.mort.juv.f, hunt.var) %$%
     rbeta(1000, alpha, beta)
   hunt.juv.f <- params %$%
-    est_beta_params(hunt.mort.juv.m, hunt.mort.var) %$%
+    est_beta_params(hunt.mort.juv.m, hunt.var) %$%
     rbeta(1000, alpha, beta)
   hunt.ad.f <- params %$%
-    est_beta_params(hunt.mort.ad.f, hunt.mort.var) %$%
+    est_beta_params(hunt.mort.ad.f, hunt.var) %$%
     rbeta(1000, alpha, beta)
   hunt.ad.m <- params %$%
-    est_beta_params(hunt.mort.ad.m, hunt.mort.var) %$%
+    est_beta_params(hunt.mort.ad.m, hunt.var) %$%
     rbeta(1000, alpha, beta)
 
   sur.tot.fawn <- sur.fawn*(1 - hunt.fawn)
@@ -43,10 +43,10 @@ plot_vitals <- function(params){
   sur.tot.ad.m <- sur.ad.m*(1 - hunt.ad.m)
 
   repro.juv <-  params %$%
-    est_beta_params(juv.repro/2, juv.repro.var) %$%
+    est_beta_params(juv.repro/2, repro.var) %$%
     rbeta(1000, alpha, beta) * 2
   repro.ad <-  params %$%
-    est_beta_params(ad.repro/2, ad.repro.var) %$%
+    est_beta_params(ad.repro/2, repro.var) %$%
     rbeta(1000, alpha, beta) * 2
 
   #create a wide data.frame

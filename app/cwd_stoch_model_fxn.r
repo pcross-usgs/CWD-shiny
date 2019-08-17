@@ -16,21 +16,21 @@ cwd_stoch_model <- function(params) {
 
   # Estimate shape and scale parameters for the Beta distribution given the user
   # input of mean and variance.  natural survival
-  fawn.s.b <- est_beta_params(fawn.an.sur, fawn.an.sur.var)
-  juv.s.b <- est_beta_params(juv.an.sur, an.sur.var)
-  ad.f.s.b <- est_beta_params(ad.an.f.sur, an.sur.var)
-  ad.m.s.b <- est_beta_params(ad.an.m.sur, an.sur.var)
+  fawn.s.b <- est_beta_params(fawn.an.sur, fawn.sur.var)
+  juv.s.b <- est_beta_params(juv.an.sur, sur.var)
+  ad.f.s.b <- est_beta_params(ad.an.f.sur, sur.var)
+  ad.m.s.b <- est_beta_params(ad.an.m.sur, sur.var)
 
   # reproduction
-  juv.r.b <- est_beta_params(juv.repro/2, juv.repro.var)
-  ad.r.b <- est_beta_params(ad.repro/2, ad.repro.var)
+  juv.r.b <- est_beta_params(juv.repro/2, repro.var)
+  ad.r.b <- est_beta_params(ad.repro/2, repro.var)
 
   # hunting
-  hunt.fawn.b <- est_beta_params(hunt.mort.fawn, hunt.mort.var)
-  hunt.juv.f.b <- est_beta_params(hunt.mort.juv.f, hunt.mort.var)
-  hunt.juv.m.b <- est_beta_params(hunt.mort.juv.m, hunt.mort.var)
-  hunt.f.b <- est_beta_params(hunt.mort.ad.f, hunt.mort.var)
-  hunt.m.b <- est_beta_params(hunt.mort.ad.m, hunt.mort.var)
+  hunt.fawn.b <- est_beta_params(hunt.mort.fawn, hunt.var)
+  hunt.juv.f.b <- est_beta_params(hunt.mort.juv.f, hunt.var)
+  hunt.juv.m.b <- est_beta_params(hunt.mort.juv.m, hunt.var)
+  hunt.f.b <- est_beta_params(hunt.mort.ad.f, hunt.var)
+  hunt.m.b <- est_beta_params(hunt.mort.ad.m, hunt.var)
 
   # group into a vector
   # initial female prevalence

@@ -4,18 +4,15 @@ n.age.cats <- 12 # age categories
 n0 <- 2000 # initial population size
 n.years <- 30 # number of years for the simulation
 
-#Annual variance on reproduction; input by user?
-fawn.an.repro.var <- 0
-juv.an.repro.var <- 0.005
-ad.an.repro.var <- 0.005
+#Annual variance on reproduction; input by user
+repro.var <- 0.005
 
-#Annual variance on survival; input by user?
-fawn.an.sur.var <- 0.005
-an.sur.var <- 0.005
+#Annual variance on survival; input by user
+fawn.sur.var <- 0.005
+sur.var <- 0.005
 
-#Variance of additive hunt mortality; user input?
-#Right now, fixed across all age/sex classes
-hunt.mort.var <- 0.005
+#Variance of additive hunt mortality; user input
+hunt.var <- 0.005
 
 #Initial prevalence; user input
 ini.fawn.prev <- 0
@@ -59,9 +56,7 @@ beta.m <- 1 # transmission rate to males increased by x
 rel.risk <- 1
 
 #rescaling variance since can't just divide by 2....need to check this step
-fawn.repro.var <- (1/2)^2 * fawn.an.repro.var
-juv.repro.var <- (1/2)^2 * juv.an.repro.var
-ad.repro.var <- (1/2)^2 * ad.an.repro.var
+repro.var <- (1/2)^2 * repro.var
 
 #bundle them into a list
 stoch.params <- list(fawn.an.sur = fawn.an.sur,
@@ -69,15 +64,15 @@ stoch.params <- list(fawn.an.sur = fawn.an.sur,
                ad.an.f.sur = ad.an.f.sur,
                ad.an.m.sur = ad.an.m.sur,
 
-               fawn.an.sur.var = fawn.an.sur.var,
-               an.sur.var = an.sur.var,
+               fawn.sur.var = fawn.sur.var,
+               sur.var = sur.var,
 
                hunt.mort.fawn = hunt.mort.fawn,
                hunt.mort.juv.f = hunt.mort.juv.f,
                hunt.mort.juv.m = hunt.mort.juv.m,
                hunt.mort.ad.f =  hunt.mort.ad.f,
                hunt.mort.ad.m = hunt.mort.ad.m,
-               hunt.mort.var = hunt.mort.var,
+               hunt.var = hunt.var,
 
                rel.risk = rel.risk,
 
@@ -85,9 +80,7 @@ stoch.params <- list(fawn.an.sur = fawn.an.sur,
                juv.repro = juv.repro,
                ad.repro = ad.repro,
 
-               fawn.repro.var = fawn.repro.var,
-               juv.repro.var = juv.repro.var,
-               ad.repro.var = ad.repro.var,
+               repro.var = repro.var,
 
                ini.fawn.prev = ini.fawn.prev,
                ini.juv.prev = ini.juv.prev,

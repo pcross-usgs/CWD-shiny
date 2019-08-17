@@ -1,5 +1,6 @@
 # Script to run the stochastic model
 rm(list = ls())
+setwd("D:/Current Projects/CWD_shiny")
 library(profvis)
 #profvis({
 
@@ -19,7 +20,7 @@ source("./code/create_stoch_params.r")
 setwd("./app/")
 
 #Run the model
-sims <- 40
+sims <- 20
 counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
 
@@ -29,15 +30,12 @@ for(i in 1:sims){
   deaths.sims[[i]] <- outa$deaths
 }
 
+counts <- melt(counts.sims, id = c("age", "month", "population", "category",
+                                   "year", "sex", "disease")) %>%
+              rename(sim = L1)
 
-counts <- melt(counts.sims,
-                         id = c("age", "month", "population", "category",
-                                            "year", "sex", "disease")) %>%
-                          rename(sim = L1)
-
-deaths <- melt(deaths.sims,
-                         id = c("age", "month", "population", "category",
-                                             "year", "sex")) %>% rename(sim = L1)
+deaths <- melt(deaths.sims, id = c("age", "month", "population", "category",
+                                   "year", "sex")) %>% rename(sim = L1)
 
 outa <- list(counts = counts,deaths = deaths)
 #plot the totals
