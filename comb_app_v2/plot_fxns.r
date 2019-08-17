@@ -1,9 +1,9 @@
 # Functions to plot the output from a single simulation
 #parameter beta plot
-pl_beta <- function(a,b, asp = if(isLim) 1, ylim = if(isLim) c(0,1.1)) {
+pl_beta <- function(a, b, asp = if(isLim) 1, ylim = if(isLim) c(0, 1.1)) {
   if(isLim <- a == 0 || b == 0 || a == Inf || b == Inf) {
     eps <- 1e-10
-    x <- c(0, eps, (1:7)/16, 1/2+c(-eps,0,eps), (9:15)/16, 1-eps, 1)
+    x <- c(0, eps, (1:7)/16, 1/2+c(-eps, 0, eps), (9:15)/16, 1 - eps, 1)
   } else {
     x <- seq(0, 1, length = 1025)
   }
@@ -38,9 +38,7 @@ plot_tots <- function(dat, ...){
                                 "negative" = "no",
                                 "positive" = "yes",
                                 "total" = "total")) %>%
-    mutate(disease = fct_reorder(disease,n))
-
-
+    mutate(disease = fct_reorder(disease, n))
 
   #plot
   p <- ggplot(dat.sum, aes(year, n, color = disease)) +
