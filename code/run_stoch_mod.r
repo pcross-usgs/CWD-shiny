@@ -1,6 +1,5 @@
 # Script to run the stochastic model
 rm(list = ls())
-setwd("D:/Current Projects/CWD_shiny")
 library(profvis)
 #profvis({
 
@@ -9,12 +8,15 @@ library(reshape2)
 library(magrittr)
 library(tidyverse)
 library(cowplot)
-source("./code/stoch_model_fxn_ver2.r")
-source("./code/plot_stoch_fxns.r")
-source("./code/plot_params.r")
-source("./code/estBetaParams.r")
-source("./code/plot_compare_scenarios.r")
-load("./output/params_stoch_ver2.RData")
+
+source("./app/cwd_stoch_model_fxn.r")
+source("./app/plot_stoch_fxns.r")
+source("./app/plot_params.r")
+source("./app/est_beta_params.r")
+source("./app/plot_compare_scenarios.r")
+source("./code/create_stoch_params.r")
+
+setwd("./app/")
 
 #Run the model
 sims <- 40
@@ -22,7 +24,7 @@ counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
 
 for(i in 1:sims){
-  outa <- stoch.pop.model.2(params)
+  outa <- cwd_stoch_model(stoch.params)
   counts.sims[[i]] <- outa$counts
   deaths.sims[[i]] <- outa$deaths
 }
@@ -39,42 +41,44 @@ deaths <- melt(deaths.sims,
 
 outa <- list(counts = counts,deaths = deaths)
 #plot the totals
-plot.stoch.tots(outa$counts, all.lines = T, error.bars = c(0.05, 0.95),
+plot_stoch_tots(outa$counts, all.lines = T, error.bars = c(0.05, 0.95),
                 by.sexage = T)
 
-plot.stoch.tots.2(outa$counts, error.bars = c(0.05, 0.95))
+plot_stoch_disease(outa$counts, error.bars = c(0.05, 0.95))
+
 #plot the prevalence
-plot.stoch.prev(outa$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.95))
+plot_stoch_prev(outa$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.95))
 
 # prev by age
-plot.stoch.prev.age(outa$counts, by.sex = T)
-plot.stoch.prev.age.2(outa$counts, error.bars = c(0.05, 0.95))
+plot_stoch_prev_age(outa$counts, by.sex = T)
+plot_stoch_prev_age_end(outa$counts, error.bars = c(0.05, 0.95))
 
 #plot fawn.adult and buck:doe
-p1 <- plot.stoch.fawn.doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
-p2 <- plot.stoch.buck.doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
+p1 <- plot_stoch_fawn_doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
+p2 <- plot_stoch_buck_doe(outa$counts, all.lines = T, error.bars = c(0.05, 0.95))
 plot_grid(p1, p2, labels = c("A", "B"))
 
 # plot deaths by type
-plot.stoch.deaths(outa$deaths, error.bars = c(0.05, 0.95))
-plot.stoch.perc.deaths(outa$deaths, error.bars = c(0.05, 0.95))
+plot_stoch_deaths(outa$deaths, error.bars = c(0.05, 0.95))
+plot_stoch_perc_deaths(outa$deaths, error.bars = c(0.05, 0.95))
 
 # plot the params
-plot.vitals(params)
+plot_vitals(stoch.params)
 # plot time to death
-plot.ttd(params$p)
+plot_ttd(stoch.params$p)
 # plot the age distribution
-plot.stoch.age.dist(outa$counts)
+plot_stoch_age_dist(outa$counts)
 
 #####################
 # run it again for comparison plot testing
-load("./output/params_stoch_ver2b.RData")
-sims <- 40
+stoch.params.b <- stoch.params
+stoch.params.b$hunt.mort.ad.m <- 0.5
+
 counts.sims <- vector("list", sims)
 deaths.sims <- vector("list", sims)
 
 for(i in 1:sims){
-  outb <- stoch.pop.model.2(params)
+  outb <- cwd_stoch_model(stoch.params.b)
   counts.sims[[i]] <- outb$counts
   deaths.sims[[i]] <- outb$deaths
 }
@@ -90,13 +94,8 @@ deaths <- melt(deaths.sims,
 
 outb <- list(counts = counts, deaths = deaths)
 
-plot.stoch.tots.2(outb$counts, error.bars = c(0.05, 0.95))
-#plot the prevalence
-plot.stoch.prev(outb$counts, all.lines = T, error.bars = TRUE, cis = c(0.05, 0.95))
-
 # plot the comparisons
-plot.compare.all(outa, outb)
-
-plot.compare.tots(outa, outb)
+plot_compare_all(outa, outb)
 
 #})
+

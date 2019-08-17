@@ -5,6 +5,7 @@ n.years <- 20 # number of years for the simulation
 
 #relative risk of hunting a positive case
 rel.risk <- 1
+
 # disease mortality parameter
 p <- .43 #0.43 #probability of transitioning between infectious box cars
 
@@ -53,9 +54,7 @@ beta.f = r0 * (n0^(theta-1)) / (mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.f.s
                                     rnbinom(1000, 1, (1 - (1 - hunt.mort.ad.f)^(1/12))),
                                     rgamma(1000, 10, p)), 1, FUN = min)))
 
-#beta <- 0.035 # direct transmission
 beta.m <- 1.5 # transmission rate to males increased 10%
-
 
 #bundle them into a list
 params <- list(fawn.an.sur = fawn.an.sur,
