@@ -1,6 +1,6 @@
 stoch_mod_server <- function(input, output, session){
 
-  react.params <- eventReactive(input$go,{
+  react.params <- reactive({
     list(sims = input$sims,
          n.age.cats = 12,
          n0 = input$n0, # initial population size
@@ -42,12 +42,13 @@ stoch_mod_server <- function(input, output, session){
   })
 
   #Run the model
-  simout <- reactive({
+  simout <- eventReactive(input$go,{
     params <- react.params()
     counts.sims <- vector("list", input$sims)
     deaths.sims <- vector("list", input$sims)
 
-    withProgress(message = "running simulation", value = 0, {
+    withProgress(message = "running simulation", max = input$sims, {
+
       for(i in 1:input$sims){
         out <- cwd_stoch_model(params)
         counts.sims[[i]] <- out$counts
