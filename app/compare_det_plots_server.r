@@ -15,8 +15,10 @@ compare_det_plots_server <- function(input, output, session, simout){
 
       output$PrevPlot_det <- renderPlot({
         out <- simout()
-        par(mar = c(6, 6, 1, 1))
-        plot_prev_age_end(out$counts, ylim = c(0, .7))
+        p1 <- plot_prev_time(out$counts, ylim = c(0,1))
+        p2 <- plot_prev_age_end(out$counts, ylim = c(0,1))
+        p3 <- plot_grid(p1, p2, nrow = 1)
+        p3
       })
 
       output$DeathPlot_det <- renderPlot({

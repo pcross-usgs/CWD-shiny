@@ -1,23 +1,4 @@
 # Functions to plot the output from a single simulation
-#parameter beta plot
-pl_beta <- function(a, b, asp = if(isLim) 1, ylim = if(isLim) c(0, 1.1)) {
-  if(isLim <- a == 0 || b == 0 || a == Inf || b == Inf) {
-    eps <- 1e-10
-    x <- c(0, eps, (1:7)/16, 1/2+c(-eps, 0, eps), (9:15)/16, 1 - eps, 1)
-  } else {
-    x <- seq(0, 1, length = 1025)
-  }
-  fx <- cbind(dbeta(x, a,b))
-  f <- fx; f[fx == Inf] <- 1e100
-  matplot(x, f, ylab="", type="l", ylim=ylim, asp=asp,
-          main = sprintf("[dpq]beta(x, a=%g, b=%g)", a,b))
-  abline(0,1,     col="gray", lty=3)
-  abline(h = 0:1, col="gray", lty=3)
-  legend("top", paste0(c("d","p","q"), "beta(x, a,b)"),
-         col=1:3, lty=1:3, bty = "n")
-  invisible(cbind(x, fx))
-}
-
 plot_tots <- function(dat, ...){
   # INPUT
   # dat = list of the output matrices
@@ -49,24 +30,8 @@ plot_tots <- function(dat, ...){
   p
 }
 
-# plot all ages all months
-plot_all <- function(dat, ...){
-  # INPUT
-  # dat = one matrix in long form
-  # OUTPUT
-  # plot of the population totals split by age, sex, prevalence
-  require(reshape2)
-  require(ggplot2)
-
-  dat.lon <- dat %>% filter(month %% 12 == 10)
-
-  plot1 <- ggplot(dat.lon, aes(year, population, color = age)) +
-    geom_point() + facet_wrap(~disease + sex, ncol = 2, scales = "free")
-  plot1
-}
-
 # plot the prevalence
-plot_prev <- function(dat, ...){
+plot_prev_time <- function(dat, ...){
   # INPUT
   # dat = longform data matrix
   # OUTPUT
@@ -81,10 +46,17 @@ plot_prev <- function(dat, ...){
     summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes))
-  par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
 
-  plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
-       bty = "l", type = "l", lwd = 2, ylim = ylims, ...)
+  #plot(dat.sum$year, dat.sum$prev, xlab = "Year", ylab = "Prevalence",
+  #     bty = "l", type = "l", lwd = 2, ...)
+  par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
+  ggplot(dat.sum, aes(x = year, y = prev)) +
+    geom_line(size = 1.5) + ylim(0,1) +
+    ylab("Prevalence") + xlab("Age") +
+    theme_light()  + theme(text = element_text(size = 18),
+                           panel.grid.minor = element_blank(),
+                           panel.grid.major = element_blank())
+
 }
 
 # plot the prevalence
@@ -147,16 +119,8 @@ plot_prev_age_end <- function(dat, ...){
   require(tidyverse)
   require(cowplot)
 
-  # summarize by year and disease status, calculate the prevalence
-  dat.sum <- dat %>%
-    filter(month %% 12 == 10) %>%
-    group_by(year, disease) %>%
-    summarize(n = sum(population)) %>%
-    spread(key = disease, value = n) %>%
-    mutate(prev = yes/ (no + yes))
-
    # summarize disease status on the last year, calculate the prevalence
-  dat.sum2 <- dat %>%
+  dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
     group_by(age, sex, disease)%>%
     summarize(n = sum(population)) %>%
@@ -164,25 +128,15 @@ plot_prev_age_end <- function(dat, ...){
     mutate(prev = yes/ (no + yes)) %>%
     select(age, sex, prev)
 
- #prevalence over time
- p1 <-  ggplot(dat.sum, aes(x = year, y = prev)) +
-   geom_line(size = 1.5) + ylim(0,1) +
-   ylab("Prevalence") + xlab("Year") +
-   theme_light()  + theme(text = element_text(size = 18),
-                          panel.grid.minor = element_blank(),
-                          panel.grid.major = element_blank())
  #prevalence by age
- p2 <-  ggplot(dat.sum2, aes(x = age, y = prev, color = sex)) +
+ ggplot(dat.sum, aes(x = age, y = prev, color = sex)) +
    geom_line(size = 1.5) + ylim(0,1) +
    ylab("") + xlab("Age") +
    theme_light()  + theme(text = element_text(size = 18),
                           panel.grid.minor = element_blank(),
                           panel.grid.major = element_blank(),
                           legend.position = c(.25,.85))
-
- p3 <- plot_grid(p1, p2, nrow = 1)
- p3
-}
+ }
 
 # plot the age distribution at the end point
 plot_age_dist <- function(dat, ...){
@@ -232,7 +186,12 @@ plot_fawn_doe <- function(dat, ...){
     spread(key = sex.age, value = n) %>%
     mutate(fawn.doe = (m_fawn + f_fawn) / f_adult)
 
-  plot(dat.sum$year, dat.sum$fawn.doe, ...)
+  ggplot(dat.sum, aes(x = year, y = fawn.doe)) +
+    geom_line(size = 1.5) + ylim(0, 1.2) +
+    ylab("Fawn:Doe ratio") + xlab("Year") +
+    theme_light()  + theme(text = element_text(size = 18),
+                           panel.grid.minor = element_blank(),
+                           panel.grid.major = element_blank())
 
 }
 
@@ -256,72 +215,31 @@ plot_buck_doe <- function(dat, ...){
     unite(sex.age, sex, age.cat) %>%
     spread(key = sex.age, value = n) %>%
     mutate(buck.doe = m_adult / f_adult)
-  par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
-  plot(dat.sum$year, dat.sum$buck.doe, ...)
 
-}
-
-# plot both fawn:doe and buck:doe
-plot_fawn_buck <- function(dat, ...){
-  # INPUT
-  # dat = list of the output matrices
-  # OUTPUT
-  # plot of the prevalence
-  require(reshape2)
-  require(tidyverse)
-
-  dat$age.cat <- "adult"
-  dat$age.cat[dat$age == 1] <- "fawn"
-
-  # summarize by year, sex and age. Calculate the male/female ratio
-  dat.sum <- dat %>%
-    filter(month %% 12 == 8) %>% # december of every year
-    group_by(year, sex, age.cat) %>%
-    summarize(n = sum(population)) %>%
-    unite(sex.age, sex, age.cat) %>%
-    spread(key = sex.age, value = n) %>%
-    mutate(buck.doe = m_adult / f_adult)
-
-
-  # summarize by year, sex and age. Calculate the fawn:doe
-  dat.sum.2 <- dat %>%
-    filter(month %% 12 == 11) %>%
-    group_by(year, sex, age.cat) %>%
-    summarize(n = sum(population)) %>%
-    unite(sex.age, sex, age.cat) %>%
-    spread(key = sex.age, value = n) %>%
-    mutate(fawn.doe = (m_fawn + f_fawn) / f_adult)
-
-  #buck:doe plot
-  p1 <- ggplot(dat.sum, aes(x = year, y = buck.doe)) +
-  geom_line(size = 1.5) + ylim(0, 1.2) +
-  ylab("Buck:Doe ratio") + xlab("Year") +
-  theme_light()  + theme(text = element_text(size = 18),
-                         panel.grid.minor = element_blank(),
-                         panel.grid.major = element_blank())
-  # fawn:doe create the plot
-  p2 <- ggplot(dat.sum.2, aes(x = year, y = fawn.doe)) +
-  geom_line(size = 1.5) + ylim(0, 1.2) +
-  ylab("Fawn:Doe ratio") + xlab("Year") +
-  theme_light()  + theme(text = element_text(size = 18),
-                         panel.grid.minor = element_blank(),
-                         panel.grid.major = element_blank())
-
-  p3 <- plot_grid(p1,p2, nrow = 1)
-  p3
+  ggplot(dat.sum, aes(x = year, y = buck.doe)) +
+    geom_line(size = 1.5) + ylim(0, 1.2) +
+    ylab("Buck:Doe ratio") + xlab("Year") +
+    theme_light()  + theme(text = element_text(size = 18),
+                           panel.grid.minor = element_blank(),
+                           panel.grid.major = element_blank())
 
 }
 
 # plot total deaths by type each year
-plot_deaths <- function(dat){
+plot_deaths <- function(dat, percent){
   # INPUT
   # dat = list of the output matrices of deaths
+  # percent = TRUE to plot the percentages rather that the totals
   # OUTPUT
   # plot of the total deaths over time
   require(reshape2)
   require(tidyverse)
 
-  deaths <- dat %>%
+  if(missing(percent)){
+    percent <- F
+  }
+  if(percent == F){
+    deaths <- dat %>%
     filter(age >= 2) %>%
     mutate(category = as.factor(str_sub(category, 1, 1))) %>%
     mutate(category = fct_recode(category,
@@ -333,12 +251,44 @@ plot_deaths <- function(dat){
     summarize(n = sum(population)) %>%
     mutate(category = fct_reorder(category, n))
 
-p <-   ggplot(data = deaths, aes(x = year, y = n, color = category)) +
-    geom_line(size = 1.5) + facet_wrap(~sex) +
-    xlab("Year") + ylab("# of Adult Deaths") + theme_light(base_size = 18) +
-  theme(panel.grid.minor = element_blank(),
-        panel.grid.major = element_blank())
-p
+    p <- ggplot(data = deaths, aes(x = year, y = n, color = category)) +
+      geom_line(size = 1.5) + facet_wrap(~sex) +
+      xlab("Year") + ylab("# of Adult Deaths")
+  }
+
+  if(percent == T){
+    deaths <- dat %>%
+      filter(age >= 2) %>%
+      mutate(category = as.factor(str_sub(category, 1, 1))) %>%
+      mutate(category = fct_recode(category,
+                                   "CWD" = "C",
+                                   "Natural" = "D",
+                                   "Hunted" = "H"),
+             year = floor(year)) %>%
+      group_by(year, sex, category) %>%
+      summarize(n = sum(population)) %>%
+      spread(key = category, value = n) %>%
+      mutate(total = CWD + Natural + Hunted) %>%
+      mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total) %>%
+      select(year, sex, cwd.p, nat.p, hunt.p) %>%
+      gather("cwd.p", "hunt.p", "nat.p", key ="category", value = "percent" ) %>%
+      mutate(category = fct_recode(category,
+                                   "CWD" = "cwd.p",
+                                   "Natural" = "nat.p",
+                                   "Hunted" = "hunt.p")) %>%
+      mutate(category = fct_reorder(category, percent))
+    p <- ggplot(data = deaths, aes(x = year, y = percent, color = category)) +
+      geom_line(size = 1.5) + facet_wrap(~sex)+
+      xlab("Year") + ylab("% of Adult Deaths")
+
+
+  }
+
+  p <-  p + theme_light(base_size = 18) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major = element_blank())
+
+  p
 
 }
 

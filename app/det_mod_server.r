@@ -99,8 +99,9 @@ det_mod_server <- function(input, output, session){
 
   output$PrevPlot <- renderPlot({
     out <- simout()
-    par(mar = c(6,6,1,1))
-    plot_prev_age_end(out$counts)
+    p1 <- plot_prev_time(out$counts, ylim = c(0,1))
+    p2 <- plot_prev_age_end(out$counts, ylim = c(0,1))
+    plot_grid(p1, p2, nrow = 1)
   })
 
   output$AgePlot <- renderPlot({
@@ -110,8 +111,8 @@ det_mod_server <- function(input, output, session){
 
   output$DeathPlot <- renderPlot({
     out <- simout()
-    p1 <- plot_deaths(out$deaths)
-    p2 <- plot_perc_deaths(out$deaths)
+    p1 <- plot_deaths(out$deaths, percent = F)
+    p2 <- plot_deaths(out$deaths, percent = T)
     plot_grid(p1, p2, nrow = 2)
   })
 
@@ -122,6 +123,9 @@ det_mod_server <- function(input, output, session){
 
   output$ClassPlot <- renderPlot({
     out <- simout()
-    plot_fawn_buck(out$counts)
+    p1 <- plot_fawn_doe(out$counts)
+    p2 <- plot_buck_doe(out$counts)
+    p3 <- plot_grid(p1, p2, nrow = 1)
+    p3
   })
 }

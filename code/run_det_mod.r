@@ -18,14 +18,20 @@ par(mfrow = c(1,1))
 plot_tots(out$counts)
 
 # prevalence plots
-plot_prev_age_end(out$counts)#, ylim = c(0,1))
+p1 <- plot_prev_time(out$counts)
+p2 <- plot_prev_age_end(out$counts)
+p3 <- plot_grid(p1, p2, nrow = 1)
+p3
 
 # plot the fawn:doe and buck:doe ratios
-plot_fawn_buck(out$counts)#, ylim = c(0.2, .8))
+p1 <- plot_fawn_doe(out$counts)
+p2 <- plot_buck_doe(out$counts)
+p3 <- plot_grid(p1, p2, nrow = 1)
+p3
 
 # plot the deaths
-plot_deaths(out$deaths)
-plot_perc_deaths(out$deaths)
+plot_deaths(out$deaths, percent = F)
+plot_deaths(out$deaths, percent = T)
 
 # plot time to death
 plot_ttd(params$p)
