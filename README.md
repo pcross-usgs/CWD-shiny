@@ -1,34 +1,42 @@
 # README #
 
-This is a code repository to test out interactive R Shiny applications of CWD disease models. Currently there are deterministic and stochastic models that are intended to project out scenarios for a 5 to 10 year window over which we assume that the management and vital rates are kept constant. 
+This is a repository with R code for an interactive Shiny application of CWD disease models. Currently there are deterministic and stochastic models that are intended to project out scenarios for a 5 to 10 year window over which we assume that the management and vital rates are kept constant. The models are sex and age structured with direct and indirect transmission. 
 
-### Webpages for the shiny apps###  
+### Webpage for the shiny apps###  
 
-Combined version 2 application:  
 https://paulchafeecr.shinyapps.io/comb_app_v2_CWD/
 
 ### How do I get set up? ###
 
-Dependencies: shiny, popbio, tidyverse, cowplot, magrittr, reshape2, knitr, ggridges, shinycssloaders, shinydashboard, markdown.  
+Dependencies: shiny, popbio, tidyverse, cowplot, magrittr, reshape2, knitr, ggridges, shinydashboard, markdown.  
 
-### Folders ###
-code: holds scripts and function files to run the models outside of the shiny environment. This is mostly for testing purposes prior to porting over to the shiny folders. Many of the code files are duplicated in the shiny folders. Not sure of a better system at the moment for referencing common files across shiny apps except by duplicating them and locating them in the local folder. 
+### Files ###
 
-comb_app_v2: version 2 of the deterministic and stochastic models joined in a single shiny app.
-old: now contains the following sub-folders  
-- det_app: deterministic shiny model with a constant disease transmission rate  
-- det_app2: deterministic shiny model with dynamic disease transmission   
-- stoch_app: stochastic shiny model with a constant disease transmission rate  
-- stoch_app2: stochastic shiny model with a dynamic disease transmission rate  
+/code/  
 
-output: stores some of the created parameter files. Only used for testing purposes. 
+- create_params_det.r: script that creates a list of parameters that can be passed to the model function.  
+- create_params_det.r: same as above but for the stochastic model  
+- run_det_mod.r: script to do a test run of the deterministic model and construct the plots.  
+- run_stoch_mod.4: same for the stochastic model  
 
+/app/   
 
-### Issues ###
-1. doe:buck ratios seem high compared to what are often observed in the field.  
-2. No density dependence on vital rates  
-3. No change in the environmental reservoir  
-4. Not sure how to implement hot spot targeted hunting. Currently allowing for positive individuals to be more likely to be hunted compared to the background prevalence via the "relative risk" parameter.
+- allocate_deaths.r function that randomly chooses which infected individuals die from hunting across the 10 subcategories  
+- app.r script that runs the shiny app.   
+- cwd_det_model.r function for the deterministic model  
+- cwd_stoch_model.r function for the stochastic model  
+- description_combo.Rmd R markdown for the first page of the shiny app  
+- est_beta_params.r function to convert the mean and variance to shape and scale parameters of the Beta distribution  
+- plot_compare_scenarios.r functions to compare the different scenarios
+- plot_fxns.r plotting of the deterministic model   
+- plot_params.r functions to help plot the parameters  
+- plot_stoch_fxns.r function to plot results of the stochastic model.  
+
+- The text files are general text descriptions that are inserted into the shiny app  
+- UI files are user interface files for the app  
+- server are server files for the app  
+- compare files are used in the comparison of different scenarios  
+- compare files that have the suffix 2 help construct the plots that directly compare the two scenarios in the same plot.  
 
 ### Who do I talk to? ###
 
