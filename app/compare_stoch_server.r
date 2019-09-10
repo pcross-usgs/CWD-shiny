@@ -6,13 +6,10 @@ compare_stoch_server <- function(input, output, session){
         n0 = input$n0, # initial population size
         p = input$p, #probability of transitioning between infectious box cars;
 
-        fawn.an.sur.var = 0.005,
-        an.sur.var = 0.005,
-
-        hunt.mort.var = 0.005,
-        fawn.repro.var = (1/2)^2 * 0,
-        juv.repro.var = (1/2)^2 * 0.005,
-        ad.repro.var = (1/2)^2 * 0.005,
+        fawn.sur.var = input$fawn.sur.var,
+        sur.var = input$sur.var,
+        hunt.var = input$hunt.var,
+        repro.var = (1/2)^2 * input$repro.var, #check this
 
         n.years = input$n.years,
         env.foi =  1 - ((1-input$an.env.foi)^(1/12)),

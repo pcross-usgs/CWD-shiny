@@ -52,7 +52,7 @@ plot_prev_time <- function(dat, ...){
   par(cex = 1.25, cex.lab = 1.25, cex.axis = 1.25)
   ggplot(dat.sum, aes(x = year, y = prev)) +
     geom_line(size = 1.5) + ylim(0,1) +
-    ylab("Prevalence") + xlab("Age") +
+    ylab("Prevalence") + xlab("Year") +
     theme_light()  + theme(text = element_text(size = 18),
                            panel.grid.minor = element_blank(),
                            panel.grid.major = element_blank())
