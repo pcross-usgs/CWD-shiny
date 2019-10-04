@@ -1,0 +1,1 @@
+The prevalence versus age plot (right) is calculated using only the last year of data.

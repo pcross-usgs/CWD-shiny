@@ -1,0 +1,12 @@
+name: CWDapp
+title: CWDapp
+username:
+account: paulchafeecr
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1288508
+bundleId: 2469983
+url: https://paulchafeecr.shinyapps.io/CWDapp/
+when: 1570231766.95179
+asMultiple: FALSE
+asStatic: FALSE
