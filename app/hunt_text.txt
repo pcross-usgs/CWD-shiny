@@ -1,1 +1,0 @@
-Note that a value of 0.1 represents 10% hunted.

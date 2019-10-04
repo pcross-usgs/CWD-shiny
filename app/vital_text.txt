@@ -1,1 +1,0 @@
-All survival parameters are annual probabilities independent of hunting mortality. Fawns are <1 year old and juveniles are 1-2 years old.
