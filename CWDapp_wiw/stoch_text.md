@@ -1,1 +1,1 @@
-Press the run simulations button for plots to display. Stochastic simulations can exceed the memory provided by shinyapps.io in which case you will be disconnected from the server. If this occurs, you can either run simulations for less time, fewer iterations, conduct the comparison with the deterministic model, or download the source code and run the shiny application on your local machine.  
+Press the run simulations button for plots to display.
