@@ -5,18 +5,116 @@
 #'  conducts one run of the model. 2x2 matrix of 
 #'  transmission rates between males and females. 
 #'
-#' @param params A list with the following parameters included: 
-#' fawn.an.sur, juv.an.sur, ad.an.f.sur, ad.an.m.sur, fawn.repro, 
-#' juv.repro, ad.repro, hunt.mort.fawn, hunt.mort.juv.f, hunt.mort.juv.m,
-#' hunt.mort.ad.f, hunt.mort.ad.m, ini.fawn.prev,
-#' ini.juv.prev, ini.ad.f.prev,  ini.ad.m.prev,
-#' n.age.cats, p, env.foi, beta.ff, gamma.mm, gamma.mf, gamma.fm, 
-#' theta, n0, n.years, rel.risk, repro.var, fawn.sur.var, sur.var, and hunt.var
-
+#' @param params A list with the following parameters included:  
 #'
-#' @return A list with 2 dataframes: 1. counts of the # of individuals in the 
-#' susceptible and infectious categories by over time. 2. deaths--how 
-#' individuals died over time (hunting, natural or disease). 
+#' fawn.an.sur = annual fawn survival (scaler value between 0 and 1),  
+#' 
+#' juv.an.sur = annual juvenile survival (scaler value between 0 and 1),  
+#' 
+#' ad.an.f.sur = annual adult female survival (scaler value between 0 and 1),  
+#' 
+#' ad.an.m.sur = annual adult male survival (scaler value between 0 and 1),   
+#' 
+#' fawn.repro = fawn reproduction (scaler value >= 0),  
+#' 
+#' juv.repro = juvenile reproduction (scaler value >= 0),  
+#' 
+#' ad.repro = adult reproduction (scaler value >= 0),  
+#' 
+#' hunt.mort.fawn = percentage of fawns hunted (scaler value between 0 and 1),  
+#' 
+#' hunt.mort.juv.f = percentage of juvenile females hunted (scaler value between 0 and 1),  
+#' 
+#' hunt.mort.juv.m = percentage of juvenile males hunted (scaler value between 0 and 1),  
+#' 
+#' hunt.mort.ad.f = percentage of adult females hunted (scaler value between 0 and 1),  
+#' 
+#' hunt.mort.ad.m = percentage of adult males hunted (scaler value between 0 and 1),  
+#' 
+#' ini.fawn.prev = percentage of fawns infected at the start (scaler value between 0 and 1),  
+#' 
+#' ini.juv.prev = percentage of juveniles infected at the start (scaler value between 0 and 1),  
+#' 
+#' ini.ad.f.prev = percentage of adult females infected at the start (scaler value between 0 and 1),  
+#' 
+#' ini.ad.m.prev = percentage of adult males infected at the start (scaler value between 0 and 1),   
+#' 
+#' n.age.cats = number of age categories to monitor. (scaler value greater than 3).
+#' The final age category includes all those of that age or greater. 
+#' 
+#' p = rate of movement in the infectious categories (scaler values between 0 and 1). 
+#' See model documentation vignette for how this relates to disease induced mortality.   
+#' 
+#' env.foi = % of the population that is infected by the environment per year (scaler value between 0 and 1) #' 
+#' beta.ff = female to female transmission coefficient (scaler value greater than 0),  
+#' 
+#' gamma.mm = relative increase in the male-male transmission coefficient compared 
+#' to female-female transmission (scaler value greater than 0. A value of 1 indicates equal transmission)  
+#' 
+#' gamma.mf = relative increase in the male-female transmission coefficient compared 
+#' to female-female transmission (scaler value greater than 0. A value of 1 indicates equal transmission)  
+#' 
+#' gamma.fm = relative increase in the female-male transmission coefficient compared 
+#' to female-female transmission (scaler value greater than 0. A value of 1 indicates equal transmission) 
+#' 
+#' theta = effect of population size on transmission (1 = frequency dependence, 0 = density dependent).  
+#' 
+#' n0 = initial population size (scaler value greater than 0)
+#' 
+#' n.years = number of years to run the model (scaler value greater than 2),  
+#' 
+#' rel.risk = relative risk of infected individuals being hunted. A value of 1 
+#' indicates no hunter preference for infected individuals  
+#' 
+#' repro.var = variance in the annual reproduction rates from year to year
+#' 
+#' fawn.sur.var = variance in the annual fawn survival rate from year to year
+#' 
+#' sur.var = variance in the juvenile and adult survival rates from year to year. 
+#' 
+#' hunt.var = variance in the proportion of individuals hunter per category per year.  
+#'
+#'
+#' @return A list with 2 dataframes is returned as output: 
+#' 
+#' 1. counts of the # of individuals in the susceptible and infectious 
+#' categories by over time. 
+#' 
+#'  Columns include: 
+#' 
+#'  age (in years)
+#' 
+#'  month of simulation,
+#' 
+#'  population = number of individuals
+#' 
+#'  category: St.f = susceptible females, St.m = susceptible males, Ixt.f = 
+#'  infectious females in the x category (1-10), Ixt.m = infectious males in the 
+#'  x infectious category (1-10) 
+#' 
+#'  sex = female or male
+#' 
+#' disease = yes or no for susceptible or infectious
+#' 
+#'   
+#' 2. deaths--how individuals died over time (hunting, natural or disease).
+#' 
+#'  Columns include: 
+#'  
+#'  age in years, 
+#'  
+#'  month of the simulation, 
+#'  
+#'  population = # of individuals, 
+#'  
+#'  category: Ht.f = hunted females, Ht.m = hunted males, Dt.f = natural 
+#'  mortality females, Dt.m = natural mortality males, CWDt.f = disease mortality 
+#'  females, CWDt.m = disease mortality males.  
+#'    
+#'  year = year of the simulation
+#'  
+#'  sex
+#'  
 #' 
 #' @importFrom popbio stable.stage
 #' @importFrom stats rbeta rbinom
@@ -49,8 +147,7 @@ cwd_stoch_model_wiw <- function(params) {
   # write the list objects to the local environment
   for (v in 1:length(params)) assign(names(params)[v], params[[v]])
 
-  
-###### check if parameters exist.####
+  ###### check if parameters exist.####
   if(exists("fawn.an.sur")==FALSE){
     message("fawn survival is missing, using default value")
     fawn.an.sur <- 0.6
@@ -194,16 +291,16 @@ cwd_stoch_model_wiw <- function(params) {
   }
 
   ###### check parameter values ###
-  if(fawn.an.sur <= 0) warning("fawn survival must be positive")
-  if(fawn.an.sur > 1) warning("fawn survival must be <= 1")
-  if(juv.an.sur <= 0) warning("juvenile survival must be positive")
-  if(juv.an.sur > 1) warning("juvenile survival must be <= 1")
-  if(ad.an.f.sur <= 0) warning("adult female survival must be positive")
-  if(ad.an.f.sur > 1) warning("adult female survival must be <= 1")
+  if(fawn.an.sur < 0) warning("fawn survival must be positive")
+  if(fawn.an.sur > 1) warning("fawn survival must be < 1")
+  if(juv.an.sur < 0) warning("juvenile survival must be positive")
+  if(juv.an.sur > 1) warning("juvenile survival must be < 1")
+  if(ad.an.f.sur < 0) warning("adult female survival must be positive")
+  if(ad.an.f.sur > 1) warning("adult female survival must be < 1")
   
-  if(fawn.repro < 0) warning("fawn.repro must be positive")
-  if(juv.repro <= 0) warning("juv.repro must be >= 0 ")
-  if(ad.repro  <= 0) warning("ad.repro must be >= 0 ")
+  if(fawn.repro < 0) warning("fawn.repro must be >= 0")
+  if(juv.repro < 0) warning("juv.repro must be >= 0 ")
+  if(ad.repro  < 0) warning("ad.repro must be >= 0 ")
   
   if(hunt.mort.fawn <= 0) warning("hunt.mort.fawn must be >0")
   if(hunt.mort.fawn >= 1) warning("hunt.mort.fawn must be < 1")

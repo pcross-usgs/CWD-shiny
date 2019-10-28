@@ -1,9 +1,12 @@
-#' Plot the age distribution at the end
+#' Plot the age distribution
 #'
 #'
-#' @param dat counts provided as output from the CWD model functions
+#' @param dat dataframe of counts provided as output from the CWD model 
+#' functions
 #'
-#' @return a plot the age distribution at the end point
+#' @return a plot the age distribution at the end point. Note that the final 
+#' age category includes all individuals of that age or more and so may be more 
+#' females or males of age 12+, for example, than those of age 11. 
 #'
 #' @import ggplot2
 #' @import dplyr
