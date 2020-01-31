@@ -1,6 +1,6 @@
 #' CWD stochastic model wrapper
 #'
-#' Wrapper function to run the stochastic CWD model many times. 
+#' Wrapper function to run the stochastic CWD_wiw model many times. 
 #'
 #' @param params A list with the parameters needed for the stochastic model:  
 #' fawn.an.sur, juv.an.sur, ad.an.f.sur, ad.an.m.sur, fawn.repro, 
@@ -12,9 +12,17 @@
 #' 
 #' @param nsims The number of simulations to run. 
 #'
-#' @return A list with 2 dataframes: 1. counts of the # of individuals in the 
-#' susceptible and infectious categories by over time. 2. deaths--how 
-#' individuals died over time (hunting, natural or disease). 
+#' @return A list with  
+#' 1. counts of the # of individuals in the susceptible and infectious categories 
+#' over time. 
+#' 
+#' 2. deaths--how individuals died over time (hunting, natural or disease). 
+#' 
+#' 3. m.R0 = basic disease reproductive number for an initially infected adult 
+#' male for direct transmission only.
+#'   
+#' 4. f.R0 = basic disease reproductive number for an initially infected adult 
+#' female for direct transmission only.
 #' 
 #' @importFrom popbio stable.stage
 #' @importFrom stats rbeta rbinom rnbinom rgamma
@@ -39,8 +47,8 @@
 #' 
 #' @export
 
-cwd_stoch_wrapper <- function(params, nsims) {
-
+cwd_stoch_wiw_wrapper <- function(params, nsims) {
+  
   if(missing(nsims) == T) warning('nsims not provided')
   if(missing(params) == T) warning('params not provided')
   

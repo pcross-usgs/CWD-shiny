@@ -9,6 +9,7 @@
 #' ini.juv.prev, ini.ad.f.prev,  ini.ad.m.prev,
 #' n.age.cats, p, env.foi, beta.f, beta.m, theta, n0, n.years, 
 #' rel.risk, repro.var, fawn.sur.var, sur.var, and hunt.var
+#' 
 #' @param nsims The number of simulations to run. 
 #'
 #' @return A list with 2 dataframes: 1. counts of the # of individuals in the 
@@ -16,7 +17,7 @@
 #' individuals died over time (hunting, natural or disease). 
 #' 
 #' @importFrom popbio stable.stage
-#' @importFrom stats rbeta rbinom
+#' @importFrom stats rbeta rbinom rnbinom rgamma
 #' @importFrom dplyr rename mutate
 #' @importFrom reshape2 melt
 #' @examples 
@@ -46,7 +47,7 @@ cwd_stoch_wrapper <- function(params, nsims) {
   #pre-allocate the output vectors
   counts.sims <- vector("list", nsims)
   deaths.sims <- vector("list", nsims)
-
+  
   for(i in 1:nsims){
     outa <- cwd_stoch_model(params)
     counts.sims[[i]] <- outa$counts
@@ -61,6 +62,6 @@ cwd_stoch_wrapper <- function(params, nsims) {
   deaths <- melt(deaths.sims, id = c("age", "month", "population", "category",
                                      "year", "sex")) %>% rename(sim = L1)
   
-  out <- list(counts = counts, deaths = deaths)
+  out <- list(counts = counts, deaths = deaths, f.R0 = outa$f.R0, m.R0 = outa$m.R0)
 }
 

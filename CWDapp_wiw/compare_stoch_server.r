@@ -74,8 +74,9 @@ compare_stoch_server <- function(input, output, session){
                        id = c("age", "month", "population", "category",
                               "year", "sex")) %>% rename(sim = L1)
 
-   out <- list(counts = counts.long, deaths = deaths.long, outputparams = params)
+   out <- list(counts = counts.long, deaths = deaths.long, f.R0 = out$f.R0,
+               m.R0 = out$m.R0, outputparams = params)
    return(out)
-   })
+ })
 
 }

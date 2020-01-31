@@ -75,12 +75,50 @@ stoch_mod_server <- function(input, output, session){
                         id = c("age", "month", "population", "category",
                                "year", "sex")) %>% rename(sim = L1)
 
-
-    out <- list(counts = counts.long, deaths = deaths.long)
+    out <- list(counts = counts.long, deaths = deaths.long, f.R0 = out$f.R0,
+                m.R0 = out$m.R0)
     out
   })
 
-
+  
+  output$R0text1 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text2 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text3 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text4 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text5 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text6 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0,1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  
+  
   output$TotalPlot <- renderPlot({
     out <- simout()
     plot_stoch_disease(out$counts, error.bars = c(0.05, 0.95))

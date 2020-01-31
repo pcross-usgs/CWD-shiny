@@ -52,8 +52,6 @@ compare_det_server <- function(input, output, session){
   params <- react.params()
 
   out <- cwd_det_model_wiw(params)
-
-  out <- list(counts = out$counts, deaths = out$deaths)
   out
   })
 

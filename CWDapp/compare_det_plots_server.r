@@ -10,8 +10,8 @@ compare_det_plots_server <- function(input, output, session, simout){
 
       output$R0text1_det <- renderUI({
         out <- simout()
-        str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-        str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+        str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+        str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
         HTML(paste(str1, str2, sep = "<br/>"))
       })
 

@@ -107,9 +107,15 @@
 #'  year = year of the simulation
 #'  
 #'  sex
+#'  
+#' 3. m.R0 = basic disease reproductive number for an initially infected adult 
+#' male for direct transmission only.
+#'   
+#' 4. f.R0 = basic disease reproductive number for an initially infected adult 
+#' female for direct transmission only.
 #' 
 #' @importFrom popbio stable.stage
-#' @importFrom stats rbeta rbinom
+#' @importFrom stats rbeta rbinom rnbinom rgamma
 #' @importFrom dplyr rename mutate
 #' @importFrom reshape2 melt
 #' @examples 
@@ -395,13 +401,33 @@ cwd_stoch_model <- function(params) {
   St.m[, 1] <- round(popbio::stable.stage(M)[(n.age.cats + 1):(n.age.cats * 2)] *
                        n0 * (1 - ini.m.prev))
 
+  if(sum(St.f[,1]) <= 0) {
+    warning("These parameters result in a stable age structure with no surviving 
+            females.")
+  } 
+  
   # randomly allocating infecteds across ages and categories.
-  It.m[, 1, 1:10] <- rbinom(n.age.cats * 10, round(popbio::stable.stage(M)[1:n.age.cats] *
-                                                     n0/10), ini.m.prev)
   It.f[, 1, 1:10] <- rbinom(n.age.cats * 10, round(popbio::stable.stage(M)[1:n.age.cats] *
                                                      n0/10), ini.f.prev)
-  rm(M)
+  It.m[, 1, 1:10] <- rbinom(n.age.cats * 10, round(popbio::stable.stage(M)
+                                                   [(n.age.cats + 1):(n.age.cats * 2)] *
+                                                     n0/10), ini.m.prev)
 
+  # calculate R0s for adult females and males
+  # in the denominator find the average minimum survival for the 3 mortality types
+  f.R0 <-  (beta.f * n0) / (n0 ^ theta) * 
+    mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.f.sur^(1/12))), 
+                     rnbinom(1000, 1, (1 - (1 - hunt.mort.ad.f)^(1/12))),
+                     rgamma(1000, 10, p)), 1, FUN = min, na.rm = T))
+  
+  m.R0 <-  (beta.m * n0)  / (n0 ^ theta) *
+    mean(apply(cbind(rnbinom(1000, 1, (1 - ad.an.m.sur^(1/12))), 
+                     rnbinom(1000, 1, (1 - (1 - hunt.mort.ad.m)^(1/12))),
+                     rgamma(1000, 10, p)), 1, FUN = min, na.rm = T))
+
+  rm(M)
+  
+  
   ####### POPULATION MODEL############
   for (t in 2:(n.years * 12)) {
 
@@ -593,5 +619,6 @@ cwd_stoch_model <- function(params) {
     rename(age = Var1, month = Var2, population = value, category = L1) %>%
     mutate(year = (month - 1)/12, sex = as.factor(str_sub(category, - 1)))
 
-  output <- list(counts = counts.long, deaths = deaths.long)
+  output <- list(counts = counts.long, deaths = deaths.long, f.R0 = f.R0, 
+                 m.R0 = m.R0)
 }

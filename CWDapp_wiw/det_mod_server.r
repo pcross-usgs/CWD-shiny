@@ -50,9 +50,46 @@ det_mod_server <- function(input, output, session){
   simout <- reactive({
     params <- react.params()
     out <- cwd_det_model_wiw(params)
-    out <- list(counts = out$counts, deaths = out$deaths)
     out
   })
+  
+  output$R0text1 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text2 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text3 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text4 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text5 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  output$R0text6 <- renderUI({
+    out <- simout()
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
+    HTML(paste(str1, str2, sep="<br/>"))
+  })
+  
   output$TotalPlot <- renderPlot({
     out <- simout()
     par(cex = 1.5)

@@ -48,54 +48,43 @@ det_mod_server <- function(input, output, session){
   simout <- reactive({
     params <- react.params()
     out <- cwd_det_model(params)
-    fem.R0 <-  ( params$beta.f / params$n0 ^ (params$theta-1) ) *
-             mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.f.sur^(1/12))),
-                       rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.f)^(1/12))),
-                       rgamma(1000, 10, input$p)), 1, FUN = min, na.rm = T))
-    male.R0 <-  ( params$beta.f * params$beta.m / params$n0 ^ (params$theta-1) ) *
-      mean(apply(cbind(rnbinom(1000, 1, (1 - input$ad.an.m.sur^(1/12))),
-                       rnbinom(1000, 1, (1 - (1 - input$hunt.mort.ad.m)^(1/12))),
-                       rgamma(1000, 10, input$p)), 1, FUN = min, na.rm = T))
-
-    out <- list(counts = out$counts, deaths = out$deaths, fem.R0 = fem.R0,
-                male.R0 = male.R0)
     out
   })
 
   output$R0text1 <- renderUI({
     out <- simout()
-    str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-    str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
     HTML(paste(str1, str2, sep="<br/>"))
   })
   output$R0text2 <- renderUI({
     out <- simout()
-    str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-    str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
     HTML(paste(str1, str2, sep="<br/>"))
   })
   output$R0text3 <- renderUI({
     out <- simout()
-    str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-    str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
     HTML(paste(str1, str2, sep="<br/>"))
   })
   output$R0text4 <- renderUI({
     out <- simout()
-    str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-    str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
     HTML(paste(str1, str2, sep="<br/>"))
   })
   output$R0text5 <- renderUI({
     out <- simout()
-    str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-    str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
     HTML(paste(str1, str2, sep="<br/>"))
   })
   output$R0text6 <- renderUI({
     out <- simout()
-    str1 <- paste("Female direct transmission R0 = ", round(out$fem.R0, 1))
-    str2 <- paste("Male direct transmission R0 = ", round(out$male.R0, 1))
+    str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
+    str2 <- paste("Male direct transmission R0 = ", round(out$m.R0, 1))
     HTML(paste(str1, str2, sep="<br/>"))
   })
 
