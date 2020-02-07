@@ -32,12 +32,6 @@ We attempted to make our models flexible enough to capture several key features 
 
 In addition to the webpage applications, these models can also be downloaded and run locally in [R](https://cran.r-project.org/) by going to the USGS [GitLab site](https://code.usgs.gov/usgs/norock/cross_p/cwdsims) and following the instructions there. This allows the user to store the data produced during different model runs for more complex analyses and comparisons. 
 
-## Examples
-
-
-
-
-
 ## Reporting bugs
 
 Please consider reporting bugs and asking questions on the [Issues page](https://code.usgs.gov/usgs/norock/cross_p/cwdsims/issues)
