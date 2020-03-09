@@ -11,6 +11,7 @@ library(dplyr)
 library(forcats)
 library(ggplot2)
 library(markdown)
+library(rmarkdown)
 library(tidyr)
 library(stringr)
 
