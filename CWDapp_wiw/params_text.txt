@@ -1,1 +1,0 @@
-The distribution of potential vital rates (top). Survival rates include both natural and hunting induced mortality but not disease-induced mortality. Time until disease induced mortality (bottom) does not include natural or hunting mortality. Survival probabilities appear to exceed one only due to smoothing the distribution.
