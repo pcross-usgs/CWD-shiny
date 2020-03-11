@@ -14,10 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 # Welcome to the CWD simulation app
 <img src="figures/logo.png" alt="CWDsims" height="150px" align="right" />
 
-##NOTE these links need to change!
-Link to the main application: [Press here](/CWDapp)
+Link to the main application: [Press here](/apps/CWDapp)
 
-Link to the application with different male and female transmission rates: [Press here](/CWDapp_wiw)
+Link to the application with different male and female transmission rates: [Press here](/apps/CWDapp_wiw)
 
 ## Overview
 
