@@ -7,11 +7,12 @@ footer, #navbar {
 	position: relative;
 }
 
+
 *, *:before, *:after {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}	
+}
 
 footer, header, main, nav, div {
     display: block;
@@ -39,7 +40,7 @@ footer, header, main, nav, div {
 }
 
 hr {
-	width: 100%; 
+	width: 100%;
 	margin-top: 42px;
 	clear: both;
 }
@@ -118,7 +119,8 @@ input,button{font-family:inherit;font-size:inherit;line-height:inherit}
 footer.footer {
 	background: #00264c;
 	padding-bottom: 0px;
-	position: relative;
+	position: absolute;
+	bottom: 0;
 	width: 100%;
 	border-top: 1px solid #E5E5E5;
 }
@@ -250,7 +252,7 @@ Content: "\f082";
     content: "\f09b";
 }
 .fa-google-plus-square:before {
-	content:"\f0d4"; 
+	content:"\f0d4";
 }
 .fa-flickr:before {
 	content: "\f16e";
