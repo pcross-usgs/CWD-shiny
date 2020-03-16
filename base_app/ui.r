@@ -10,7 +10,7 @@ ui <- fluidPage(theme = "common.css",
                 Wildlife and Parks"),
                            windowTitle = "CWD model"),
 
-                navbarPage("Chronic Wasting Disease",
+                navbarPage("Base CWD model",
                            tabPanel("Description",
                                     withMathJax(includeHTML("description_combo.html"))),
                            tabPanel("Deterministic model",
