@@ -44,7 +44,7 @@
 #' p = rate of movement in the infectious categories (scaler values between 0 and 1). 
 #' See model documentation vignette for how this relates to disease induced mortality.   
 #' 
-#' env.foi = % of the population that is infected by the environment per year (scaler value between 0 and 1) #' 
+#' env.foi = % of the population that is infected by the environment per month (scaler value between 0 and 1) #' 
 #' beta.ff = female to female transmission coefficient (scaler value greater than 0),  
 #' 
 #' gamma.mm = relative increase in the male-male transmission coefficient compared 

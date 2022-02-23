@@ -8,7 +8,7 @@ ui <- fluidPage(theme = "common.css",
 
                 titlePanel(h4("Prepared in cooperation with Montana Fish,
                 Wildlife and Parks"),
-                           windowTitle = "CWD model"),
+                           windowTitle = "CWD WIW model"),
 
                 navbarPage("CWD who-infects-who model",
                            tabPanel("Description",

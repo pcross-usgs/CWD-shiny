@@ -1,0 +1,10 @@
+Indirect transmission is the monthly probability of being infected from the environment.
+
+Direct transmission is the annual probability of being infected for either males or females. Relative male infection equals 1 if male and female infection rates are equal.  
+
+S is the multiplier for direct transmission for individuals in infection classes 8:10 vs 1:7 (i.e., late stage infection versus early infection). 
+
+Theta = 1 for frequency dependent transmission, 0 for density dependent transmission.  
+
+An index of mortality of 0.43 equates to about a 2 year lifetime post-infection.  
+Relative hunting risk is greater than 1 if infected individuals are more likely to be hunted than susceptible individuals. 

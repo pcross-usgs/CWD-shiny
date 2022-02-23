@@ -24,7 +24,7 @@ There are four other pages in this application that can be accessed via the tabs
 |                | disease mortality index | $\rho$ | p = 0.43 | dictates the rate of movement among infectious sub-categories |
 | | hunting relative risk | $RR$ | rel.risk = 1 | increase in hunting mortality associated with being CWD positive |
 | |  | |  | |
-|Transmission    | environmental transmission| $\epsilon$ | env.foi = 0 | annual probability from 0 to 1 |
+|Transmission    | environmental transmission| $\epsilon$ | env.foi = 0 | monthly probability from 0 to 1 |
 |                | female to female transmission  | $\beta_{ff}$ | beta.ff = 0.05 | used in "wiw" models |
 |                | male to female scaling  | $\gamma_{mf}$ | gamma.mf = 1 | $\beta_{mf} = \beta_{ff} \gamma_{mf}$ in "wiw" models |
 |                | female to male scaling  | $\gamma_{fm}$ | gamma.fm = 1 | $\beta_{fm} = \beta_{ff} \gamma_{fm}$  in "wiw" models |
@@ -45,7 +45,7 @@ In the deterministic and stochastic model tabs the user can adjust the model par
 
 *Disease parameters*
 
-Indirect transmission is the annual probability of being infected from the environment, which is constant for the duration of the simulation. The direct transmission rate is proportional to $\frac{\beta SI}{N^{\theta}}$, where $\beta$ is the transmission coefficient, $I$ and $N$ are the number of infectious individuals and the total number of individuals.$\theta$ determines how disease transmission is a function of the population size. When $\theta = 0$ disease transmission is a function of the number of infected individuals. When $\theta = 1$ disease transmission is a function of the prevalence (*i.e.* frequency dependent transmission).
+Indirect transmission is the monthly probability of being infected from the environment, which is constant for the duration of the simulation. The direct transmission rate is proportional to $\frac{\beta SI}{N^{\theta}}$, where $\beta$ is the transmission coefficient, $I$ and $N$ are the number of infectious individuals and the total number of individuals.$\theta$ determines how disease transmission is a function of the population size. When $\theta = 0$ disease transmission is a function of the number of infected individuals. When $\theta = 1$ disease transmission is a function of the prevalence (*i.e.* frequency dependent transmission).
 
 While the underlying CWD model functions use $\beta$, in this shiny application we ask the user to input the direct $R_0$ per year, which we define as the expected number of individuals to be infected by an infected individual in a completely susceptible population in one year. This is because $\theta$ has a strong effect on the overall transmission rate, such that a small increase in $\theta$ would require the large decrease $\beta$ to result in a similar prevalence over time. Based on $\theta$ and the per year direct $R_0$ the shiny app then calculates the appropriate $\beta$ value to pass to the model simulation. Note that direct $R_0$ *per year* is not the same as the typical $R_0$ which is based on the entire duration of the infectious period, which may be several years. We used this per year $R_0$ because the traditional $R_0$ is a function of the other user-inputs hunting and natural mortality. The direct per year $R_0$ may be less than one and CWD may still increase in the population if individuals are likely to survive with the disease for many years. Also note that the environmental transmission component is not included in that user-input of the direct $R_0$. Based on these inputs the shiny app calculates $\beta$ for the simulation. 
 
@@ -92,11 +92,19 @@ Additional comparison plots are provided at the bottom of the deterministic and 
 Finally, at the bottom of the stochastic comparison page, there are some statistical comparisons of the two scenarios.  
 
 ### Citation
-This CWD model was developed by the U.S. Geological Survey, Northern Rocky Mountain Science Center, in collaboration with Montana Fish, Wildlife, and Parks. 
+The original CWD model was developed by the U.S. Geological Survey, Northern Rocky Mountain Science Center, in collaboration with Montana Fish, Wildlife, and Parks. 
 
 The tool may be cited as:
 
-Cross, PC and ES Almberg. 2019. Interactive chronic wasting disease model for scenario planning. URL TBD. DOI: 10.5066/P948SF4Q. 
+Versions 0.1 - 0.1.4
+Cross, PC and ES Almberg. 2019. Interactive chronic wasting disease model for scenario planning. Version 0.1.4. DOI: 10.5066/P948SF4Q. 
+
+Subsequent versions that include the predation model can be cited as: 
+
+Version >= 0.2.0 
+Cross, PC, W Rogers, and E Brandell. 2022. Interactive chronic wasting disease model for scenario planning. Version 0.2.0 DOI: https://doi.org/10.5066/P93XICBO
+
+which also relates to USGS IPDS #IP-137921. 
 
 *Contact:* For technical assistance or to report outages, please contact pcross@usgs.gov
 

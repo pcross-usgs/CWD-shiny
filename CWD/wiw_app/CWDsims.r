@@ -12,6 +12,9 @@
 #' 
 #' cwd_det_model_wiw similar to cwd_det_model, but allows for different male-male
 #' male-female, and female-male transmission rates.  
+#'
+#' cwd_detmod_predation_late runs a predator-prey-disease model where the transmission
+#'  rate escalates with time since infection.
 #' 
 #' cwd_stoch_model_wiw similar to cwd_stoch_model, but allows for different male-male
 #' male-female, and female-male transmission rates.  
@@ -30,6 +33,8 @@
 #' 
 #' allocate_deaths randomly allocates deaths among the 10 infectious 
 #' subcategories
+#' 
+#' R0_NGM.R calculates a next-generation R0 for the who-infects-who model structure.
 #' 
 #' @section Plotting functions: 
 #' plot_age_dist plots the age distribution at the last timepoint

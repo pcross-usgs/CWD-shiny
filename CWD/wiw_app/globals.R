@@ -9,4 +9,10 @@ utils::globalVariables(c(
   "n.age.cats", "n.years", "n0", "nat.p", "population", "prev",
   "prevalence", "rel.risk", "repro.var", "scenario", "sex", "sex.age", "sim",
   "sur.var", "theta", "year", "years.to.death", 'CWD', "category", "no", "p",
-  "parameter", "percent", "stoch.params", "total", "value", "yes", "beta.ff"))
+  "parameter", "percent", "stoch.params", "total", "value", "yes", "beta.ff", 
+  "gamma.ff", "gamma.mf", "gamma.fm", "D", "selection.form", "base.juv",
+  "stages", "base.adult", "base.old", "r", "s", "beta.f.low", "beta.m.low", 
+  "juvs", "adults", "old", "functional.form", "k_max", "k_inflect", 
+  "numeric.form", "max.predators", "min.predators", "Predated", "predated.p",
+  "Trans.stages", "Transmission", "Sex", "selection", "Age", "prey", "infected",
+  "prop", "gamma.mm", "S", "n_inflect"))

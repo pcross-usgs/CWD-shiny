@@ -1,0 +1,13 @@
+name: wiw_cwd_app
+title: WIW CWD app
+username: pcross@usgs.gov
+account: pcross@usgs.gov
+server: rconnect-dev.chs.usgs.gov
+hostUrl: https://rconnect-dev.chs.usgs.gov/__api__
+appId: 56
+bundleId: 81
+url: https://rconnect-dev.chs.usgs.gov/content/4e56b4c4-dc72-4616-9615-d6a79c5f0e44/
+when: 1634328552.13491
+lastSyncTime: 1634328552.13491
+asMultiple: FALSE
+asStatic: FALSE

@@ -26,4 +26,5 @@ server <- function(input, output, session) {
   callModule(compare_stoch_plots_server2, "compare_plots",
              simout_a = out_stoch_a,
              simout_b = out_stoch_b)
+  session$onSessionEnded(stopApp)
 }

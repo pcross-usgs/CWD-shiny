@@ -30,7 +30,7 @@ plot_age_dist <- function(dat){
   # summarize disease status on the last year, calculate the prevalence
   dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
-    group_by(age, sex, age) %>%
+    group_by(age, sex) %>%
     summarize(n = sum(population)) %>%
     select(age, sex, n)
 
