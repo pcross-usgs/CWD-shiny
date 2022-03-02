@@ -17,8 +17,9 @@
 #' individuals died over time (hunting, natural or disease). 
 #' 
 #' @importFrom popbio stable.stage
+#' @importFrom magrittr %>%
 #' @importFrom stats rbeta rbinom rnbinom rgamma
-#' @importFrom dplyr rename mutate
+#' @importFrom dplyr rename 
 #' @importFrom reshape2 melt
 #' @examples 
 #' 
@@ -57,10 +58,11 @@ cwd_stoch_wrapper <- function(params, nsims) {
   # organize the output into a long data.frame
   counts <- melt(counts.sims, id = c("age", "month", "population", "category",
                                      "year", "sex", "disease")) %>% 
-    rename(sim = L1)
+    dplyr::rename(sim = L1)
   
   deaths <- melt(deaths.sims, id = c("age", "month", "population", "category",
-                                     "year", "sex")) %>% rename(sim = L1)
+                                     "year", "sex")) %>% 
+    dplyr::rename(sim = L1)
   
   out <- list(counts = counts, deaths = deaths, f.R0 = outa$f.R0, m.R0 = outa$m.R0)
 }

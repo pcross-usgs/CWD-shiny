@@ -33,7 +33,7 @@ plot_buck_doe <- function(dat){
   dat.sum <- dat %>%
     filter(month %% 12 == 8) %>% # december of every year
     group_by(year, sex, age.cat) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     unite(sex.age, sex, age.cat) %>%
     spread(key = sex.age, value = n) %>%
     mutate(buck.doe = m_adult / f_adult)

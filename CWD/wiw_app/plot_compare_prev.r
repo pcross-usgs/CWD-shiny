@@ -47,10 +47,10 @@ plot_compare_prev <- function(outa, outb){
   dat <- melt(dat, id = c("age", "month", "population", "category",
                           "year", "sex", "disease", "sim")) %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
-    rename(scenario = L1) %>%
+    dplyr::rename(scenario = L1) %>%
     mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2")) %>%
     group_by(disease, sim, scenario) %>%
-    summarize(n = sum(population))%>%
+    dplyr::summarize(n = sum(population))%>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes / (no + yes))
 

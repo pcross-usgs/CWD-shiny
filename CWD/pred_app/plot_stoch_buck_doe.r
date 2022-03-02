@@ -39,7 +39,7 @@ plot_stoch_buck_doe <- function(dat, all.lines, error.bars){
   dat.sum <- dat %>%
     filter(month %% 12 == 8) %>% # december of every year
     group_by(year, age.cat, sex, sim) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     unite(sex.age, sex, age.cat) %>%
     spread(key = sex.age, value = n) %>%
     mutate(buck.doe = m_adult / f_adult)
@@ -47,7 +47,7 @@ plot_stoch_buck_doe <- function(dat, all.lines, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year) %>%
-    summarize(avg = mean(buck.doe))
+    dplyr::summarize(avg = mean(buck.doe))
 
 
   if(all.lines == TRUE){

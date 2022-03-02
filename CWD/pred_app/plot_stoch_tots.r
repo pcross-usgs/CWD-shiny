@@ -48,18 +48,18 @@ plot_stoch_tots <- function(dat, all.lines, error.bars, by.sexage){
     dat.sum <- dat %>%
       filter(month %% 12 == 10) %>%
       group_by(year, age.cat, sex, sim) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       unite(sex.age, sex, age.cat)
 
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year, sex.age) %>%
-      summarize(avg = mean(n, na.rm = T))
+      dplyr::summarize(avg = mean(n, na.rm = T))
 
     if(missing(error.bars) == F){# calculate the error bars
       dat.errors <- dat.sum %>%
         group_by(year, sex.age) %>%
-        summarize(lo = quantile(n, error.bars[1]),
+        dplyr::summarize(lo = quantile(n, error.bars[1]),
                   hi = quantile(n, error.bars[2]))
     }
   }
@@ -68,18 +68,18 @@ plot_stoch_tots <- function(dat, all.lines, error.bars, by.sexage){
     dat.sum <- dat %>%
       filter(month %% 12 == 10) %>%
       group_by(year, sim) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       arrange(sim, year)
 
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year) %>%
-      summarize(avg = mean(n, na.rm = T))
+      dplyr::summarize(avg = mean(n, na.rm = T))
 
     if(missing(error.bars) == F){# calculate the error bars
       dat.errors <- dat.sum %>%
         group_by(year) %>%
-        summarize(lo = quantile(n, error.bars[1]),
+        dplyr::summarize(lo = quantile(n, error.bars[1]),
                   hi = quantile(n, error.bars[2]))
     }
   }

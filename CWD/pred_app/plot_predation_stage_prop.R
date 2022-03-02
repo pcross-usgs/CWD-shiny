@@ -50,7 +50,7 @@ plot_predation_stage_prop <- function(dat.prey, dat.pred, dat.params){
                              str_detect(category,"I9") ~ 9,
                              str_detect(category,"I10") ~ 10)) %>% 
     group_by(year, class) %>% 
-    summarize(prop = sum(population))
+    dplyr::summarize(prop = sum(population))
   
   pred.prop <- dat.pred %>% 
     filter(str_detect(category,"Predated")) %>% 
@@ -67,7 +67,7 @@ plot_predation_stage_prop <- function(dat.prey, dat.pred, dat.params){
                              str_detect(category,"I9") ~ 9,
                              str_detect(category,"I10") ~ 10)) %>% 
     group_by(year, class) %>% 
-    summarize(prop = sum(population))
+    dplyr::summarize(prop = sum(population))
   
   pred.prop$prop = pred.prop$prop/prey.pop$prop
   

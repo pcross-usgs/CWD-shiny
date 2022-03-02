@@ -58,7 +58,7 @@ plot_compare_hunted <- function(outa, outb, end, males.only, old.only){
   dat <- melt(dat, id = c("age", "month", "population", "category",
                           "year", "sex", "sim")) %>%
     filter(age >= 2, str_sub(category, 1, 1) == "H") %>%
-    rename(scenario = L1) %>%
+    dplyr::rename(scenario = L1) %>%
     mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"),
            year = floor(year))
 
@@ -76,7 +76,7 @@ plot_compare_hunted <- function(outa, outb, end, males.only, old.only){
 
   dat <- dat %>%
     group_by(sim, scenario) %>%
-    summarize(n = sum(population))
+    dplyr::summarize(n = sum(population))
 
   # define some color options
   cols <- c('#ffff00','#0000ff')

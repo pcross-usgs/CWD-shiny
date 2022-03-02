@@ -33,7 +33,7 @@ plot_stoch_disease <- function(dat, error.bars){
   dat.sum <- dat %>%
     filter(month %% 12 == 10) %>%
     group_by(year, sim, disease) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(total = no + yes) %>%
     gather ("no", "yes", "total", key = "disease", value = "n" ) %>%
@@ -47,7 +47,7 @@ plot_stoch_disease <- function(dat, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, disease) %>%
-    summarize(avg = mean(n)) %>%
+    dplyr::summarize(avg = mean(n)) %>%
     mutate(disease = fct_reorder(disease, avg))
 
   p <-   ggplot(data = dat.mean, aes(x = year, y = avg, color = disease)) +
@@ -58,7 +58,7 @@ plot_stoch_disease <- function(dat, error.bars){
     # calculate the mean
     dat.mean <- dat.sum %>%
       group_by(year, disease) %>%
-      summarize(lo = quantile(n, error.bars[1]),
+      dplyr::summarize(lo = quantile(n, error.bars[1]),
                 hi = quantile(n, error.bars[2]),
                 avg = mean(n)) %>%
       mutate(disease = fct_reorder(disease, avg))

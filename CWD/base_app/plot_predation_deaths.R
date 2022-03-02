@@ -10,6 +10,7 @@
 #' 
 #' @import ggplot2
 #' @import dplyr
+#' @importFrom tidyr spread gather
 #' @importFrom magrittr %>%
 #' @importFrom forcats fct_recode fct_reorder
 #' @examples
@@ -58,7 +59,7 @@ plot_predation_deaths <- function(deaths, predation, percents)
                                    "Predated" = "P"),
              year = floor(year)) %>%
       group_by(year, category) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       mutate(category = fct_reorder(category, n))
     
     p <- ggplot(data = deaths, aes(x = year, y = n, color = category)) +
@@ -78,7 +79,7 @@ plot_predation_deaths <- function(deaths, predation, percents)
                                    "Predated" = "P"),
              year = floor(year)) %>%
       group_by(year, category) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = category, value = n) %>%
       mutate(total = CWD + Natural + Hunted + Predated) %>%
       mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total, predated.p = Predated/total) %>%

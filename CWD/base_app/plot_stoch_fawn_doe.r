@@ -38,7 +38,7 @@ plot_stoch_fawn_doe <- function(dat, all.lines, error.bars){
   dat.sum <- dat %>%
     filter(month %% 12 == 11) %>%
     group_by(year, sex, age.cat, sim) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     unite(sex.age, sex, age.cat) %>%
     spread(key = sex.age, value = n) %>%
     mutate(fawn.doe = (m_fawn + f_fawn) / f_adult)
@@ -46,7 +46,7 @@ plot_stoch_fawn_doe <- function(dat, all.lines, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year) %>%
-    summarize(avg = mean(fawn.doe))
+    dplyr::summarize(avg = mean(fawn.doe))
 
   if(all.lines == TRUE){
     p <- ggplot(data = dat.sum, aes(x = year, y = fawn.doe, group = sim)) +
@@ -63,7 +63,7 @@ plot_stoch_fawn_doe <- function(dat, all.lines, error.bars){
     # calculate the mean, and the error bars
     dat.mean <- dat.sum %>%
       group_by(year) %>%
-      summarize(avg = mean(fawn.doe), lo = quantile(fawn.doe,error.bars[1]),
+      dplyr::summarize(avg = mean(fawn.doe), lo = quantile(fawn.doe,error.bars[1]),
                 hi = quantile(fawn.doe,error.bars[2]))
 
     p <- p + geom_line(data = dat.mean, aes(x = year, y = lo, group = NULL),

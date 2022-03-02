@@ -30,7 +30,7 @@ plot_prev_age_end <- function(dat){
   dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
     group_by(age, sex, disease)%>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes)) %>%
     select(age, sex, prev)

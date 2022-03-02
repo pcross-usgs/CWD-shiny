@@ -37,7 +37,7 @@ plot_stoch_prev <- function(dat, all.lines, error.bars){
   dat.sum <- dat %>%
     filter(month %% 12 == 7) %>%
     group_by(year, sim, disease) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes)) %>%
     arrange(sim, year)
@@ -45,7 +45,7 @@ plot_stoch_prev <- function(dat, all.lines, error.bars){
   # calculate mean, lo and hi percentiles.
   dat.mean <- dat.sum %>%
     group_by(year) %>%
-    summarize(avg.prev = mean(prev))
+    dplyr::summarize(avg.prev = mean(prev))
 
   # Start constructing the plot
   if(all.lines == TRUE){
@@ -64,7 +64,7 @@ plot_stoch_prev <- function(dat, all.lines, error.bars){
     # calculate mean, lo and hi percentiles.
     dat.mean <- dat.sum %>%
       group_by(year) %>%
-      summarize(avg.prev = mean(prev),
+      dplyr::summarize(avg.prev = mean(prev),
                 lo = quantile(prev, error.bars[1]),
                 hi = quantile(prev, error.bars[2]))
 

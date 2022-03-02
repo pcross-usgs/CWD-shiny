@@ -41,7 +41,7 @@ plot_deaths <- function(dat, percents){
                                    "Hunted" = "H"),
              year = floor(year)) %>%
       group_by(year, sex, category) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       mutate(category = fct_reorder(category, n))
 
     p <- ggplot(data = deaths, aes(x = year, y = n, color = category)) +
@@ -59,7 +59,7 @@ plot_deaths <- function(dat, percents){
                                    "Hunted" = "H"),
              year = floor(year)) %>%
       group_by(year, sex, category) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = category, value = n) %>%
       mutate(total = CWD + Natural + Hunted) %>%
       mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total) %>%

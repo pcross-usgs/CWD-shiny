@@ -28,7 +28,7 @@ plot_prev_time <- function(dat){
   dat.sum <- dat %>%
     filter(month %% 12 == 10) %>%
     group_by(year, disease) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes/ (no + yes))
 

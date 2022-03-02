@@ -44,7 +44,7 @@ plot_predation_prop <- function(dat.prey, dat.pred, dat.params){
                              age %in% dat.params$old ~ "Old"),
            infected = ifelse(disease == "no", "Healthy", "Infected")) %>% 
     group_by(year, class, infected) %>% 
-    summarize(prop = sum(population))
+    dplyr::summarize(prop = sum(population))
   
   pred.prop <- dat.pred %>% 
     filter(str_detect(category,"Predated")) %>% 
@@ -53,7 +53,7 @@ plot_predation_prop <- function(dat.prey, dat.pred, dat.params){
                              age %in% dat.params$old ~ "Old"),
            infected = ifelse(str_detect(category, "\\_H"), "Healthy", "Infected")) %>% 
     group_by(year, class, infected) %>% 
-    summarize(prop = sum(population))
+    dplyr::summarize(prop = sum(population))
   
   pred.prop$prop = pred.prop$prop/prey.pop$prop
   

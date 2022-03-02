@@ -39,7 +39,7 @@ plot_stoch_perc_deaths <- function(dat, error.bars){
                                  "Hunted" = "H"),
            year = floor(year)) %>%
     group_by(year, sex, category, sim) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = category, value = n) %>%
     mutate(total = CWD + Natural + Hunted) %>%
     mutate(cwd.p = CWD/total, nat.p = Natural/total, hunt.p = Hunted/total) %>%
@@ -53,7 +53,7 @@ plot_stoch_perc_deaths <- function(dat, error.bars){
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg.percent = mean(percent, na.rm = T))%>%
+    dplyr::summarize(avg.percent = mean(percent, na.rm = T))%>%
     mutate(category = fct_reorder(category, avg.percent))
 
    p <- ggplot(data = dat.mean, aes(x = year, y = avg.percent, color = category)) +
@@ -63,7 +63,7 @@ plot_stoch_perc_deaths <- function(dat, error.bars){
     # calculate the error bars
     dat.mean <- dat.sum %>%
       group_by(year, sex, category) %>%
-      summarize(lo = quantile(percent, error.bars[1]),
+      dplyr::summarize(lo = quantile(percent, error.bars[1]),
                 hi = quantile(percent, error.bars[2]),
                 avg.percent = mean(percent))%>%
       mutate(category = fct_reorder(category, avg.percent))

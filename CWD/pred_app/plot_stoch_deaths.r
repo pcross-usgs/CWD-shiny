@@ -39,13 +39,13 @@ plot_stoch_deaths <- function(dat, error.bars){
                                  "Hunted" = "H"),
            year = floor(year)) %>%
     group_by(year, sex, category, sim) %>%
-    summarize(n = sum(population))
+    dplyr::summarize(n = sum(population))
 
 
   # calculate the mean
   dat.mean <- dat.sum %>%
     group_by(year, sex, category) %>%
-    summarize(avg = mean(n, na.rm = T)) %>%
+    dplyr::summarize(avg = mean(n, na.rm = T)) %>%
     mutate(category = fct_reorder(category, avg))
 
   p <-   ggplot(data = dat.mean, aes(x = year, y = avg, color = category)) +

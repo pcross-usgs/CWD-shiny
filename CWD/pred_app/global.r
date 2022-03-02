@@ -16,14 +16,14 @@ library(tidyr)
 library(stringr)
 
 source("allocate_deaths.r", local = T)
-source("cwd_detmod_predations_late.r", local = T)
+source("cwd_detmod_predation_late.r", local = T)
 source("est_beta_params.r", local = T)
 
 source("plot_predation_deaths.r", local = T)
 source("plot_predation_params.r", local = T)
 source("plot_predation_prop.r", local = T)
 source("plot_predation_stage_prop.r", local = T)
-source("plot_predation_prey_pop.r", local = T)
+source("plot_predator_prey_pop.r", local = T)
 
 source("plot_age_dist.r", local = T)
 source("plot_buck_doe.r", local = T)

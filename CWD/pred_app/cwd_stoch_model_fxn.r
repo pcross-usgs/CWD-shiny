@@ -118,6 +118,7 @@
 #' @importFrom stats rbeta rbinom rnbinom rgamma
 #' @importFrom dplyr rename mutate
 #' @importFrom reshape2 melt
+#' @importFrom magrittr %>%
 #' @examples 
 #' 
 #' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 
@@ -610,13 +611,13 @@ cwd_stoch_model <- function(params) {
 
   # convert the output to long form
   counts.long <- melt(counts) %>%
-    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    dplyr::rename(age = Var1, month = Var2, population = value, category = L1) %>%
     mutate(year = (month - 1)/12, sex = as.factor(str_sub(category, - 1)), disease = "no")
   counts.long$disease[str_sub(counts.long$category, 1, 1) == "I"] <- "yes"
   counts.long$disease <- as.factor(counts.long$disease)
 
   deaths.long <- melt(deaths) %>%
-    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    dplyr::rename(age = Var1, month = Var2, population = value, category = L1) %>%
     mutate(year = (month - 1)/12, sex = as.factor(str_sub(category, - 1)))
 
   output <- list(counts = counts.long, deaths = deaths.long, f.R0 = f.R0, 

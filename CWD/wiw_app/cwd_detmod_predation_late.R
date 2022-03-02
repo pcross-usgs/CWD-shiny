@@ -159,6 +159,7 @@
 #' @importFrom stats rbeta rbinom rnbinom rgamma
 #' @importFrom dplyr rename mutate
 #' @importFrom reshape2 melt
+#' @importFrom magrittr %>%
 #' @examples 
 #' 
 #' #WOLF-ELK Parameters
@@ -643,7 +644,7 @@ cwd_detmod_predation_late <- function(params) {
                     Predated_I10m = Predated_Im[, , 10])
   # convert the output to long form
   counts.long <- melt(counts) %>%
-    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    dplyr::rename(age = Var1, month = Var2, population = value, category = L1) %>%
     mutate(year = (month - 1)/12, 
            sex = as.factor(stringr::str_sub(category, -1)),
            disease = "no")
@@ -651,11 +652,11 @@ cwd_detmod_predation_late <- function(params) {
   counts.long$disease <- as.factor(counts.long$disease)
   
   deaths.long <- melt(deaths) %>%
-    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    dplyr::rename(age = Var1, month = Var2, population = value, category = L1) %>%
     mutate(year = (month - 1)/12, sex = as.factor(stringr::str_sub(category, -1)))
   
   predation.long <- melt(predation) %>%
-    rename(age = Var1, month = Var2, population = value, category = L1) %>%
+    dplyr::rename(age = Var1, month = Var2, population = value, category = L1) %>%
     mutate(year = (month - 1)/12, sex = as.factor(stringr::str_sub(category, -1)))
 
   # add in predator counts

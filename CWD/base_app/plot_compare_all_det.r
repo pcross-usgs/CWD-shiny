@@ -48,16 +48,16 @@ plot_compare_all_det <- function(outa, outb){
   counts <- melt(counts, id = c("age", "month", "population", "category",
                                 "year", "sex", "disease")) %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
-    rename(scenario = L1) %>%
+    dplyr::rename(scenario = L1) %>%
     mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"))
 
   totals <- counts %>%
     group_by(scenario) %>%
-    summarize(n = sum(population))
+    dplyr::summarize(n = sum(population))
 
   prev <- counts %>%
     group_by(disease, scenario) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prevalence = yes/ (no + yes))
 
@@ -66,12 +66,12 @@ plot_compare_all_det <- function(outa, outb){
   hunted <- melt(deaths, id = c("age", "month", "population", "category",
                                 "year", "sex")) %>%
     filter(age >= 2, str_sub(category, 1, 1) == "H") %>%
-    rename(scenario = L1) %>%
+    dplyr::rename(scenario = L1) %>%
     mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"))
 
   tot.hunted <- hunted %>%
     group_by(scenario) %>%
-    summarize(n = sum(population))
+    dplyr::summarize(n = sum(population))
 
   males.hunted <- hunted %>%
     filter(sex == "m") %>%
@@ -81,13 +81,13 @@ plot_compare_all_det <- function(outa, outb){
   last.hunted <- hunted %>%
     filter(round(year, 0) == max(round(year, 0))) %>%
     group_by(scenario) %>%
-    summarize(n = sum(population))
+    dplyr::summarize(n = sum(population))
 
   males.last.hunted <- hunted %>%
     filter(round(year, 0) == max(round(year, 0))) %>%
     filter(sex == "m") %>%
     group_by(scenario) %>%
-    summarize(n = sum(population))
+    dplyr::summarize(n = sum(population))
 
   # define theme
   theme_set(theme_bw(base_size = 18))

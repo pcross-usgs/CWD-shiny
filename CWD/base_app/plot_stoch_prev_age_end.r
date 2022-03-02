@@ -34,14 +34,14 @@ plot_stoch_prev_age_end <- function(dat, error.bars){
   dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
     group_by(age, sex, sim, disease)%>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(prev = yes / (no + yes)) %>%
     select(age, sex, prev, sim)
 
   dat.mean <- dat.sum %>%
     group_by(age, sex) %>%
-    summarize(avg = mean(prev, na.rm = T)) %>%
+    dplyr::summarize(avg = mean(prev, na.rm = T)) %>%
     arrange(sex, age)
 
   p <-   ggplot(data = dat.mean, aes(x = age, y = avg, color = sex)) +
@@ -52,7 +52,7 @@ plot_stoch_prev_age_end <- function(dat, error.bars){
     # calculate the mean
     dat.mean <- dat.sum %>%
     group_by(age, sex) %>%
-    summarize(lo = quantile(prev, error.bars[1], na.rm = T),
+    dplyr::summarize(lo = quantile(prev, error.bars[1], na.rm = T),
               hi = quantile(prev, error.bars[2], na.rm = T),
               avg = mean(prev, na.rm = T)) %>%
     arrange(sex, age)

@@ -46,7 +46,7 @@ plot_predator_prey_pop <- function(dat.prey, dat.pred){
   prey.pop <- dat.prey %>% 
     filter(year%%1 == 0) %>% 
     group_by(year) %>% 
-    summarise(n = sum(population))
+    dplyr::summarise(n = sum(population))
   
   pred.pop <- dat.pred %>% 
     filter(category == "Predator") %>% 

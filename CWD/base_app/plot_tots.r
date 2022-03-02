@@ -24,12 +24,11 @@
 
 plot_tots <- function(dat){
   if(missing(dat)==TRUE) warning("missing data to plot")
-  
   # summarize by year and sex
   dat.sum <- dat %>%
     filter(month %% 12 == 10) %>%
     group_by(year, disease) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     spread(key = disease, value = n) %>%
     mutate(total = no + yes) %>%
     gather ("no", "yes", "total", key = "disease", value = "n" ) %>%

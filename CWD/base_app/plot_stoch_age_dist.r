@@ -29,10 +29,10 @@ plot_stoch_age_dist <- function(dat){
   dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
     group_by(age, sex, sim) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     select(age, sex, n, sim) %>%
     group_by(age, sex) %>%
-    summarize(avg = mean(n, na.rm = T)) %>%
+    dplyr::summarize(avg = mean(n, na.rm = T)) %>%
     arrange(sex, age)
 
   #create the plot

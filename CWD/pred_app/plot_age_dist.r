@@ -31,7 +31,7 @@ plot_age_dist <- function(dat){
   dat.sum <- dat %>%
     filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
     group_by(age, sex) %>%
-    summarize(n = sum(population)) %>%
+    dplyr::summarize(n = sum(population)) %>%
     select(age, sex, n)
 
   #create the plot
