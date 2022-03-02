@@ -14,8 +14,7 @@
 #' 4. Numerical response of predators to prey population
 #'
 #' @import ggplot2
-#' @import dplyr
-#' @importFrom ggpubr ggarrange
+#' @importFrom cowplot plot_grid
 #' @importFrom tibble tibble
 #' @importFrom magrittr %>%
 #' @importFrom forcats fct_recode fct_reorder
@@ -159,8 +158,7 @@ plot_predation_params <- function(dat){
     labs(x = "Prey Population",
          y = "Numerical Response")
   
-  p <- ggpubr::ggarrange(a,b,c,d, labels = c("A.", "B.","C.","D."), hjust = -0.1,
-                         nrow = 2, ncol = 2)
+  p <- cowplot::plot_grid(a,b,c,d, nrow = 2)
   
   p
 }

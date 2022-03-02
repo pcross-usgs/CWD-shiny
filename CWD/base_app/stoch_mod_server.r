@@ -2,9 +2,13 @@
 #'
 #' Runs the model for the main stochastic model page
 #'
+#' @import ggplot2
+#' @import dplyr
+#' @import shiny
+#' @importFrom cowplot plot_grid
+#' 
 #' @param input provided by shiny
 #' @param output provided by shiny
-#' @import shiny
 
 stoch_mod_server <- function(input, output, session){
 
@@ -130,14 +134,14 @@ stoch_mod_server <- function(input, output, session){
     out <- simout()
     p1 <- plot_stoch_prev(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
     p2 <- plot_stoch_prev_age_end(out$counts, error.bars = c(0.05, 0.95))
-    plot_grid(p1, p2, nrow = 1)
+    cowplot::plot_grid(p1, p2, nrow = 1)
   })
 
   output$ParamPlot <- renderPlot({
     params <- react.params()
     p1 <- plot_vitals(params)
     p2 <- plot_ttd(params$p)
-    plot_grid(p1, p2, nrow = 2)
+    cowplot::plot_grid(p1, p2, nrow = 2)
   })
 
   output$DeathPlot <- renderPlot({
@@ -155,7 +159,7 @@ stoch_mod_server <- function(input, output, session){
     out <- simout()
     p1 <- plot_stoch_fawn_doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
     p2 <- plot_stoch_buck_doe(out$counts, all.lines = T, error.bars = c(0.05, 0.95))
-    plot_grid(p1, p2)
+    cowplot::plot_grid(p1, p2)
   })
 
 }

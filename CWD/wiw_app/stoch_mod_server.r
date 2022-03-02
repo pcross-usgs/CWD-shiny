@@ -5,6 +5,8 @@
 #' @param input provided by shiny
 #' @param output provided by shiny
 #' @import shiny
+#' @importFrom cowplot plot_grid
+#' @importFrom reshape2 melt
 
 stoch_mod_server <- function(input, output, session){
 

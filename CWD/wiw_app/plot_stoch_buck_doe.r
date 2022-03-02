@@ -10,7 +10,7 @@
 #' @import ggplot2
 #' @import dplyr
 #' @importFrom magrittr %>%
-#' @importFrom tidyr unite
+#' @importFrom tidyr unite spread
 #' @importFrom stats quantile
 #' @examples 
 #' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 

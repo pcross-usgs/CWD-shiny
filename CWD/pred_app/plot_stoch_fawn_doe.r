@@ -11,7 +11,7 @@
 #' @import dplyr
 #' @importFrom magrittr %>%
 #' @importFrom stats quantile
-#' @importFrom tidyr unite
+#' @importFrom tidyr unite spread
 #' @examples 
 #' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 
 #' ad.an.m.sur = 0.9, fawn.repro = 0, juv.repro = 0.6, ad.repro = 1, 

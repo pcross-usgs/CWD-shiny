@@ -5,6 +5,7 @@
 #' @param input provided by shiny
 #' @param output provided by shiny
 #' @import shiny
+#' @importFrom reshape2 melt
 
 compare_stoch_server <- function(input, output, session){
 

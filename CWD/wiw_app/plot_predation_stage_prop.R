@@ -8,7 +8,6 @@
 #' 
 #' @import ggplot2
 #' @import dplyr
-#' @import ggpubr
 #' @importFrom magrittr %>%
 #' @importFrom forcats fct_recode fct_reorder
 #' @examples

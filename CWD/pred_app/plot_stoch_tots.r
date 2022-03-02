@@ -12,7 +12,7 @@
 #' @import dplyr
 #' @importFrom magrittr %>%
 #' @importFrom reshape2 melt
-#' @importFrom tidyr spread
+#' @importFrom tidyr spread unite
 #' @importFrom stats quantile
 #' @importFrom forcats fct_reorder
 #'

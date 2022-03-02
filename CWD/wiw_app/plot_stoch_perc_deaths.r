@@ -8,6 +8,7 @@
 #'
 #' @import ggplot2
 #' @import dplyr
+#' @importFrom tidyr spread gather
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_sub
 #' @importFrom forcats fct_recode fct_reorder

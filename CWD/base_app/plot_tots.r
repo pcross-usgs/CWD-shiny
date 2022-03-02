@@ -6,6 +6,7 @@
 #' @import ggplot2
 #' @import dplyr
 #' @importFrom magrittr %>%
+#' @importFrom tidyr spread gather
 #' @importFrom forcats fct_reorder fct_recode
 #' @examples
 #' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 

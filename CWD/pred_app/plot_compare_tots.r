@@ -11,7 +11,6 @@
 #' @import dplyr
 #' @importFrom magrittr %>%
 #' @importFrom reshape2 melt
-#' @importFrom tidyr spread
 #' @importFrom forcats fct_recode
 #' @examples 
 #' params.a <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 

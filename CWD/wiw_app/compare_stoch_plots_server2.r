@@ -5,6 +5,9 @@
 #' @param input provided by shiny
 #' @param output provided by shiny
 #' @import shiny
+#' @import dplyr
+#' @importFrom reshape2 melt
+#' @importFrom tidyr spread
 
 compare_stoch_plots_server2 <- function(input, output, session, simout_a, simout_b){
 

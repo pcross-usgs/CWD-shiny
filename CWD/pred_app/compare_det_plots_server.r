@@ -5,6 +5,7 @@
 #' @param input provided by shiny
 #' @param output provided by shiny
 #' @import shiny
+#' @importFrom cowplot plot_grid
 
 compare_det_plots_server <- function(input, output, session, simout){
 

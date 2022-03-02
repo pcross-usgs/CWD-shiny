@@ -7,6 +7,7 @@
 #'
 #' @import ggplot2
 #' @import dplyr
+#' @importFrom tidyr spread
 #' @importFrom magrittr %>%
 #' @examples
 #' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 
