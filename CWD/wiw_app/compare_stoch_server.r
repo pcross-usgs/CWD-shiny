@@ -25,7 +25,7 @@ compare_stoch_server <- function(input, output, session){
 
         #convert from r0_peryear to beta
         beta.ff = (input$r0_peryear  * input$n0 ^ (input$theta-1)) / 12,
-        gamma.mm = input$gamma.mm, 
+        gamma.mm = input$gamma.mm,
         gamma.mf = input$gamma.mf,
         gamma.fm = input$gamma.fm,
         theta = input$theta,
@@ -69,11 +69,11 @@ compare_stoch_server <- function(input, output, session){
 
    counts.long <- melt(counts.sims,
                        id = c("age", "month", "population", "category",
-                              "year", "sex", "disease")) %>% rename(sim = L1)
+                              "year", "sex", "disease")) %>% dplyr::rename(sim = L1)
 
    deaths.long <- melt(deaths.sims,
                        id = c("age", "month", "population", "category",
-                              "year", "sex")) %>% rename(sim = L1)
+                              "year", "sex")) %>% dplyr::rename(sim = L1)
 
    out <- list(counts = counts.long, deaths = deaths.long, f.R0 = out$f.R0,
                m.R0 = out$m.R0, outputparams = params)

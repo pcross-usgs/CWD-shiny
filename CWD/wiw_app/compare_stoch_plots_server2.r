@@ -55,8 +55,8 @@ compare_stoch_plots_server2 <- function(input, output, session, simout_a, simout
 
     tot.hunted <- hunted %>%
       group_by(sim, scenario) %>%
-      summarize(n = sum(population)) %>%
-      dplyr::spread(key = scenario, value = n) %>%
+      dplyr::summarize(n = sum(population)) %>%
+      spread(key = scenario, value = n) %>%
       mutate(comp = A - B)
 
     last.hunted <- hunted %>%

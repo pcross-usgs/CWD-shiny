@@ -12,16 +12,16 @@
 #' @importFrom forcats fct_recode fct_reorder
 #' @importFrom stringr str_sub
 #' @importFrom stats quantile
-#' @examples 
-#' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95, 
-#' ad.an.m.sur = 0.9, fawn.repro = 0, juv.repro = 0.6, ad.repro = 1, 
+#' @examples
+#' params <- list(fawn.an.sur = 0.6, juv.an.sur = 0.8, ad.an.f.sur = 0.95,
+#' ad.an.m.sur = 0.9, fawn.repro = 0, juv.repro = 0.6, ad.repro = 1,
 #' hunt.mort.fawn = 0.01, hunt.mort.juv.f = 0.1, hunt.mort.juv.m = 0.1,
 #' hunt.mort.ad.f = 0.1, hunt.mort.ad.m = 0.4, ini.fawn.prev = 0.02,
 #' ini.juv.prev = 0.03, ini.ad.f.prev = 0.04,  ini.ad.m.prev = 0.04,
 #' n.age.cats = 12,  p = 0.43, env.foi = 0,  beta.f = 0.15,  beta.m = 0.15,
-#' theta = 1, n0 = 2000, n.years = 10, rel.risk = 1.0, 
+#' theta = 1, n0 = 2000, n.years = 10, rel.risk = 1.0,
 #' repro.var = 0.005, fawn.sur.var = 0.005, sur.var = 0.005, hunt.var = 0.005)
-#' 
+#'
 #' out <- cwd_stoch_wrapper(params, nsims = 20)
 #' plot_stoch_deaths(out$deaths, error.bars = c(0.05, 0.95))
 #'
@@ -29,7 +29,7 @@
 
 plot_stoch_deaths <- function(dat, error.bars){
   if(missing(dat)==TRUE) warning("missing data to plot")
-  
+
   dat.sum <- dat %>%
     filter(age >= 2) %>%
     mutate(category = as.factor(str_sub(category, 1, 1))) %>%
@@ -56,7 +56,7 @@ plot_stoch_deaths <- function(dat, error.bars){
     # calculate the error bars
     dat.mean <- dat.sum %>%
       group_by(year, sex, category) %>%
-      summarize(lo = quantile(n, error.bars[1]),
+      dplyr::summarize(lo = quantile(n, error.bars[1]),
                 hi = quantile(n, error.bars[2]),
                 avg = mean(n)) %>%
       mutate(category = fct_reorder(category, avg))
