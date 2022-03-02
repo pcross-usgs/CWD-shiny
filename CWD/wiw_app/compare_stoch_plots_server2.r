@@ -26,18 +26,18 @@ compare_stoch_plots_server2 <- function(input, output, session, simout_a, simout
     count <- melt(count, id = c("age", "month", "population", "category",
                             "year", "sex", "disease", "sim")) %>%
       filter(month %% 12 == 10, round(year, 0) == max(round(year, 0))) %>%
-      rename(scenario = L1) %>%
+      dplyr::rename(scenario = L1) %>%
       mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"))
 
     totals <- count %>%
       group_by(sim, scenario) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = scenario, value = n) %>%
       mutate(comp = A - B)
 
     prev <- count %>%
       group_by(sim, disease, scenario) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = disease, value = n) %>%
       mutate(prevalence = yes/ (no + yes)) %>%
       select(sim, scenario, prevalence) %>%
@@ -49,27 +49,27 @@ compare_stoch_plots_server2 <- function(input, output, session, simout_a, simout
     hunted <- melt(death, id = c("age", "month", "population", "category",
                             "year", "sex", "sim")) %>%
       filter(age >= 2, str_sub(category, 1, 1) == "H") %>%
-      rename(scenario = L1) %>%
+      dplyr::rename(scenario = L1) %>%
       mutate(scenario = fct_recode(as.factor(scenario), A = "1", B = "2"),
              year = floor(year))
 
     tot.hunted <- hunted %>%
       group_by(sim, scenario) %>%
       summarize(n = sum(population)) %>%
-      spread(key = scenario, value = n) %>%
+      dplyr::spread(key = scenario, value = n) %>%
       mutate(comp = A - B)
 
     last.hunted <- hunted %>%
       filter(round(year, 0) == max(round(year, 0))) %>%
       group_by(sim, scenario) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = scenario, value = n) %>%
       mutate(comp = A - B)
 
     males.hunted <- hunted %>%
       filter(sex == "m") %>%
       group_by(sim, scenario) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = scenario, value = n) %>%
       mutate(comp = A - B)
 
@@ -77,7 +77,7 @@ compare_stoch_plots_server2 <- function(input, output, session, simout_a, simout
       filter(round(year, 0) == max(round(year, 0))) %>%
       filter(sex == "m") %>%
       group_by(sim, scenario) %>%
-      summarize(n = sum(population)) %>%
+      dplyr::summarize(n = sum(population)) %>%
       spread(key = scenario, value = n) %>%
       mutate(comp = A - B)
 

@@ -67,11 +67,11 @@ compare_stoch_server <- function(input, output, session){
 
    counts.long <- melt(counts.sims,
                        id = c("age", "month", "population", "category",
-                              "year", "sex", "disease")) %>% rename(sim = L1)
+                              "year", "sex", "disease")) %>% dplyr::rename(sim = L1)
 
    deaths.long <- melt(deaths.sims,
                        id = c("age", "month", "population", "category",
-                              "year", "sex")) %>% rename(sim = L1)
+                              "year", "sex")) %>% dplyr::rename(sim = L1)
 
 
    out <- list(counts = counts.long, deaths = deaths.long, f.R0 = out$f.R0,

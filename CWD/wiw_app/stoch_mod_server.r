@@ -26,7 +26,7 @@ stoch_mod_server <- function(input, output, session){
 
          #convert from r0_peryear to beta
          beta.ff = (input$r0_peryear  * input$n0 ^ (input$theta-1)) / 12,
-         gamma.mm = input$gamma.mm, 
+         gamma.mm = input$gamma.mm,
          gamma.mf = input$gamma.mf,
          gamma.fm = input$gamma.fm,
          theta = input$theta,
@@ -71,18 +71,18 @@ stoch_mod_server <- function(input, output, session){
 
     counts.long <- melt(counts.sims,
                         id = c("age", "month", "population", "category",
-                               "year", "sex", "disease")) %>% rename(sim = L1)
+                               "year", "sex", "disease")) %>% dplyr::rename(sim = L1)
 
     deaths.long <- melt(deaths.sims,
                         id = c("age", "month", "population", "category",
-                               "year", "sex")) %>% rename(sim = L1)
+                               "year", "sex")) %>% dplyr::rename(sim = L1)
 
     out <- list(counts = counts.long, deaths = deaths.long, f.R0 = out$f.R0,
                 m.R0 = out$m.R0)
     out
   })
 
-  
+
   output$R0text1 <- renderUI({
     out <- simout()
     str1 <- paste("Female direct transmission R0 = ", round(out$f.R0, 1))
@@ -125,8 +125,8 @@ stoch_mod_server <- function(input, output, session){
     str3 <- paste("Next Generation R0 = ", round(R0_NGM_wiw(react.params(), stable.stage.pop = TRUE), 1))
     HTML(paste(str1, str2, str3,sep="<br/>"))
   })
-  
-  
+
+
   output$TotalPlot <- renderPlot({
     out <- simout()
     plot_stoch_disease(out$counts, error.bars = c(0.05, 0.95))
