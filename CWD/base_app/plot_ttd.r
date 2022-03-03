@@ -12,7 +12,7 @@
 #' @importFrom ggridges theme_ridges
 #' @importFrom stats rgamma
 #' @examples
-#' plot_ttd(p = 0.043)
+#' plot_ttd(p = 0.27)
 #' 
 #' @export
 
