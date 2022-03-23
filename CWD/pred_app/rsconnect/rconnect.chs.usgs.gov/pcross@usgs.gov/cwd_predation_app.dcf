@@ -1,0 +1,13 @@
+name: cwd_predation_app
+title: CWD predation app
+username: pcross@usgs.gov
+account: pcross@usgs.gov
+server: rconnect.chs.usgs.gov
+hostUrl: https://rconnect.chs.usgs.gov/__api__
+appId: 126
+bundleId: 321
+url: https://rconnect.chs.usgs.gov/content/9319ff28-5ddf-4981-8985-b5a3388f098e/
+when: 1648055559.92245
+lastSyncTime: 1648055559.92245
+asMultiple: FALSE
+asStatic: FALSE
