@@ -20,11 +20,11 @@ knitr::opts_chunk$set(echo = TRUE)
 # Welcome to the CWD simulation app
 <img src="figures/logo.png" alt="CWDsims" height="150px" align="right" />
 
-Link to the base application where males and females have different susceptibility: [Base Application](/base_app)
+Link to the base application where males and females have different susceptibility: [Base Application](apps/CWD/base_app)
 
-Link to the who-infects-whom application with four different transmission rates--within males, within females, from males to females and from females to males: [WIW Application](/wiw_app)
+Link to the who-infects-whom application with four different transmission rates--within males, within females, from males to females and from females to males: [WIW Application](apps/CWD/wiw_app)
 
-Link to the predator-prey-CWD application: [Predator Application](/pred_app)
+Link to the predator-prey-CWD application: [Predator Application](apps/CWD/pred_app)
 
 
 # Overview
