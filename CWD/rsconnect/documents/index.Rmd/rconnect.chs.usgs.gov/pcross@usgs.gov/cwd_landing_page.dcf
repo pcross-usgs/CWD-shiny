@@ -1,0 +1,13 @@
+name: cwd_landing_page
+title: CWD landing page
+username: pcross@usgs.gov
+account: pcross@usgs.gov
+server: rconnect.chs.usgs.gov
+hostUrl: https://rconnect.chs.usgs.gov/__api__
+appId: 132
+bundleId: 1823
+url: https://rconnect.chs.usgs.gov/CWD/
+when: 1669932619.32054
+lastSyncTime: 1669932619.32054
+asMultiple: FALSE
+asStatic: TRUE
